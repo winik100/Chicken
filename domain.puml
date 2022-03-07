@@ -22,6 +22,7 @@ class LsfId {
 - int id
 - istGueltig()
 }
-Klausur<--LsfId
-Klausur<--KlausurTyp
+
+Klausur <-- LsfId
+Klausur <-- KlausurTyp
 @enduml
