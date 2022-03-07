@@ -1,0 +1,27 @@
+@startuml
+class Student {
+- String githubHandle
+- Urlaubszeit restUrlaub
+}
+class Urlaubsantrag {
+
+}
+class Klausur {
+- long id
+- LsfId lsfId
+- String name
+- LocalDateTime start
+- LocalDateTime ende
+- KlausurTyp typ
+- dauer()
+}
+enum KlausurTyp {
+ONLINE, PRAESENZ
+}
+class LsfId {
+- int id
+- istGueltig()
+}
+Klausur<--LsfId
+Klausur<--KlausurTyp
+@enduml

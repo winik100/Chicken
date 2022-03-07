@@ -1,0 +1,10 @@
+@startuml
+[domain] <<..domain..>>
+[services] <<..services..>>
+[web] <<..infrastructure.web..>>
+[persistenz] <<..infrastructure.persistenz..>>
+
+[services]-->[domain]
+[web]-->[services]
+[persistenz]-->[services]
+@enduml
