@@ -1,0 +1,4 @@
+rootProject.name="Chicken"
+include 'domain'
+include 'infrastructure'
+include 'services'
