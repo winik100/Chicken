@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class KlausurTest {
+class KlausurTest {
 
     @Test
-    @DisplayName("Dauer")
+    @DisplayName("Berechnung der Dauer korrekt")
     void test1() {
 
         LsfId lsfId = new LsfId(234567);

@@ -1,5 +1,5 @@
 package klausur;
 
-public enum KlausurTyp {
+enum KlausurTyp {
     ONLINE, PRAESENZ
 }

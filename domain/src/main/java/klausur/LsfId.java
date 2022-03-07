@@ -2,7 +2,7 @@ package klausur;
 
 import java.util.Objects;
 
-public class LsfId {
+class LsfId {
 
     int id;
 
