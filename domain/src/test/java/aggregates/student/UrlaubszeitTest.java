@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UrlaubszeitTest {
+class UrlaubszeitTest {
 
     @Test
     @DisplayName("240 Minuten Gesamturlaub - 15 Minuten = 225 Resturlaub")
