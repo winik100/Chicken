@@ -14,7 +14,7 @@ public class Student {
   UrlaubsZeit resturlaub;
   List<UrlaubsEintrag> urlaube;
 
-  Student(Long id, String github){
+  public Student(Long id, String github){
     this.id = id;
     this.githubHandle = github;
     this.resturlaub = new UrlaubsZeit();
