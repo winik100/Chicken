@@ -7,11 +7,13 @@ import stereotype.AggregateRoot;
 @AggregateRoot
 public class Student {
 
+  Long id;
   String githubHandle;
   UrlaubsZeit resturlaub;
   List<UrlaubsEintrag> urlaube;
 
-  Student(String github){
+  Student(Long id, String github){
+    this.id = id;
     this.githubHandle = github;
     this.resturlaub = new UrlaubsZeit();
     this.urlaube = new ArrayList<UrlaubsEintrag>();

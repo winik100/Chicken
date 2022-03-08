@@ -16,7 +16,7 @@ class KlausurTest {
         LsfId lsfId = new LsfId(234567);
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        Klausur klausur = new Klausur(111, lsfId, "Mathe", start, ende, KlausurTyp.PRAESENZ);
+        Klausur klausur = new Klausur(111L, lsfId, "Mathe", start, ende, KlausurTyp.PRAESENZ);
 
         Long dauer = klausur.dauer();
 
