@@ -1,10 +1,10 @@
 package aggregates.student;
 
-class Urlaubszeit {
+class UrlaubsZeit {
 
     private Long minuten;
 
-    public Urlaubszeit() {
+    public UrlaubsZeit() {
         this.minuten = 240L;
     }
 

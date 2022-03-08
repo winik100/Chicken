@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UrlaubszeitTest {
+class UrlaubsZeitTest {
 
     @Test
     @DisplayName("240 Minuten Gesamturlaub - 15 Minuten = 225 Resturlaub")
     void test1() {
-        Urlaubszeit urlaubszeit = new Urlaubszeit();
+        UrlaubsZeit urlaubszeit = new UrlaubsZeit();
         urlaubszeit.zeitEntfernen(15L);
         assertThat(urlaubszeit.getMinuten()).isEqualTo(225L);
     }
@@ -18,7 +18,7 @@ class UrlaubszeitTest {
     @Test
     @DisplayName("240 Minuten Gesamturlaub - 30 Minuten + 15 Minuten = 225 Resturlaub")
     void test2() {
-        Urlaubszeit urlaubszeit = new Urlaubszeit();
+        UrlaubsZeit urlaubszeit = new UrlaubsZeit();
         urlaubszeit.zeitEntfernen(30L);
         urlaubszeit.zeitHinzufuegen(15L);
         assertThat(urlaubszeit.getMinuten()).isEqualTo(225L);
@@ -27,7 +27,7 @@ class UrlaubszeitTest {
     @Test
     @DisplayName("Urlaubszeit kann nicht negativ werden")
     void test3() {
-        Urlaubszeit urlaubszeit = new Urlaubszeit();
+        UrlaubsZeit urlaubszeit = new UrlaubsZeit();
         urlaubszeit.zeitEntfernen(240L);
         urlaubszeit.zeitEntfernen(15L);
         assertThat(urlaubszeit.getMinuten()).isEqualTo(0L);
@@ -36,7 +36,7 @@ class UrlaubszeitTest {
     @Test
     @DisplayName("Urlaubszeit kann nicht größer als 240 Minuten sein")
     void test4() {
-        Urlaubszeit urlaubszeit = new Urlaubszeit();
+        UrlaubsZeit urlaubszeit = new UrlaubsZeit();
         urlaubszeit.zeitHinzufuegen(60L);
         assertThat(urlaubszeit.getMinuten()).isEqualTo(240L);
     }

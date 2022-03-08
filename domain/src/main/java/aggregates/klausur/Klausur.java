@@ -6,7 +6,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 @AggregateRoot
-public record Klausur (long id, LsfId lsfId, String name, LocalDateTime start, LocalDateTime ende, KlausurTyp typ) {
+public record Klausur (Long id, LsfId lsfId, String name, LocalDateTime start, LocalDateTime ende, KlausurTyp typ) {
 
     Long dauer() {
         return Duration.between(start, ende).toMinutes();

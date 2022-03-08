@@ -1,19 +1,31 @@
 @startuml
 class Student {
 - String githubHandle
-- Urlaubszeit restUrlaub
+- UrlaubsZeit restUrlaub
+- List<UrlaubsEintrag> urlaube
+- void urlaubNehmen(Long minuten)
+- void urlaubEntfernen(Long minuten)
 }
-class Urlaubsantrag {
 
+class UrlaubsEintrag {
+- LocalDateTime start
+- LocalDateTime ende
 }
+
+class UrlaubsZeit {
+- Long minuten
+- void zeitHinzufügen()
+- void zeitEntfernen()
+}
+
 class Klausur {
-- long id
+- Long id
 - LsfId lsfId
 - String name
 - LocalDateTime start
 - LocalDateTime ende
 - KlausurTyp typ
-- dauer()
+- Long dauer()
 }
 enum KlausurTyp {
 ONLINE, PRAESENZ
@@ -25,4 +37,6 @@ class LsfId {
 
 Klausur <-- LsfId
 Klausur <-- KlausurTyp
+Student <-- UrlaubsEintrag
+Student <-- UrlaubsZeit
 @enduml
