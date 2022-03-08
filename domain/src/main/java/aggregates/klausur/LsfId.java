@@ -1,4 +1,4 @@
-package klausur;
+package aggregates.klausur;
 
 import java.util.Objects;
 

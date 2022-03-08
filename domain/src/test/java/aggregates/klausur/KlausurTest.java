@@ -1,8 +1,5 @@
-package klausur;
+package aggregates.klausur;
 
-import klausur.Klausur;
-import klausur.KlausurTyp;
-import klausur.LsfId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
