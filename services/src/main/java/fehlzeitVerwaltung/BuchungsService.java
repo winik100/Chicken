@@ -16,9 +16,16 @@ public class BuchungsService {
         this.klausurRepository = klausurRepository;
     }
 
-    public void klausurBuchen (int lsfId, Long studentID){
+    public void klausurBuchen(int lsfId, Long studentID){
         Klausur klausur = klausurRepository.klausurMitLsfId(lsfId);
         Student student = studentRepository.studentMitId(studentID);
         student.klausurAnmelden(klausur);
     }
+
+    public void klausurStornieren(int lsfId, Long studentID){
+        Klausur klausur = klausurRepository.klausurMitLsfId(lsfId);
+        Student student = studentRepository.studentMitId(studentID);
+        student.klausurAbmelden(klausur);
+    }
+
 }

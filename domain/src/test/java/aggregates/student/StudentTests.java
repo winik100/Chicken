@@ -37,4 +37,18 @@ class StudentTests {
     student.klausurAnmelden(klausur);
     assertThat(student.getKlausurAnmeldungen()).contains(klausur);
   }
+
+  @Test
+  @DisplayName("Klausuren lassen sich vom Studenten entfernen.")
+  void test_4(){
+    Student student = new Student(10L,"ibimsgithub");
+    LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
+    LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
+    Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
+    student.klausurAnmelden(klausur);
+
+    student.klausurAbmelden(klausur);
+
+    assertThat(student.getKlausurAnmeldungen()).doesNotContain(klausur);
+  }
 }

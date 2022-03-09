@@ -42,6 +42,10 @@ public class Student {
     resturlaub.zeitHinzufuegen(minuten);
   }
 
+  public void klausurAbmelden(Klausur klausur) {
+    klausurAnmeldungen.remove(klausur);
+  }
+
   public void klausurAnmelden(Klausur klausur){
     klausurAnmeldungen.add(klausur);
   }
@@ -58,4 +62,6 @@ public class Student {
   public int hashCode() {
     return Objects.hash(id);
   }
+
+
 }
