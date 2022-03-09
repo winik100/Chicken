@@ -6,7 +6,9 @@ import repositories.KlausurRepository;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import stereotypes.DomainService;
 
+@DomainService
 public class KlausurService {
     private final KlausurRepository repo;
 

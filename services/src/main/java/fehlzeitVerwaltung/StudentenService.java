@@ -4,8 +4,9 @@ import aggregates.student.Student;
 import repositories.StudentRepository;
 
 import java.util.Optional;
+import stereotypes.DomainService;
 
-
+@DomainService
 public class StudentenService {
 
     final private StudentRepository repo;

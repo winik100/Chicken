@@ -5,7 +5,9 @@ import aggregates.student.Student;
 import java.time.LocalDateTime;
 import repositories.KlausurRepository;
 import repositories.StudentRepository;
+import stereotypes.ApplicationService;
 
+@ApplicationService
 public class BuchungsService {
 
    private final StudentRepository studentRepository;
