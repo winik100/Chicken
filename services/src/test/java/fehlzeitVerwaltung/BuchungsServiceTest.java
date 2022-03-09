@@ -4,6 +4,8 @@ import aggregates.klausur.Klausur;
 import aggregates.student.Student;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import repositories.KlausurRepository;
 import repositories.StudentRepository;
 
@@ -51,6 +53,38 @@ public class BuchungsServiceTest {
         buchungsService.klausurStornieren(234567, 10L);
 
         assertThat(student.getKlausurAnmeldungen()).doesNotContain(klausur);
+    }
 
+    @Test
+    @DisplayName("BuchungsService.urlaubBuchen() ruft Student.urlaubNehmen() korrekt auf")
+    void test_3(){
+        StudentRepository studentRepo = mock(StudentRepository.class);
+        Student student = mock(Student.class);
+        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
+        KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
+
+        buchungsService.urlaubBuchen(student.getId(), start, ende);
+
+        verify(student, times(1)).urlaubNehmen(start, ende);
+    }
+
+    @Test
+    @DisplayName("BuchungsService.urlaubStornieren() ruft Student.urlaubEntfernen() korrekt auf")
+    void test_4(){
+        StudentRepository studentRepo = mock(StudentRepository.class);
+        Student student = mock(Student.class);
+        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
+        KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
+        buchungsService.urlaubBuchen(student.getId(), start, ende);
+
+        buchungsService.urlaubStornieren(student.getId(), start, ende);
+
+        verify(student, times(1)).urlaubEntfernen(start, ende);
     }
 }

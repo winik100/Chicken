@@ -2,6 +2,7 @@ package fehlzeitVerwaltung;
 
 import aggregates.klausur.Klausur;
 import aggregates.student.Student;
+import java.time.LocalDateTime;
 import repositories.KlausurRepository;
 import repositories.StudentRepository;
 
@@ -26,6 +27,16 @@ public class BuchungsService {
         Klausur klausur = klausurRepository.klausurMitLsfId(lsfId);
         Student student = studentRepository.studentMitId(studentID);
         student.klausurAbmelden(klausur);
+    }
+
+    public void urlaubBuchen(Long studentID, LocalDateTime start, LocalDateTime ende){
+        Student student = studentRepository.studentMitId(studentID);
+        student.urlaubNehmen(start, ende);
+    }
+
+    public void urlaubStornieren(Long studentID, LocalDateTime start, LocalDateTime ende){
+      Student student = studentRepository.studentMitId(studentID);
+      student.urlaubEntfernen(start, ende);
     }
 
 }

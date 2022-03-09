@@ -40,14 +40,14 @@ public class Student {
     return klausurAnmeldungen;
   }
 
-  void urlaubNehmen(LocalDateTime start, LocalDateTime ende){
+  public void urlaubNehmen(LocalDateTime start, LocalDateTime ende){
     Long minuten = Duration.between(start, ende).toMinutes();
     UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
     urlaube.add(urlaubsEintrag);
     resturlaub.zeitEntfernen(minuten);
   }
 
-  void urlaubEntfernen(LocalDateTime start, LocalDateTime ende){
+  public void urlaubEntfernen(LocalDateTime start, LocalDateTime ende){
     Long minuten = Duration.between(start, ende).toMinutes();
     UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
     if (urlaube.remove(urlaubsEintrag)) {
