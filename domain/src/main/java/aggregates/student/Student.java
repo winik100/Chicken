@@ -1,10 +1,12 @@
 package aggregates.student;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
 import aggregates.klausur.Klausur;
+import java.util.stream.Collectors;
 import stereotype.AggregateRoot;
 
 @AggregateRoot
@@ -61,6 +63,12 @@ public class Student {
 
   public void klausurAnmelden(Klausur klausur){
     klausurAnmeldungen.add(klausur);
+  }
+
+  public boolean hatUrlaubAm(LocalDate tag){
+    List<LocalDate> urlaubsDaten = urlaube.stream().map(x -> x.start().toLocalDate()).collect(
+        Collectors.toList());
+    return urlaubsDaten.contains(tag);
   }
 
   @Override

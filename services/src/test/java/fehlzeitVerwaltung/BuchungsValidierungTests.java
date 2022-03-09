@@ -87,4 +87,40 @@ public class BuchungsValidierungTests {
 
     assertThat(b).isFalse();
   }
+
+  @Test
+  @DisplayName("Ganzer Tag Urlaub ist erlaubt")
+  void test_7(){
+    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+    LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 9, 30);
+    LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 13, 30);
+
+    boolean b = buchungsValidierung.blockEntwederGanzerTagOderMax150Min(urlaubsStart, urlaubsEnde);
+
+    assertThat(b).isTrue();
+  }
+
+  @Test
+  @DisplayName("Urlaub unter 150 Min ist erlaubt")
+  void test_8(){
+    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+    LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 9, 30);
+    LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 10, 30);
+
+    boolean b = buchungsValidierung.blockEntwederGanzerTagOderMax150Min(urlaubsStart, urlaubsEnde);
+
+    assertThat(b).isTrue();
+  }
+
+  @Test
+  @DisplayName("Urlaub >150 Min, aber <240 Min ist nicht erlaubt")
+  void test_9(){
+    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+    LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 9, 30);
+    LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 12, 30);
+
+    boolean b = buchungsValidierung.blockEntwederGanzerTagOderMax150Min(urlaubsStart, urlaubsEnde);
+
+    assertThat(b).isFalse();
+  }
 }

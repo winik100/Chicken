@@ -3,6 +3,7 @@ package aggregates.student;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import aggregates.klausur.Klausur;
+import java.time.LocalDate;
 import org.assertj.core.internal.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -80,5 +81,19 @@ class StudentTests {
 
     student.urlaubEntfernen(start, ende);
     assertThat(student.getUrlaube()).doesNotContain(urlaubsEintrag);
+  }
+
+  @Test
+  @DisplayName("Student.hatUrlaubAm() erkennt bereits gebuchten Urlaub an einem gegebenen Tag")
+  void test_7(){
+    Student student = new Student(10L,"ibimsgithub");
+    LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
+    LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
+    student.urlaubNehmen(start, ende);
+    LocalDate datum = start.toLocalDate();
+
+    boolean b = student.hatUrlaubAm(datum);
+
+    assertThat(b).isTrue();
   }
 }

@@ -26,4 +26,13 @@ public class BuchungsValidierung {
         klausurAnmeldungen.stream().map(Klausur::getStart).map(LocalDateTime::toLocalDate).collect(Collectors.toSet());
     return klausurDaten.contains(datum);
   }
+
+  boolean blockEntwederGanzerTagOderMax150Min(LocalDateTime start, LocalDateTime ende){
+    long dauer = Duration.between(start, ende).toMinutes();
+    return (dauer == 240 || dauer <= 150);
+  }
+
+  boolean mind90MinZwischenUrlauben(Student student, LocalDateTime startZweiterUrlaub, LocalDateTime endeZweiterUrlaub){
+    return false;
+  }
 }
