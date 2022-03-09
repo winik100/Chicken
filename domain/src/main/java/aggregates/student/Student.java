@@ -1,5 +1,7 @@
 package aggregates.student;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import aggregates.klausur.Klausur;
@@ -13,6 +15,10 @@ public class Student {
   UrlaubsZeit resturlaub;
   List<UrlaubsEintrag> urlaube;
   Set<Klausur> klausurAnmeldungen;
+
+  public List<UrlaubsEintrag> getUrlaube() {
+    return urlaube;
+  }
 
   public Student(Long id, String github){
     this.id = id;
@@ -34,12 +40,19 @@ public class Student {
     return klausurAnmeldungen;
   }
 
-  void urlaubNehmen(Long minuten){
+  void urlaubNehmen(LocalDateTime start, LocalDateTime ende){
+    Long minuten = Duration.between(start, ende).toMinutes();
+    UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
+    urlaube.add(urlaubsEintrag);
     resturlaub.zeitEntfernen(minuten);
   }
 
-  void urlaubEntfernen(Long minuten){
-    resturlaub.zeitHinzufuegen(minuten);
+  void urlaubEntfernen(LocalDateTime start, LocalDateTime ende){
+    Long minuten = Duration.between(start, ende).toMinutes();
+    UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
+    if (urlaube.remove(urlaubsEintrag)) {
+      resturlaub.zeitHinzufuegen(minuten);
+    }
   }
 
   public void klausurAbmelden(Klausur klausur) {

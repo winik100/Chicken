@@ -3,6 +3,7 @@ package aggregates.student;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import aggregates.klausur.Klausur;
+import org.assertj.core.internal.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,9 @@ class StudentTests {
   @DisplayName("urlaubNehmen() reduziert den Resturlaub des Studenten korrekt")
   void test_1(){
     Student student = new Student(10L,"ibimsgithub");
-    student.urlaubNehmen(15L);
+    LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
+    LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 12, 15);
+    student.urlaubNehmen(start, ende);
     assertThat(student.getResturlaubInMin()).isEqualTo(225L);
   }
 
@@ -22,9 +25,11 @@ class StudentTests {
   @DisplayName("urlaubEntfernen() erhöht den Resturlaub des Studenten korrekt")
   void test_2(){
     Student student = new Student(10L,"ibimsgithub");
-    student.urlaubNehmen(30L);
-    student.urlaubEntfernen(15L);
-    assertThat(student.getResturlaubInMin()).isEqualTo(225L);
+    LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
+    LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 12, 30);
+    student.urlaubNehmen(start, ende);
+    student.urlaubEntfernen(start, ende);
+    assertThat(student.getResturlaubInMin()).isEqualTo(240L);
   }
 
   @Test
@@ -50,5 +55,30 @@ class StudentTests {
     student.klausurAbmelden(klausur);
 
     assertThat(student.getKlausurAnmeldungen()).doesNotContain(klausur);
+  }
+
+  @Test
+  @DisplayName("Student.urlaubNehmen() erzeugt einen neuen Urlaubseintrag in Student.urlaube")
+  void test_5(){
+    Student student = new Student(10L,"ibimsgithub");
+    LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
+    LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
+    UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
+
+    student.urlaubNehmen(start, ende);
+    assertThat(student.getUrlaube()).contains(urlaubsEintrag);
+  }
+
+  @Test
+  @DisplayName("Student.urlaubEntfernen() entfernt einen bestehenden Urlaubseintrag in Student.urlaube")
+  void test_6(){
+    Student student = new Student(10L,"ibimsgithub");
+    LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
+    LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
+    UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
+    student.urlaubNehmen(start, ende);
+
+    student.urlaubEntfernen(start, ende);
+    assertThat(student.getUrlaube()).doesNotContain(urlaubsEintrag);
   }
 }
