@@ -8,18 +8,22 @@ class UrlaubsZeit {
         this.minuten = 240L;
     }
 
-    void zeitHinzufuegen(Long minuten) {
+    boolean zeitHinzufuegen(Long minuten) {
         Long zwischenmin = this.minuten + minuten;
         if(zwischenmin<=240L) {
             this.minuten = zwischenmin;
+            return true;
         }
+        return false;
     }
 
-    void zeitEntfernen(Long minuten) {
+    boolean zeitEntfernen(Long minuten) {
         Long zwischenmin = this.minuten - minuten;
         if(zwischenmin>=0L) {
             this.minuten = zwischenmin;
+            return true;
         }
+        return false;
     }
 
     public Long getMinuten() {

@@ -1,9 +1,8 @@
 package aggregates.student;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+import aggregates.klausur.Klausur;
 import stereotype.AggregateRoot;
 
 @AggregateRoot
@@ -13,12 +12,14 @@ public class Student {
   String githubHandle;
   UrlaubsZeit resturlaub;
   List<UrlaubsEintrag> urlaube;
+  Set<Klausur> klausurAnmeldungen;
 
   public Student(Long id, String github){
     this.id = id;
     this.githubHandle = github;
     this.resturlaub = new UrlaubsZeit();
-    this.urlaube = new ArrayList<UrlaubsEintrag>();
+    this.urlaube = new ArrayList<>();
+    this.klausurAnmeldungen = new HashSet<>();
   }
 
   public Long getResturlaubInMin() {
