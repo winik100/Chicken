@@ -12,6 +12,7 @@ public class BuchungsService {
 
    private final StudentRepository studentRepository;
    private final KlausurRepository klausurRepository;
+   private final BuchungsValidierung validierung = new BuchungsValidierung();
 
 
     public BuchungsService(StudentRepository studentRepository, KlausurRepository klausurRepository) {

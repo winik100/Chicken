@@ -29,6 +29,14 @@ public class Klausur {
         return Duration.between(start, ende).toMinutes();
     }
 
+    public int getLsfId() {
+        return lsfId;
+    }
+
+    public LocalDateTime getStart() {
+        return start;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
