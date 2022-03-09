@@ -26,12 +26,24 @@ public class Student {
     return resturlaub.getMinuten();
   }
 
+  public Long getId() {
+    return id;
+  }
+
+  public Set<Klausur> getKlausurAnmeldungen() {
+    return klausurAnmeldungen;
+  }
+
   void urlaubNehmen(Long minuten){
     resturlaub.zeitEntfernen(minuten);
   }
 
   void urlaubEntfernen(Long minuten){
     resturlaub.zeitHinzufuegen(minuten);
+  }
+
+  public void klausurAnmelden(Klausur klausur){
+    klausurAnmeldungen.add(klausur);
   }
 
   @Override
