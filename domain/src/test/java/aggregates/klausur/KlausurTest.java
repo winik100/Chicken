@@ -20,8 +20,6 @@ class KlausurTest {
         Long dauer = klausur.dauer();
 
         assertThat(dauer).isEqualTo(60L);
-
-
     }
 
     @Test
@@ -70,6 +68,54 @@ class KlausurTest {
         final LocalDateTime startFreistellung = klausur.startFreistellungBerechnen();
 
         assertThat(startFreistellung).isEqualTo(LocalDateTime.of(2022, 3, 8, 9, 30));
+    }
+
+    @Test
+    @DisplayName("Bei einer Präsenzklausur bis 11:00 wird die Freistellung bis 13:00 gewährt")
+    void test6() {
+        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 10, 0);
+        LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 11, 0);
+        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
+
+        final LocalDateTime endeFreistellung = klausur.endeFreistellungBerechnen();
+
+        assertThat(endeFreistellung).isEqualTo(LocalDateTime.of(2022, 3, 8, 13, 0));
+    }
+
+    @Test
+    @DisplayName("Bei einer Präsenzklausur bis 13:00 wird die Freistellung bis 13:30 gewährt, also Praktkumsende")
+    void test7() {
+        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 10, 0);
+        LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
+        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
+
+        final LocalDateTime endeFreistellung = klausur.endeFreistellungBerechnen();
+
+        assertThat(endeFreistellung).isEqualTo(LocalDateTime.of(2022, 3, 8, 13, 30));
+    }
+
+    @Test
+    @DisplayName("Bei einer Onlineklausur bis 13:00 wird die Freistellung bis 13:00 gewährt.")
+    void test8() {
+        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 10, 0);
+        LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
+        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "online");
+
+        final LocalDateTime endeFreistellung = klausur.endeFreistellungBerechnen();
+
+        assertThat(endeFreistellung).isEqualTo(LocalDateTime.of(2022, 3, 8, 13, 0));
+    }
+
+    @Test
+    @DisplayName("Bei einer Onlineklausur bis 14:00 wird die Freistellung bis 13:30 gewährt, also Praktikumsende.")
+    void test9() {
+        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 10, 0);
+        LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 14, 0);
+        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "online");
+
+        final LocalDateTime endeFreistellung = klausur.endeFreistellungBerechnen();
+
+        assertThat(endeFreistellung).isEqualTo(LocalDateTime.of(2022, 3, 8, 13, 30));
     }
 
 }
