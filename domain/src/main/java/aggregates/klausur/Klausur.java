@@ -3,7 +3,9 @@ package aggregates.klausur;
 import stereotype.AggregateRoot;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Objects;
 
 @AggregateRoot
@@ -15,6 +17,11 @@ public class Klausur {
     LocalDateTime ende;
     KlausurTyp typ = KlausurTyp.ONLINE;
 
+    private final static LocalTime PRAKTIKUMSSTART = LocalTime.of(9, 30);
+    private final static LocalTime ENDE = LocalTime.of(13, 30);
+
+
+
     public Klausur(int lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
         this.lsfId = lsfId;
         this.name = name;
@@ -24,6 +31,23 @@ public class Klausur {
             this.typ = KlausurTyp.PRAESENZ;
         }
     }
+
+    public LocalDateTime startFreistellungBerechnen() {
+        LocalDateTime freistellungsBeginn = start;
+        LocalTime praktikumsBeginn = LocalTime.of(9, 30);
+        if(typ.equals(KlausurTyp.PRAESENZ)) {
+            freistellungsBeginn = freistellungsBeginn.minusHours(2L);
+        }
+        else {
+            freistellungsBeginn = freistellungsBeginn.minusMinutes(30L);
+        }
+        if(freistellungsBeginn.isBefore(LocalDateTime.of(start.toLocalDate(), praktikumsBeginn))) {
+            freistellungsBeginn = LocalDateTime.of(start.toLocalDate(), praktikumsBeginn);
+        }
+        return freistellungsBeginn;
+    }
+
+
 
     Long dauer() {
         return Duration.between(start, ende).toMinutes();
