@@ -35,6 +35,9 @@ public class BuchungsService {
 
     public void urlaubBuchen(Long studentID, LocalDateTime start, LocalDateTime ende) {
         Student student = studentRepository.studentMitId(studentID);
+        if(validierung.dauerIstVielfachesVon15(start, ende) && validierung.startZeitIstVielfachesVon15(start)){
+
+        }
         student.urlaubNehmen(start, ende);
     }
 
