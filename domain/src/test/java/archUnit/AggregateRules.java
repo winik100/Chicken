@@ -16,7 +16,7 @@ public class AggregateRules {
 
     @Test
     @DisplayName("Nur Aggregate Roots dürfen public sein.")
-    void test_1 () throws Exception {
+    void test_1() throws Exception {
         ArchRule rule = classes()
                 .that()
                 .areNotAnnotatedWith(AggregateRoot.class)

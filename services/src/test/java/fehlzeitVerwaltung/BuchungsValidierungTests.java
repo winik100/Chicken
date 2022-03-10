@@ -1,242 +1,243 @@
 package fehlzeitVerwaltung;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import aggregates.klausur.Klausur;
 import aggregates.student.Student;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class BuchungsValidierungTests {
 
-  @Test
-  @DisplayName("dauerIstVielFachesVon15 gibt bei Dauer von 60 min true zurück")
-  void test_1(){
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
-    LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
+    @Test
+    @DisplayName("dauerIstVielFachesVon15 gibt bei Dauer von 60 min true zurück")
+    void test_1() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
 
-    boolean b = buchungsValidierung.dauerIstVielfachesVon15(start, ende);
+        boolean b = buchungsValidierung.dauerIstVielfachesVon15(start, ende);
 
-    assertThat(b).isTrue();
-  }
+        assertThat(b).isTrue();
+    }
 
-  @Test
-  @DisplayName("dauerIstVielFachesVon15 gibt bei Dauer von 66 min false zurück")
-  void test_2(){
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
-    LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 6);
+    @Test
+    @DisplayName("dauerIstVielFachesVon15 gibt bei Dauer von 66 min false zurück")
+    void test_2() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 6);
 
-    boolean b = buchungsValidierung.dauerIstVielfachesVon15(start, ende);
+        boolean b = buchungsValidierung.dauerIstVielfachesVon15(start, ende);
 
-    assertThat(b).isFalse();
-  }
+        assertThat(b).isFalse();
+    }
 
-  @Test
-  @DisplayName("Ist die Startzeit ein Vielfaches von 15 (z.B. 12:00) wird true zurückgegeben")
-  void test_3(){
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
+    @Test
+    @DisplayName("Ist die Startzeit ein Vielfaches von 15 (z.B. 12:00) wird true zurückgegeben")
+    void test_3() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
 
-    boolean b = buchungsValidierung.startZeitIstVielfachesVon15(start);
+        boolean b = buchungsValidierung.startZeitIstVielfachesVon15(start);
 
-    assertThat(b).isTrue();
-  }
+        assertThat(b).isTrue();
+    }
 
-  @Test
-  @DisplayName("Ist die Startzeit kein Vielfaches von 15 (z.B. 12:10) wird false zurückgegeben")
-  void test_4(){
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 10);
+    @Test
+    @DisplayName("Ist die Startzeit kein Vielfaches von 15 (z.B. 12:10) wird false zurückgegeben")
+    void test_4() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 10);
 
-    boolean b = buchungsValidierung.startZeitIstVielfachesVon15(start);
+        boolean b = buchungsValidierung.startZeitIstVielfachesVon15(start);
 
-    assertThat(b).isFalse();
-  }
+        assertThat(b).isFalse();
+    }
 
-  @Test
-  @DisplayName("Klausur am gleichen Tag wird erkannt (unabhängig von Uhrzeit)")
-  void test_5(){
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime klausurStart = LocalDateTime.of(2022, 3, 8, 12, 10);
-    LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 13, 10);
-    LocalDateTime klausurEnde = LocalDateTime.of(2022, 3, 8, 13, 0);
-    Student student = new Student(10L, "ibimsgithub");
-    Klausur klausur = new Klausur(234567, "Mathe", klausurStart, klausurEnde, "praesenz");
-    student.klausurAnmelden(klausur);
+    @Test
+    @DisplayName("Klausur am gleichen Tag wird erkannt (unabhängig von Uhrzeit)")
+    void test_5() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime klausurStart = LocalDateTime.of(2022, 3, 8, 12, 10);
+        LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 13, 10);
+        LocalDateTime klausurEnde = LocalDateTime.of(2022, 3, 8, 13, 0);
+        Student student = new Student(10L, "ibimsgithub");
+        Klausur klausur = new Klausur(234567, "Mathe", klausurStart, klausurEnde, "praesenz");
+        student.klausurAnmelden(klausur);
 
-    boolean b = buchungsValidierung.klausurAmGleichenTag(student, urlaubsStart);
+        boolean b = buchungsValidierung.klausurAmGleichenTag(student, urlaubsStart);
 
-    assertThat(b).isTrue();
-  }
+        assertThat(b).isTrue();
+    }
 
-  @Test
-  @DisplayName("Klausur am anderem Tag spielt keine Rolle")
-  void test_6(){
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime klausurStart = LocalDateTime.of(2022, 3, 8, 12, 10);
-    LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 9, 13, 10);
-    LocalDateTime klausurEnde = LocalDateTime.of(2022, 3, 8, 13, 0);
-    Student student = new Student(10L, "ibimsgithub");
-    Klausur klausur = new Klausur(234567, "Mathe", klausurStart, klausurEnde, "praesenz");
-    student.klausurAnmelden(klausur);
+    @Test
+    @DisplayName("Klausur am anderem Tag spielt keine Rolle")
+    void test_6() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime klausurStart = LocalDateTime.of(2022, 3, 8, 12, 10);
+        LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 9, 13, 10);
+        LocalDateTime klausurEnde = LocalDateTime.of(2022, 3, 8, 13, 0);
+        Student student = new Student(10L, "ibimsgithub");
+        Klausur klausur = new Klausur(234567, "Mathe", klausurStart, klausurEnde, "praesenz");
+        student.klausurAnmelden(klausur);
 
-    boolean b = buchungsValidierung.klausurAmGleichenTag(student, urlaubsStart);
+        boolean b = buchungsValidierung.klausurAmGleichenTag(student, urlaubsStart);
 
-    assertThat(b).isFalse();
-  }
+        assertThat(b).isFalse();
+    }
 
-  @Test
-  @DisplayName("Ganzer Tag Urlaub ist erlaubt")
-  void test_7(){
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 9, 30);
-    LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 13, 30);
+    @Test
+    @DisplayName("Ganzer Tag Urlaub ist erlaubt")
+    void test_7() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 13, 30);
 
-    boolean b = buchungsValidierung.blockEntwederGanzerTagOderMax150Min(urlaubsStart, urlaubsEnde);
+        boolean b = buchungsValidierung.blockEntwederGanzerTagOderMax150Min(urlaubsStart, urlaubsEnde);
 
-    assertThat(b).isTrue();
-  }
+        assertThat(b).isTrue();
+    }
 
-  @Test
-  @DisplayName("Urlaub unter 150 Min ist erlaubt")
-  void test_8(){
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 9, 30);
-    LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 10, 30);
+    @Test
+    @DisplayName("Urlaub unter 150 Min ist erlaubt")
+    void test_8() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 10, 30);
 
-    boolean b = buchungsValidierung.blockEntwederGanzerTagOderMax150Min(urlaubsStart, urlaubsEnde);
+        boolean b = buchungsValidierung.blockEntwederGanzerTagOderMax150Min(urlaubsStart, urlaubsEnde);
 
-    assertThat(b).isTrue();
-  }
+        assertThat(b).isTrue();
+    }
 
-  @Test
-  @DisplayName("Urlaub >150 Min, aber <240 Min ist nicht erlaubt")
-  void test_9(){
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 9, 30);
-    LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 12, 30);
+    @Test
+    @DisplayName("Urlaub >150 Min, aber <240 Min ist nicht erlaubt")
+    void test_9() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 12, 30);
 
-    boolean b = buchungsValidierung.blockEntwederGanzerTagOderMax150Min(urlaubsStart, urlaubsEnde);
+        boolean b = buchungsValidierung.blockEntwederGanzerTagOderMax150Min(urlaubsStart, urlaubsEnde);
 
-    assertThat(b).isFalse();
-  }
+        assertThat(b).isFalse();
+    }
 
-  @Test
-  @DisplayName("Ist schon ein Urlaub in der Mitte des Tages gebucht, schlägt die zweite Buchung fehl")
-  void test_10() {
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
-    LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
-    Student student = new Student(10L, "ibimsgithub");
-    student.urlaubNehmen(startErsterUrlaub, endeErsterUrlaub);
-    LocalDateTime startZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
-    LocalDateTime endeZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+    @Test
+    @DisplayName("Ist schon ein Urlaub in der Mitte des Tages gebucht, schlägt die zweite Buchung fehl")
+    void test_10() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
+        LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startErsterUrlaub, endeErsterUrlaub);
+        LocalDateTime startZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
 
-    boolean b = buchungsValidierung.mind90MinZwischenUrlauben(student, startZweiterUrlaub, endeZweiterUrlaub);
+        boolean b = buchungsValidierung.mind90MinZwischenUrlauben(student, startZweiterUrlaub, endeZweiterUrlaub);
 
-    assertThat(b).isFalse();
-  }
+        assertThat(b).isFalse();
+    }
 
-  @Test
-  @DisplayName("Ist schon ein Urlaub am Anfang des Tages gebucht, kann kein zweiter Urlaub mit 60 Minuten Abstand gebucht werden")
-  void test_11() {
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
-    LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
-    Student student = new Student(10L, "ibimsgithub");
-    student.urlaubNehmen(startErsterUrlaub, endeErsterUrlaub);
-    LocalDateTime startZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
-    LocalDateTime endeZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+    @Test
+    @DisplayName("Ist schon ein Urlaub am Anfang des Tages gebucht, kann kein zweiter Urlaub mit 60 Minuten Abstand gebucht werden")
+    void test_11() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startErsterUrlaub, endeErsterUrlaub);
+        LocalDateTime startZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
 
-    boolean b = buchungsValidierung.mind90MinZwischenUrlauben(student, startZweiterUrlaub, endeZweiterUrlaub);
+        boolean b = buchungsValidierung.mind90MinZwischenUrlauben(student, startZweiterUrlaub, endeZweiterUrlaub);
 
-    assertThat(b).isFalse();
-  }
+        assertThat(b).isFalse();
+    }
 
-  @Test
-  @DisplayName("Ist schon ein Urlaub am Ende des Tages gebucht, kann kein zweiter Urlaub mit 60 Minuten Abstand gebucht werden")
-  void test_12() {
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
-    LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
-    Student student = new Student(10L, "ibimsgithub");
-    student.urlaubNehmen(startErsterUrlaub, endeErsterUrlaub);
-    LocalDateTime startZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
-    LocalDateTime endeZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
+    @Test
+    @DisplayName("Ist schon ein Urlaub am Ende des Tages gebucht, kann kein zweiter Urlaub mit 60 Minuten Abstand gebucht werden")
+    void test_12() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startErsterUrlaub, endeErsterUrlaub);
+        LocalDateTime startZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
 
-    boolean b = buchungsValidierung.mind90MinZwischenUrlauben(student, startZweiterUrlaub, endeZweiterUrlaub);
+        boolean b = buchungsValidierung.mind90MinZwischenUrlauben(student, startZweiterUrlaub, endeZweiterUrlaub);
 
-    assertThat(b).isFalse();
-  }
+        assertThat(b).isFalse();
+    }
 
-  @Test
-  @DisplayName("Ist schon ein Urlaub am Anfang des Tages gebucht, kann kein zweiter Urlaub mit 90 Minuten " +
-          "Abstand aber nicht am Ende des Tages gebucht werden")
-  void test_13() {
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
-    LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
-    Student student = new Student(10L, "ibimsgithub");
-    student.urlaubNehmen(startErsterUrlaub, endeErsterUrlaub);
-    LocalDateTime startZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
-    LocalDateTime endeZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 15);
+    @Test
+    @DisplayName("Ist schon ein Urlaub am Anfang des Tages gebucht, kann kein zweiter Urlaub mit 90 Minuten " +
+            "Abstand aber nicht am Ende des Tages gebucht werden")
+    void test_13() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startErsterUrlaub, endeErsterUrlaub);
+        LocalDateTime startZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        LocalDateTime endeZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 15);
 
-    boolean b = buchungsValidierung.mind90MinZwischenUrlauben(student, startZweiterUrlaub, endeZweiterUrlaub);
+        boolean b = buchungsValidierung.mind90MinZwischenUrlauben(student, startZweiterUrlaub, endeZweiterUrlaub);
 
-    assertThat(b).isFalse();
-  }
+        assertThat(b).isFalse();
+    }
 
-  @Test
-  @DisplayName("Ist schon ein Urlaub am Ende des Tages gebucht, kann kein zweiter Urlaub mit 90 Minuten " +
-          "Abstand aber nicht am Anfang des Tages gebucht werden")
-  void test_14() {
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
-    LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
-    Student student = new Student(10L, "ibimsgithub");
-    student.urlaubNehmen(startErsterUrlaub, endeErsterUrlaub);
-    LocalDateTime startZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 45);
-    LocalDateTime endeZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
+    @Test
+    @DisplayName("Ist schon ein Urlaub am Ende des Tages gebucht, kann kein zweiter Urlaub mit 90 Minuten " +
+            "Abstand aber nicht am Anfang des Tages gebucht werden")
+    void test_14() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startErsterUrlaub, endeErsterUrlaub);
+        LocalDateTime startZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 45);
+        LocalDateTime endeZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
 
-    boolean b = buchungsValidierung.mind90MinZwischenUrlauben(student, startZweiterUrlaub, endeZweiterUrlaub);
+        boolean b = buchungsValidierung.mind90MinZwischenUrlauben(student, startZweiterUrlaub, endeZweiterUrlaub);
 
-    assertThat(b).isFalse();
-  }
+        assertThat(b).isFalse();
+    }
 
-  @Test
-  @DisplayName("Ist schon ein Urlaub am Anfang des Tages gebucht, kann ein zweiter Urlaub am Ende des Tages mit" +
-          "90 Minuten Abstand gebucht werden")
-  void test_15() {
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
-    LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
-    Student student = new Student(10L, "ibimsgithub");
-    student.urlaubNehmen(startErsterUrlaub, endeErsterUrlaub);
-    LocalDateTime startZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
-    LocalDateTime endeZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+    @Test
+    @DisplayName("Ist schon ein Urlaub am Anfang des Tages gebucht, kann ein zweiter Urlaub am Ende des Tages mit" +
+            "90 Minuten Abstand gebucht werden")
+    void test_15() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startErsterUrlaub, endeErsterUrlaub);
+        LocalDateTime startZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime endeZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
 
-    boolean b = buchungsValidierung.mind90MinZwischenUrlauben(student, startZweiterUrlaub, endeZweiterUrlaub);
+        boolean b = buchungsValidierung.mind90MinZwischenUrlauben(student, startZweiterUrlaub, endeZweiterUrlaub);
 
-    assertThat(b).isTrue();
-  }
+        assertThat(b).isTrue();
+    }
 
-  @Test
-  @DisplayName("Ist schon ein Urlaub am Ende des Tages gebucht, kann ein zweiter Urlaub am Anfang des Tages mit" +
-          "90 Minuten Abstand gebucht werden")
-  void test_16() {
-    BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-    LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
-    LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
-    Student student = new Student(10L, "ibimsgithub");
-    student.urlaubNehmen(startErsterUrlaub, endeErsterUrlaub);
-    LocalDateTime startZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
-    LocalDateTime endeZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
+    @Test
+    @DisplayName("Ist schon ein Urlaub am Ende des Tages gebucht, kann ein zweiter Urlaub am Anfang des Tages mit" +
+            "90 Minuten Abstand gebucht werden")
+    void test_16() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startErsterUrlaub, endeErsterUrlaub);
+        LocalDateTime startZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeZweiterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
 
-    boolean b = buchungsValidierung.mind90MinZwischenUrlauben(student, startZweiterUrlaub, endeZweiterUrlaub);
+        boolean b = buchungsValidierung.mind90MinZwischenUrlauben(student, startZweiterUrlaub, endeZweiterUrlaub);
 
-    assertThat(b).isTrue();
-  }
+        assertThat(b).isTrue();
+    }
 }

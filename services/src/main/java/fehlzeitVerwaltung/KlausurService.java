@@ -1,12 +1,11 @@
 package fehlzeitVerwaltung;
 
 import aggregates.klausur.Klausur;
-import aggregates.student.Student;
 import repositories.KlausurRepository;
+import stereotypes.DomainService;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import stereotypes.DomainService;
 
 @DomainService
 public class KlausurService {

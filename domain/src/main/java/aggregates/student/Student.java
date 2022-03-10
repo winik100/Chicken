@@ -1,98 +1,98 @@
 package aggregates.student;
 
+import aggregates.klausur.Klausur;
+import stereotype.AggregateRoot;
+
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import aggregates.klausur.Klausur;
-import stereotype.AggregateRoot;
-
 @AggregateRoot
 public class Student {
 
-  Long id;
-  String githubHandle;
-  UrlaubsZeit resturlaub;
-  List<UrlaubsEintrag> urlaube;
-  Set<Klausur> klausurAnmeldungen;
+    Long id;
+    String githubHandle;
+    UrlaubsZeit resturlaub;
+    List<UrlaubsEintrag> urlaube;
+    Set<Klausur> klausurAnmeldungen;
 
-  public List<UrlaubsEintrag> getUrlaube() {
-    return urlaube;
-  }
-
-  public Student(Long id, String github){
-    this.id = id;
-    this.githubHandle = github;
-    this.resturlaub = new UrlaubsZeit();
-    this.urlaube = new ArrayList<>();
-    this.klausurAnmeldungen = new HashSet<>();
-  }
-
-  public Long getResturlaubInMin() {
-    return resturlaub.getMinuten();
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public Set<Klausur> getKlausurAnmeldungen() {
-    return klausurAnmeldungen;
-  }
-
-  public void urlaubNehmen(LocalDateTime start, LocalDateTime ende){
-    Long minuten = Duration.between(start, ende).toMinutes();
-    UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
-    urlaube.add(urlaubsEintrag);
-    resturlaub.zeitEntfernen(minuten);
-  }
-
-  public void urlaubEntfernen(LocalDateTime start, LocalDateTime ende){
-    Long minuten = Duration.between(start, ende).toMinutes();
-    UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
-    if (urlaube.remove(urlaubsEintrag)) {
-      resturlaub.zeitHinzufuegen(minuten);
+    public Student(Long id, String github) {
+        this.id = id;
+        this.githubHandle = github;
+        this.resturlaub = new UrlaubsZeit();
+        this.urlaube = new ArrayList<>();
+        this.klausurAnmeldungen = new HashSet<>();
     }
-  }
 
-  public void klausurAbmelden(Klausur klausur) {
-    klausurAnmeldungen.remove(klausur);
-  }
+    public List<UrlaubsEintrag> getUrlaube() {
+        return urlaube;
+    }
 
-  public void klausurAnmelden(Klausur klausur){
-    klausurAnmeldungen.add(klausur);
-  }
+    public Long getResturlaubInMin() {
+        return resturlaub.getMinuten();
+    }
 
-  public boolean hatUrlaubAm(LocalDate tag){
-    List<LocalDate> urlaubsDaten = urlaube.stream().map(x -> x.start().toLocalDate()).toList();
-    return urlaubsDaten.contains(tag);
-  }
+    public Long getId() {
+        return id;
+    }
 
-  // wird nur aufgerufen, wenn an dem Tag bereits ein Urlaub eingetragen ist
-  public LocalDateTime startDesUrlaubsAm(LocalDate tag) {
-    Optional<LocalDateTime> startZeit = urlaube.stream().map(UrlaubsEintrag::start).filter(x -> x.toLocalDate().equals(tag)).findFirst();
-    return startZeit.get();
-  }
+    public Set<Klausur> getKlausurAnmeldungen() {
+        return klausurAnmeldungen;
+    }
 
-  // wird nur aufgerufen, wenn an dem Tag bereits ein Urlaub eingetragen ist
-  public LocalDateTime endeDesUrlaubsAm(LocalDate tag) {
-    Optional<LocalDateTime> endZeit = urlaube.stream().map(UrlaubsEintrag::ende).filter(x -> x.toLocalDate().equals(tag)).findFirst();
-    return endZeit.get();
-  }
+    public void urlaubNehmen(LocalDateTime start, LocalDateTime ende) {
+        Long minuten = Duration.between(start, ende).toMinutes();
+        UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
+        urlaube.add(urlaubsEintrag);
+        resturlaub.zeitEntfernen(minuten);
+    }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Student student = (Student) o;
-    return id.equals(student.id);
-  }
+    public void urlaubEntfernen(LocalDateTime start, LocalDateTime ende) {
+        Long minuten = Duration.between(start, ende).toMinutes();
+        UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
+        if (urlaube.remove(urlaubsEintrag)) {
+            resturlaub.zeitHinzufuegen(minuten);
+        }
+    }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(id);
-  }
+    public void klausurAbmelden(Klausur klausur) {
+        klausurAnmeldungen.remove(klausur);
+    }
+
+    public void klausurAnmelden(Klausur klausur) {
+        klausurAnmeldungen.add(klausur);
+    }
+
+    public boolean hatUrlaubAm(LocalDate tag) {
+        List<LocalDate> urlaubsDaten = urlaube.stream().map(x -> x.start().toLocalDate()).toList();
+        return urlaubsDaten.contains(tag);
+    }
+
+    // wird nur aufgerufen, wenn an dem Tag bereits ein Urlaub eingetragen ist
+    public LocalDateTime startDesUrlaubsAm(LocalDate tag) {
+        Optional<LocalDateTime> startZeit = urlaube.stream().map(UrlaubsEintrag::start).filter(x -> x.toLocalDate().equals(tag)).findFirst();
+        return startZeit.get();
+    }
+
+    // wird nur aufgerufen, wenn an dem Tag bereits ein Urlaub eingetragen ist
+    public LocalDateTime endeDesUrlaubsAm(LocalDate tag) {
+        Optional<LocalDateTime> endZeit = urlaube.stream().map(UrlaubsEintrag::ende).filter(x -> x.toLocalDate().equals(tag)).findFirst();
+        return endZeit.get();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return id.equals(student.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
 
 }

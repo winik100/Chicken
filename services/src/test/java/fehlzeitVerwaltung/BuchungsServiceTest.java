@@ -4,8 +4,6 @@ import aggregates.klausur.Klausur;
 import aggregates.student.Student;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 import repositories.KlausurRepository;
 import repositories.StudentRepository;
 
@@ -20,12 +18,12 @@ public class BuchungsServiceTest {
 
     @Test
     @DisplayName("Buchungsservice.klausurbuchen fügt Klausuranmeldung zu Student hinzu")
-    void test_1(){
+    void test_1() {
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
         StudentRepository studentRepo = mock(StudentRepository.class);
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
-        Student student = new Student(10L,"ibimsgithub");
+        Student student = new Student(10L, "ibimsgithub");
         Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(anyInt())).thenReturn(klausur);
@@ -38,12 +36,12 @@ public class BuchungsServiceTest {
 
     @Test
     @DisplayName("Buchungsservice.klausurbuchen entfernt Klausuranmeldung von Student")
-    void test_2(){
+    void test_2() {
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
         StudentRepository studentRepo = mock(StudentRepository.class);
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
-        Student student = new Student(10L,"ibimsgithub");
+        Student student = new Student(10L, "ibimsgithub");
         Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(anyInt())).thenReturn(klausur);
@@ -57,7 +55,7 @@ public class BuchungsServiceTest {
 
     @Test
     @DisplayName("BuchungsService.urlaubBuchen() ruft Student.urlaubNehmen() korrekt auf")
-    void test_3(){
+    void test_3() {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
@@ -73,7 +71,7 @@ public class BuchungsServiceTest {
 
     @Test
     @DisplayName("BuchungsService.urlaubStornieren() ruft Student.urlaubEntfernen() korrekt auf")
-    void test_4(){
+    void test_4() {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);

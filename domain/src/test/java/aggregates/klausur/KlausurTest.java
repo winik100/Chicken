@@ -22,7 +22,6 @@ class KlausurTest {
         assertThat(dauer).isEqualTo(60L);
 
 
-
     }
 
 }

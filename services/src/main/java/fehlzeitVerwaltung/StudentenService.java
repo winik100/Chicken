@@ -2,9 +2,9 @@ package fehlzeitVerwaltung;
 
 import aggregates.student.Student;
 import repositories.StudentRepository;
+import stereotypes.DomainService;
 
 import java.util.Optional;
-import stereotypes.DomainService;
 
 @DomainService
 public class StudentenService {
@@ -27,8 +27,6 @@ public class StudentenService {
         Student student = repo.studentMitId(id);
         return Optional.ofNullable(student);
     }
-
-
 
 
 }

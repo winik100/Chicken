@@ -10,7 +10,7 @@ class UrlaubsZeit {
 
     boolean zeitHinzufuegen(Long minuten) {
         Long zwischenmin = this.minuten + minuten;
-        if(zwischenmin<=240L) {
+        if (zwischenmin <= 240L) {
             this.minuten = zwischenmin;
             return true;
         }
@@ -19,7 +19,7 @@ class UrlaubsZeit {
 
     boolean zeitEntfernen(Long minuten) {
         Long zwischenmin = this.minuten - minuten;
-        if(zwischenmin>=0L) {
+        if (zwischenmin >= 0L) {
             this.minuten = zwischenmin;
             return true;
         }
