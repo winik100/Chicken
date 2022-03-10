@@ -36,9 +36,23 @@ public class BuchungsService {
     public void urlaubBuchen(Long studentID, LocalDateTime start, LocalDateTime ende) {
         Student student = studentRepository.studentMitId(studentID);
         if(validierung.dauerIstVielfachesVon15(start, ende) && validierung.startZeitIstVielfachesVon15(start)){
-
+            if(validierung.klausurAmGleichenTag(student, start)){
+                student.urlaubNehmen(start, ende);
+            }
+            else{
+                if(student.hatUrlaubAm(start.toLocalDate())){
+                    if(validierung.mind90MinZwischenUrlauben(student, start, ende)) {
+                        student.urlaubNehmen(start, ende);
+                    }
+                }
+                else {
+                    if(validierung.blockEntwederGanzerTagOderMax150Min(start, ende)){
+                        student.urlaubNehmen(start, ende);
+                    }
+                }
+            }
         }
-        student.urlaubNehmen(start, ende);
+
     }
 
     public void urlaubStornieren(Long studentID, LocalDateTime start, LocalDateTime ende) {

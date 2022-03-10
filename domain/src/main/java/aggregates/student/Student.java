@@ -41,6 +41,7 @@ public class Student {
         return klausurAnmeldungen;
     }
 
+    //TODO: Mögliche Überschneidung Klausur/Urlaub entfernen
     public void urlaubNehmen(LocalDateTime start, LocalDateTime ende) {
         Long minuten = Duration.between(start, ende).toMinutes();
         UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
