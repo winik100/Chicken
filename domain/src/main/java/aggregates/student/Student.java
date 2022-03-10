@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import aggregates.klausur.Klausur;
-import java.util.stream.Collectors;
 import stereotype.AggregateRoot;
 
 @AggregateRoot
@@ -66,9 +65,20 @@ public class Student {
   }
 
   public boolean hatUrlaubAm(LocalDate tag){
-    List<LocalDate> urlaubsDaten = urlaube.stream().map(x -> x.start().toLocalDate()).collect(
-        Collectors.toList());
+    List<LocalDate> urlaubsDaten = urlaube.stream().map(x -> x.start().toLocalDate()).toList();
     return urlaubsDaten.contains(tag);
+  }
+
+  // wird nur aufgerufen, wenn an dem Tag bereits ein Urlaub eingetragen ist
+  public LocalDateTime startDesUrlaubsAm(LocalDate tag) {
+    Optional<LocalDateTime> startZeit = urlaube.stream().map(UrlaubsEintrag::start).filter(x -> x.toLocalDate().equals(tag)).findFirst();
+    return startZeit.get();
+  }
+
+  // wird nur aufgerufen, wenn an dem Tag bereits ein Urlaub eingetragen ist
+  public LocalDateTime endeDesUrlaubsAm(LocalDate tag) {
+    Optional<LocalDateTime> endZeit = urlaube.stream().map(UrlaubsEintrag::ende).filter(x -> x.toLocalDate().equals(tag)).findFirst();
+    return endZeit.get();
   }
 
   @Override
