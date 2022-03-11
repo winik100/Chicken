@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 public class BuchungsServiceTest {
 
     @Test
-    @DisplayName("Buchungsservice.klausurbuchen fügt Klausuranmeldung zu Student hinzu")
+    @DisplayName("Buchungsservice.klausurBuchen fügt Klausuranmeldung zu Student hinzu")
     void test_1() {
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
@@ -36,7 +36,7 @@ public class BuchungsServiceTest {
     }
 
     @Test
-    @DisplayName("Buchungsservice.klausurbuchen entfernt Klausuranmeldung von Student")
+    @DisplayName("Buchungsservice.klausurStornieren entfernt Klausuranmeldung von Student")
     void test_2() {
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
@@ -54,6 +54,7 @@ public class BuchungsServiceTest {
         assertThat(student.getKlausurAnmeldungen()).doesNotContain(klausur);
     }
 
+    //TODO: nutzloser Test, da Use-Case-Tests weiter unten
     @Test
     @DisplayName("BuchungsService.urlaubBuchen() ruft Student.urlaubNehmen() korrekt auf")
     void test_3() {
@@ -119,5 +120,82 @@ public class BuchungsServiceTest {
         LocalDateTime neuerAnfang = BuchungsService.neuenUrlaubsStartBerechnen(startUrlaub, endeUrlaub, startFreistellung, endeFreistellung);
 
         assertThat(neuerAnfang).isEqualTo(endeFreistellung);
+    }
+
+    @Test
+    @DisplayName("Wenn keine Konflikte mit Freistellungszeiträumen exisitieren, wird einfach student.urlaubNehmen mit unverändertem Start- und Endzeitpunkt aufgerufen")
+    void test_7(){
+        StudentRepository studentRepo = mock(StudentRepository.class);
+        Student student = mock(Student.class);
+        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
+        KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
+        LocalDateTime startKlausur = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime endeKlausur = LocalDateTime.of(2022, 3, 8, 13, 0);
+        Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
+
+        buchungsService.urlaubBuchen(10L, startUrlaub, endeUrlaub);
+        buchungsService.klausurBuchen(234567, 10L);
+
+        verify(student, times(1)).urlaubNehmen(startUrlaub, endeUrlaub);
+    }
+
+    //TODO: test ändern
+    @Test
+    @DisplayName("Wenn keine Konflikte mit Freistellungszeiträumen exisitieren, wird einfach student.urlaubNehmen mit unverändertem Start- und Endzeitpunkt aufgerufen")
+    void test_8(){
+        StudentRepository studentRepo = mock(StudentRepository.class);
+        Student student = mock(Student.class);
+        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
+        KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
+        LocalDateTime startKlausur = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime endeKlausur = LocalDateTime.of(2022, 3, 8, 13, 0);
+        Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
+
+        buchungsService.urlaubBuchen(10L, startUrlaub, endeUrlaub);
+
+        verify(student, times(1)).urlaubNehmen(startUrlaub, endeUrlaub);
+    }
+
+    @Test
+    @DisplayName("Keine Klausur am gleichen Tag, bereits gebuchter Urlaub, aber 90 Min dazwischen -> student.urlaubNehmen() mit unveränderten Argumenten")
+    void test_9(){
+        StudentRepository studentRepo = mock(StudentRepository.class);
+        Student student = mock(Student.class);
+        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
+        KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+        LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
+
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
+
+        buchungsService.urlaubBuchen(10L, startErsterUrlaub, endeErsterUrlaub);
+        buchungsService.urlaubBuchen(10L, startUrlaub, endeUrlaub);
+
+        verify(student, times(1)).urlaubNehmen(startUrlaub, endeUrlaub);
+    }
+
+    @Test
+    @DisplayName("Keine Klausur am gleichen Tag, kein bereits gebuchter Urlaub, weniger als 150 Min Urlaub -> student.urlaubNehmen() mit unveränderten Argumenten")
+    void test_10(){
+        StudentRepository studentRepo = mock(StudentRepository.class);
+        Student student = mock(Student.class);
+        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
+        KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
+
+        buchungsService.urlaubBuchen(10L, startUrlaub, endeUrlaub);
+
+        verify(student, times(1)).urlaubNehmen(startUrlaub, endeUrlaub);
     }
 }

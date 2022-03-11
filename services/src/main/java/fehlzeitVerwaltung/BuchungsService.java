@@ -38,17 +38,20 @@ public class BuchungsService {
         Student student = studentRepository.studentMitId(studentID);
         if(validierung.dauerIstVielfachesVon15(start, ende) && validierung.startZeitIstVielfachesVon15(start)){
             if(validierung.klausurAmGleichenTag(student, start)){
-                List<Klausur> klausuren = validierung.ueberschneidungMitKlausur(student, start, ende);
-                if(klausuren.isEmpty()) {
+                List<Klausur> ueberschneidendeKlausuren = validierung.ueberschneidungMitKlausur(student, start, ende);
+                if(ueberschneidendeKlausuren.isEmpty()) {
                     student.urlaubNehmen(start, ende);
                 }
                 else {
-                    for(Klausur k : klausuren) {
+                    LocalDateTime neuerUrlaubsStart = start;
+                    LocalDateTime neuesUrlaubsEnde = ende;
+                    for(Klausur k : ueberschneidendeKlausuren) {
                         LocalDateTime freistellungsStart = k.startFreistellungBerechnen();
                         LocalDateTime freistellungsEnde = k.endeFreistellungBerechnen();
-                        LocalDateTime neuerUrlaubsStart = neuenUrlaubsStartBerechnen(start, ende, freistellungsStart, freistellungsEnde);
-                        LocalDateTime neuesUrlaubsEnde = neuesUrlaubsEndeBerechnen(start, ende, freistellungsStart, freistellungsEnde);
+                        neuerUrlaubsStart = neuenUrlaubsStartBerechnen(start, ende, freistellungsStart, freistellungsEnde);
+                        neuesUrlaubsEnde = neuesUrlaubsEndeBerechnen(start, ende, freistellungsStart, freistellungsEnde);
                     }
+                    student.urlaubNehmen(neuerUrlaubsStart, neuesUrlaubsEnde);
                 }
             }
             else{
