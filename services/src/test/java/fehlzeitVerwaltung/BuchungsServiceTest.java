@@ -8,6 +8,7 @@ import repositories.KlausurRepository;
 import repositories.StudentRepository;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -84,5 +85,39 @@ public class BuchungsServiceTest {
         buchungsService.urlaubStornieren(student.getId(), start, ende);
 
         verify(student, times(1)).urlaubEntfernen(start, ende);
+    }
+
+    @Test
+    @DisplayName("Urlaub beginnt vor Freistellungszeitraum und endet innerhalb -> Urlaubsende wird auf Freistellungsbeginn gesetzt")
+    void test_5(){
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
+        Student student = new Student(10L, "ibimsgithub");
+        LocalDateTime startKlausur = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeKlausur = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
+        LocalDateTime startFreistellung = klausur.startFreistellungBerechnen();
+        LocalDateTime endeFreistellung = klausur.endeFreistellungBerechnen();
+
+        LocalDateTime neuesEnde = BuchungsService.neuesUrlaubsEndeBerechnen(startUrlaub, endeUrlaub, startFreistellung, endeFreistellung);
+
+        assertThat(neuesEnde).isEqualTo(startFreistellung);
+    }
+
+    @Test
+    @DisplayName("Urlaub beginnt im Freistellungszeitraum und endet nachher -> Urlaubsstart wird auf Freistellungsende gesetzt")
+    void test_6(){
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 0);
+        Student student = new Student(10L, "ibimsgithub");
+        LocalDateTime startKlausur = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeKlausur = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
+        LocalDateTime startFreistellung = klausur.startFreistellungBerechnen();
+        LocalDateTime endeFreistellung = klausur.endeFreistellungBerechnen();
+
+        LocalDateTime neuerAnfang = BuchungsService.neuenUrlaubsStartBerechnen(startUrlaub, endeUrlaub, startFreistellung, endeFreistellung);
+
+        assertThat(neuerAnfang).isEqualTo(endeFreistellung);
     }
 }
