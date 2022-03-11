@@ -14,18 +14,18 @@ public class Student {
     Long id;
     String githubHandle;
     UrlaubsZeit resturlaub;
-    List<UrlaubsEintrag> urlaube;
+    Set<UrlaubsEintrag> urlaube;
     Set<Klausur> klausurAnmeldungen;
 
     public Student(Long id, String github) {
         this.id = id;
         this.githubHandle = github;
         this.resturlaub = new UrlaubsZeit();
-        this.urlaube = new ArrayList<>();
+        this.urlaube = new HashSet<>();
         this.klausurAnmeldungen = new HashSet<>();
     }
 
-    public List<UrlaubsEintrag> getUrlaube() {
+    public Set<UrlaubsEintrag> getUrlaube() {
         return urlaube;
     }
 

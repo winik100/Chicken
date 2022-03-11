@@ -7,6 +7,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -63,5 +65,23 @@ public class BuchungsValidierung {
     boolean istAmAnfangDesTages(LocalDateTime zeit) {
         LocalDate tag = zeit.toLocalDate();
         return zeit.equals(LocalDateTime.of(tag, START));
+    }
+
+    boolean ueberschneidungMitKlausur(Student student, LocalDateTime urlaubsStart, LocalDateTime urlaubsEnde) {
+        List<Klausur> klausuren = student.getKlausurAnmeldungen().stream().filter(x -> x.getStart().toLocalDate().equals(urlaubsStart.toLocalDate())).toList();
+        for(Klausur k : klausuren) {
+            LocalDateTime startFreistellung = k.startFreistellungBerechnen();
+            LocalDateTime endeFreistellung = k.endeFreistellungBerechnen();
+            if (startFreistellung.isAfter(urlaubsStart.minusMinutes(1)) && startFreistellung.isBefore((urlaubsEnde))) {
+                return true;
+            }
+            if (endeFreistellung.isAfter(urlaubsStart) && endeFreistellung.minusMinutes(1).isBefore(urlaubsEnde)){
+                return true;
+            }
+            if (startFreistellung.isBefore(urlaubsStart) && endeFreistellung.isAfter(urlaubsEnde)){
+                return true;
+            }
+        }
+        return false;
     }
 }

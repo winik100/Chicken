@@ -240,4 +240,157 @@ public class BuchungsValidierungTests {
 
         assertThat(b).isTrue();
     }
+
+    @Test
+    @DisplayName("Geplanter Urlaub von 11 bis 12:30 überschneidet sich mit der Klausurfreistellung einer online Klausur von 12 bis 13 Uhr")
+    void test_17() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        LocalDateTime startKlausur = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime endeKlausur = LocalDateTime.of(2022, 3, 8, 13, 0);
+        Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
+        student.klausurAnmelden(klausur);
+
+        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub von 11:30 bis 12:30 überschneidet sich mit der Klausurfreistellung einer online Klausur von 12 bis 13 Uhr")
+    void test_18() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        LocalDateTime startKlausur = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime endeKlausur = LocalDateTime.of(2022, 3, 8, 13, 0);
+        Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
+        student.klausurAnmelden(klausur);
+
+        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub von 11 bis 12:30 überschneidet sich mit der Klausurfreistellung einer online Klausur von 10 bis 11:30 Uhr")
+    void test_19() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        LocalDateTime startKlausur = LocalDateTime.of(2022, 3, 8, 10, 0);
+        LocalDateTime endeKlausur = LocalDateTime.of(2022, 3, 8, 11, 30);
+        Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
+        student.klausurAnmelden(klausur);
+
+        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub von 11:30 bis 12:30 überschneidet sich mit der Klausurfreistellung einer online Klausur von 11 bis 12:30 Uhr")
+    void test_20() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        LocalDateTime startKlausur = LocalDateTime.of(2022, 3, 8, 11, 0);
+        LocalDateTime endeKlausur = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
+        student.klausurAnmelden(klausur);
+
+        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub ist identisch mit dem Freistellungszeitraum")
+    void test_21() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        LocalDateTime startKlausur = LocalDateTime.of(2022, 3, 8, 11, 0);
+        LocalDateTime endeKlausur = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
+        student.klausurAnmelden(klausur);
+
+        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub liegt komplett im Freistellungszeitraum")
+    void test_22() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        LocalDateTime startKlausur = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeKlausur = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
+        student.klausurAnmelden(klausur);
+
+        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub umfasst den Freistellungszeitraum komplett")
+    void test_23() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        LocalDateTime startKlausur = LocalDateTime.of(2022, 3, 8, 10, 30);
+        LocalDateTime endeKlausur = LocalDateTime.of(2022, 3, 8, 11, 30);
+        Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
+        student.klausurAnmelden(klausur);
+
+        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub liegt vor dem Freistellungszeitraum")
+    void test_24() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
+        Student student = new Student(10L, "ibimsgithub");
+        LocalDateTime startKlausur = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeKlausur = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
+        student.klausurAnmelden(klausur);
+
+        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+
+        assertThat(b).isFalse();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub liegt nach dem Freistellungszeitraum")
+    void test_25() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 0);
+        Student student = new Student(10L, "ibimsgithub");
+        LocalDateTime startKlausur = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeKlausur = LocalDateTime.of(2022, 3, 8, 11, 30);
+        Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
+        student.klausurAnmelden(klausur);
+
+        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+
+        assertThat(b).isFalse();
+    }
 }
