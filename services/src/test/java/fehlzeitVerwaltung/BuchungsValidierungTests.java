@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -253,9 +254,9 @@ public class BuchungsValidierungTests {
         Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
         student.klausurAnmelden(klausur);
 
-        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
 
-        assertThat(b).isTrue();
+        assertThat(klausuren).contains(klausur);
     }
 
     @Test
@@ -270,9 +271,9 @@ public class BuchungsValidierungTests {
         Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
         student.klausurAnmelden(klausur);
 
-        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
 
-        assertThat(b).isTrue();
+        assertThat(klausuren).contains(klausur);
     }
 
     @Test
@@ -287,9 +288,9 @@ public class BuchungsValidierungTests {
         Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
         student.klausurAnmelden(klausur);
 
-        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
 
-        assertThat(b).isTrue();
+        assertThat(klausuren).contains(klausur);
     }
 
     @Test
@@ -304,9 +305,9 @@ public class BuchungsValidierungTests {
         Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
         student.klausurAnmelden(klausur);
 
-        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
 
-        assertThat(b).isTrue();
+        assertThat(klausuren).contains(klausur);
     }
 
     @Test
@@ -321,9 +322,9 @@ public class BuchungsValidierungTests {
         Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
         student.klausurAnmelden(klausur);
 
-        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
 
-        assertThat(b).isTrue();
+        assertThat(klausuren).contains(klausur);
     }
 
     @Test
@@ -338,9 +339,9 @@ public class BuchungsValidierungTests {
         Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
         student.klausurAnmelden(klausur);
 
-        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
 
-        assertThat(b).isTrue();
+        assertThat(klausuren).contains(klausur);
     }
 
     @Test
@@ -355,9 +356,9 @@ public class BuchungsValidierungTests {
         Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
         student.klausurAnmelden(klausur);
 
-        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
 
-        assertThat(b).isTrue();
+        assertThat(klausuren).contains(klausur);
     }
 
     @Test
@@ -372,9 +373,9 @@ public class BuchungsValidierungTests {
         Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
         student.klausurAnmelden(klausur);
 
-        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
 
-        assertThat(b).isFalse();
+        assertThat(klausuren).doesNotContain(klausur);
     }
 
     @Test
@@ -389,8 +390,8 @@ public class BuchungsValidierungTests {
         Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
         student.klausurAnmelden(klausur);
 
-        boolean b = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
 
-        assertThat(b).isFalse();
+        assertThat(klausuren).doesNotContain(klausur);
     }
 }
