@@ -7,6 +7,7 @@ import repositories.StudentRepository;
 import stereotypes.ApplicationService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @ApplicationService
 public class BuchungsService {
@@ -37,7 +38,18 @@ public class BuchungsService {
         Student student = studentRepository.studentMitId(studentID);
         if(validierung.dauerIstVielfachesVon15(start, ende) && validierung.startZeitIstVielfachesVon15(start)){
             if(validierung.klausurAmGleichenTag(student, start)){
-                student.urlaubNehmen(start, ende);
+                List<Klausur> klausuren = validierung.ueberschneidungMitKlausur(student, start, ende);
+                if(klausuren.isEmpty()) {
+                    student.urlaubNehmen(start, ende);
+                }
+                else {
+                    for(Klausur k : klausuren) {
+                        LocalDateTime freistellungsStart = k.startFreistellungBerechnen();
+                        LocalDateTime freistellungsEnde = k.endeFreistellungBerechnen();
+                        LocalDateTime neuerUrlaubsStart = neuenUrlaubsStartBerechnen(start, ende, freistellungsStart, freistellungsEnde);
+                        LocalDateTime neuesUrlaubsEnde = neuesUrlaubsEndeBerechnen(start, ende, freistellungsStart, freistellungsEnde);
+                    }
+                }
             }
             else{
                 if(student.hatUrlaubAm(start.toLocalDate())){
@@ -52,7 +64,20 @@ public class BuchungsService {
                 }
             }
         }
+    }
 
+    LocalDateTime neuesUrlaubsEndeBerechnen(LocalDateTime start, LocalDateTime ende, LocalDateTime freistellungsStart, LocalDateTime freistellungsEnde) {
+        if (start.isBefore(freistellungsStart) && (ende.isAfter(freistellungsStart) && ende.isBefore(freistellungsEnde))) {
+            return freistellungsEnde;
+        }
+        return ende;
+    }
+
+    LocalDateTime neuenUrlaubsStartBerechnen(LocalDateTime start, LocalDateTime ende, LocalDateTime freistellungsStart, LocalDateTime freistellungsEnde) {
+        if (start.isAfter(freistellungsStart) && ende.isAfter(freistellungsEnde)) {
+            return freistellungsEnde;
+        }
+        return start;
     }
 
     public void urlaubStornieren(Long studentID, LocalDateTime start, LocalDateTime ende) {
