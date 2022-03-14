@@ -1,12 +1,11 @@
 package de.hhu.propra.chicken.fehlzeitVerwaltung;
 
-import de.hhu.propra.chicken.aggregates.klausur.Klausur;
 import de.hhu.propra.chicken.repositories.KlausurRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 
+import static templates.KlausurTemplates.*;
 import static org.mockito.Mockito.*;
 
 public class KlausurServiceTest {
@@ -14,15 +13,12 @@ public class KlausurServiceTest {
     @DisplayName("Wenn die Klausur schon eingetragen ist, wird sie nicht gespeichert.")
     void test1() {
         KlausurRepository repo = mock(KlausurRepository.class);
-        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
-        LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
         KlausurService service = new KlausurService(repo);
-        when(repo.klausurMitLsfId(234567)).thenReturn(klausur);
+        when(repo.klausurMitLsfId(anyInt())).thenReturn(PK_12_13);
 
-        service.klausurHinzufuegen(234567, "Mathe", start, ende, "praesenz");
+        service.klausurHinzufuegen(PK_12_13.getLsfId(), "Mathe", PK_12_13.getStart(), PK_12_13.getEnde(),"praesenz");
 
-        verify(repo, never()).save(klausur);
+        verify(repo, never()).save(PK_12_13);
     }
 
     @Test
@@ -30,16 +26,12 @@ public class KlausurServiceTest {
     void test2() {
 
         KlausurRepository repo = mock(KlausurRepository.class);
-        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
-        LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
         KlausurService service = new KlausurService(repo);
-        when(repo.klausurMitLsfId(234567)).thenReturn(null);
+        when(repo.klausurMitLsfId(anyInt())).thenReturn(null);
 
-        service.klausurHinzufuegen(234567, "Mathe", start, ende, "praesenz");
+        service.klausurHinzufuegen(PK_12_13.getLsfId(), "Mathe", PK_12_13.getStart(), PK_12_13.getEnde(), "praesenz");
 
-        verify(repo, times(1)).save(klausur);
-
+        verify(repo, times(1)).save(PK_12_13);
     }
 
     @Test
@@ -47,9 +39,6 @@ public class KlausurServiceTest {
     void test3() {
 
         KlausurRepository repo = mock(KlausurRepository.class);
-        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
-        LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
         KlausurService service = new KlausurService(repo);
 
         service.findeKlausur(234567);

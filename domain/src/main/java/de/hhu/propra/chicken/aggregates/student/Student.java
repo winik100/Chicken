@@ -96,4 +96,7 @@ public class Student {
     }
 
 
+    public String getGithubHandle() {
+        return githubHandle;
+    }
 }

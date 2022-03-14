@@ -84,6 +84,10 @@ public class Klausur {
     public int hashCode() {
         return Objects.hash(lsfId);
     }
+
+    public LocalDateTime getEnde() {
+        return ende;
+    }
 }
 
 

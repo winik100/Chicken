@@ -1,6 +1,5 @@
 package de.hhu.propra.chicken.fehlzeitVerwaltung;
 
-import de.hhu.propra.chicken.aggregates.klausur.Klausur;
 import de.hhu.propra.chicken.aggregates.student.Student;
 import de.hhu.propra.chicken.repositories.KlausurRepository;
 import de.hhu.propra.chicken.repositories.StudentRepository;
@@ -9,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
+import static templates.KlausurTemplates.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -55,16 +55,13 @@ public class BuchungsSzenarioTests {
         when(studentRepo.studentMitId(anyLong())).thenReturn(otto);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
-        LocalDateTime startKlausur = LocalDateTime.of(2022, 3, 8, 11, 0);
-        LocalDateTime endeKlausur = LocalDateTime.of(2022, 3, 8, 12, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
-        when(klausurRepo.klausurMitLsfId(anyInt())).thenReturn(klausur);
+        when(klausurRepo.klausurMitLsfId(anyInt())).thenReturn(OK_11_12);
         LocalDateTime ersterUrlaubsStart = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime erstesUrlaubsEnde = LocalDateTime.of(2022, 3, 8, 10, 30);
         LocalDateTime zweiterUrlaubsStart = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime zweitesUrlaubsEnde = LocalDateTime.of(2022, 3, 8, 12, 30);
 
-        buchungsService.klausurBuchen(234567, 10L);
+        buchungsService.klausurBuchen(OK_11_12.getLsfId(), 10L);
         buchungsService.urlaubBuchen(10L, ersterUrlaubsStart, erstesUrlaubsEnde);
         buchungsService.urlaubBuchen(10L, zweiterUrlaubsStart, zweitesUrlaubsEnde);
 
