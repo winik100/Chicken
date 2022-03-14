@@ -39,7 +39,7 @@ class StudentTests {
         Student student = new Student(10L, "ibimsgithub");
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
+        KlausurReferenz klausur = new KlausurReferenz(123456);
         student.klausurAnmelden(klausur);
         assertThat(student.getKlausurAnmeldungen()).contains(klausur);
     }
@@ -50,7 +50,7 @@ class StudentTests {
         Student student = new Student(10L, "ibimsgithub");
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
+        KlausurReferenz klausur = new KlausurReferenz(234567);
         student.klausurAnmelden(klausur);
 
         student.klausurAbmelden(klausur);

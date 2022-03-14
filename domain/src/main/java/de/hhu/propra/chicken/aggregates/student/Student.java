@@ -16,7 +16,7 @@ public class Student {
     String githubHandle;
     UrlaubsZeit resturlaub;
     Set<UrlaubsEintrag> urlaube;
-    Set<Klausur> klausurAnmeldungen;
+    Set<KlausurReferenz> klausurAnmeldungen;
 
     public Student(Long id, String github) {
         this.id = id;
@@ -38,7 +38,7 @@ public class Student {
         return id;
     }
 
-    public Set<Klausur> getKlausurAnmeldungen() {
+    public Set<KlausurReferenz> getKlausurAnmeldungen() {
         return klausurAnmeldungen;
     }
 
@@ -58,11 +58,11 @@ public class Student {
         }
     }
 
-    public void klausurAbmelden(Klausur klausur) {
+    public void klausurAbmelden(KlausurReferenz klausur) {
         klausurAnmeldungen.remove(klausur);
     }
 
-    public void klausurAnmelden(Klausur klausur) {
+    public void klausurAnmelden(KlausurReferenz klausur) {
         klausurAnmeldungen.add(klausur);
     }
 

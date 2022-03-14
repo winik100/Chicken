@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static templates.KlausurTemplates.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -249,7 +250,7 @@ public class BuchungsValidierungTests {
         Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
         student.klausurAnmelden(klausur);
 
-        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).contains(klausur);
     }
@@ -263,7 +264,7 @@ public class BuchungsValidierungTests {
         Student student = new Student(10L, "ibimsgithub");
         student.klausurAnmelden(OK_12_13);
 
-        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).contains(OK_12_13);
     }
@@ -277,7 +278,7 @@ public class BuchungsValidierungTests {
         Student student = new Student(10L, "ibimsgithub");
         student.klausurAnmelden(OK_10_1130);
 
-        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).contains(OK_10_1130);
     }
@@ -291,7 +292,7 @@ public class BuchungsValidierungTests {
         Student student = new Student(10L, "ibimsgithub");
         student.klausurAnmelden(OK_11_1230);
 
-        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).contains(OK_11_1230);
     }
@@ -305,7 +306,7 @@ public class BuchungsValidierungTests {
         Student student = new Student(10L, "ibimsgithub");
         student.klausurAnmelden(OK_11_1230);
 
-        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).contains(OK_11_1230);
     }
@@ -319,7 +320,7 @@ public class BuchungsValidierungTests {
         Student student = new Student(10L, "ibimsgithub");
         student.klausurAnmelden(OK_930_1230);
 
-        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).contains(OK_930_1230);
     }
@@ -333,7 +334,7 @@ public class BuchungsValidierungTests {
         Student student = new Student(10L, "ibimsgithub");
         student.klausurAnmelden(OK_1030_1130);
 
-        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).contains(OK_1030_1130);
     }
@@ -347,7 +348,7 @@ public class BuchungsValidierungTests {
         Student student = new Student(10L, "ibimsgithub");
         student.klausurAnmelden(OK_1130_1230);
 
-        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).doesNotContain(OK_1130_1230);
     }
@@ -361,8 +362,105 @@ public class BuchungsValidierungTests {
         Student student = new Student(10L, "ibimsgithub");
         student.klausurAnmelden(OK_930_1130);
 
-        List<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student, startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).doesNotContain(OK_930_1130);
     }
+
+    @Test
+    @DisplayName("Geplanter Urlaub liegt komplett im bestehenden Urlaub")
+    void test_26() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 13, 0);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+
+        boolean b = buchungsValidierung.ueberschneidungMitBestehendemUrlaub(student, startUrlaub2, endeUrlaub2);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub ist identisch mit bestehendem Urlaub")
+    void test_27() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 13, 0);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 13, 0);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+
+        boolean b = buchungsValidierung.ueberschneidungMitBestehendemUrlaub(student, startUrlaub2, endeUrlaub2);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub beginnt innerhalb bestehenden Urlaubs und endet danach")
+    void test_28() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 13, 0);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 30);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 13, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+
+        boolean b = buchungsValidierung.ueberschneidungMitBestehendemUrlaub(student, startUrlaub2, endeUrlaub2);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub beginnt vor bestehendem Urlaub und endet innerhalb")
+    void test_29() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 13, 0);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 11, 00);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+
+        boolean b = buchungsValidierung.ueberschneidungMitBestehendemUrlaub(student, startUrlaub2, endeUrlaub2);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub liegt komplett vor bestehendem Urlaub")
+    void test_30() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 10, 00);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+
+        boolean b = buchungsValidierung.ueberschneidungMitBestehendemUrlaub(student, startUrlaub2, endeUrlaub2);
+
+        assertThat(b).isFalse();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub liegt komplett nach bestehendem Urlaub")
+    void test_31() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 30);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 13, 00);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+
+        boolean b = buchungsValidierung.ueberschneidungMitBestehendemUrlaub(student, startUrlaub2, endeUrlaub2);
+
+        assertThat(b).isFalse();
+    }
+
 }

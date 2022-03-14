@@ -1,13 +1,17 @@
 package de.hhu.propra.chicken.fehlzeitVerwaltung;
 
 import de.hhu.propra.chicken.aggregates.klausur.Klausur;
+import de.hhu.propra.chicken.aggregates.student.KlausurReferenz;
 import de.hhu.propra.chicken.aggregates.student.Student;
+import de.hhu.propra.chicken.aggregates.urlaub.UrlaubsEintrag;
 import de.hhu.propra.chicken.repositories.KlausurRepository;
 import de.hhu.propra.chicken.repositories.StudentRepository;
 import de.hhu.propra.chicken.stereotypes.ApplicationService;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @ApplicationService
 public class BuchungsService {
@@ -23,61 +27,25 @@ public class BuchungsService {
     }
 
     public void klausurBuchen(int lsfId, Long studentID) {
-        Klausur klausur = klausurRepository.klausurMitLsfId(lsfId);
+        KlausurReferenz klausur = new KlausurReferenz(lsfId);
         Student student = studentRepository.studentMitId(studentID);
         student.klausurAnmelden(klausur);
     }
 
     public void klausurStornieren(int lsfId, Long studentID) {
-        Klausur klausur = klausurRepository.klausurMitLsfId(lsfId);
+        KlausurReferenz klausur = new KlausurReferenz(lsfId);
         Student student = studentRepository.studentMitId(studentID);
         student.klausurAbmelden(klausur);
     }
 
-    public void urlaubBuchen1(Long studentID, LocalDateTime start, LocalDateTime ende) {
-        Student student = studentRepository.studentMitId(studentID);
-        if(validierung.dauerIstVielfachesVon15(start, ende) && validierung.startZeitIstVielfachesVon15(start)){
-            if(validierung.klausurAmGleichenTag(student, start)){
-                List<Klausur> ueberschneidendeKlausuren = validierung.ueberschneidungMitKlausur(student, start, ende);
-                if(ueberschneidendeKlausuren.isEmpty()) {
-                    // überschneidende Urlaube prüfen
-                    student.urlaubNehmen(start, ende);
-                }
-                else {
-                    // Urlaubszeit an Klausur(en) anpassen
-                    LocalDateTime neuerUrlaubsStart = start;
-                    LocalDateTime neuesUrlaubsEnde = ende;
-                    for(Klausur k : ueberschneidendeKlausuren) {
-                        LocalDateTime freistellungsStart = k.startFreistellungBerechnen();
-                        LocalDateTime freistellungsEnde = k.endeFreistellungBerechnen();
-                        neuerUrlaubsStart = neuenUrlaubsStartBerechnen(start, ende, freistellungsStart, freistellungsEnde);
-                        neuesUrlaubsEnde = neuesUrlaubsEndeBerechnen(start, ende, freistellungsStart, freistellungsEnde);
-                    }
-                    student.urlaubNehmen(neuerUrlaubsStart, neuesUrlaubsEnde);
-                }
-            }
-            else{
-                if(student.hatUrlaubAm(start.toLocalDate())){
-                    if(validierung.mind90MinZwischenUrlauben(student, start, ende)) {
-                        student.urlaubNehmen(start, ende);
-                    }
-                }
-                else {
-                    if(validierung.blockEntwederGanzerTagOderMax150Min(start, ende)){
-                        student.urlaubNehmen(start, ende);
-                    }
-                }
-            }
-        }
-    }
-
     public String urlaubBuchen (Long studentID, LocalDateTime start, LocalDateTime ende) {
         Student student = studentRepository.studentMitId(studentID);
+        Set<Klausur> klausuren = klausurRepository.klausurenMitReferenzen(student.getKlausurAnmeldungen());
         if (validierung.dauerIstVielfachesVon15(start, ende)) {
             if (validierung.startZeitIstVielfachesVon15(start)) {
                 // Urlaubszeit an Klausuren anpassen, kann keinen Fehler geben
-                if(validierung.klausurAmGleichenTag(student, start)) {
-                    List<Klausur> ueberschneidendeKlausuren = validierung.ueberschneidungMitKlausur(student, start, ende);
+                if(validierung.klausurAmGleichenTag(klausuren, start)) {
+                    Set<Klausur> ueberschneidendeKlausuren = validierung.ueberschneidungMitKlausur(klausuren, start, ende);
                     if(!ueberschneidendeKlausuren.isEmpty()) {
                         // Urlaubszeit an Klausuren anpassen
                     }
@@ -87,7 +55,7 @@ public class BuchungsService {
                     if (validierung.ueberschneidungMitBestehendemUrlaub(student, start, ende)) {
                         return "Bestehender Urlaub muss erst storniert werden.";
                     }
-                    if (!validierung.klausurAmGleichenTag(student, start)) {
+                    if (!validierung.klausurAmGleichenTag(klausuren, start)) {
                         if (!validierung.mind90MinZwischenUrlauben(student, start, ende)) {
                             return "Zwischen zwei Urlauben am selben Tag müssen mindestens 90 Minuten liegen" +
                                     "und die beiden Urlaubsblöcke müssen am Anfang und Ende des Tages liegen.";
@@ -95,7 +63,7 @@ public class BuchungsService {
                     }
                 }
 
-                if (!validierung.klausurAmGleichenTag(student, start)) {
+                if (!validierung.klausurAmGleichenTag(klausuren, start)) {
                     if (!validierung.blockEntwederGanzerTagOderMax150Min(start, ende)) {
                         return "Der Urlaub muss entweder den ganzen Tag oder maximal 150 Minuten dauern.";
                     }
@@ -125,5 +93,16 @@ public class BuchungsService {
         Student student = studentRepository.studentMitId(studentID);
         student.urlaubEntfernen(start, ende);
     }
+
+//    public Set<UrlaubsEintrag> urlaubAnKlausurenAnpassen(Set<Klausur> klausuren, LocalDateTime geplanterStart, LocalDateTime geplantesEnde) {
+//        UrlaubsEintrag urlaub = new UrlaubsEintrag(geplanterStart, geplantesEnde);
+//        Set<UrlaubsEintrag> angepassteUrlaubsBloecke = new HashSet<>();
+//        angepassteUrlaubsBloecke.add(urlaub);
+//        for (Klausur k : klausuren) {
+//            for (UrlaubsEintrag u : angepassteUrlaubsBloecke) {
+//                if ()
+//            }
+//        }
+//    }
 
 }

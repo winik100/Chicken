@@ -1,6 +1,7 @@
 package de.hhu.propra.chicken.fehlzeitVerwaltung;
 
 import de.hhu.propra.chicken.aggregates.klausur.Klausur;
+import de.hhu.propra.chicken.aggregates.student.KlausurReferenz;
 import de.hhu.propra.chicken.aggregates.student.Student;
 import de.hhu.propra.chicken.aggregates.urlaub.UrlaubsEintrag;
 
@@ -28,9 +29,8 @@ public class BuchungsValidierung {
         return (start.getMinute() % 15) == 0;
     }
 
-    boolean klausurAmGleichenTag(Student student, LocalDateTime start) {
+    boolean klausurAmGleichenTag(Set<Klausur> klausurAnmeldungen, LocalDateTime start) {
         LocalDate datum = start.toLocalDate();
-        Set<Klausur> klausurAnmeldungen = student.getKlausurAnmeldungen();
         Set<LocalDate> klausurDaten =
                 klausurAnmeldungen.stream().map(Klausur::getStart).map(LocalDateTime::toLocalDate).collect(Collectors.toSet());
         return klausurDaten.contains(datum);
@@ -69,10 +69,10 @@ public class BuchungsValidierung {
         return zeit.equals(LocalDateTime.of(tag, START));
     }
 
-    List<Klausur> ueberschneidungMitKlausur(Student student, LocalDateTime urlaubsStart, LocalDateTime urlaubsEnde) {
-        List<Klausur> klausurenMitUeberschneidung = new ArrayList<>();
-        List<Klausur> klausuren = student.getKlausurAnmeldungen().stream().filter(x -> x.getStart().toLocalDate().equals(urlaubsStart.toLocalDate())).toList();
-        for(Klausur k : klausuren) {
+    Set<Klausur> ueberschneidungMitKlausur(Set<Klausur> klausuren, LocalDateTime urlaubsStart, LocalDateTime urlaubsEnde) {
+        Set<Klausur> klausurenMitUeberschneidung = new HashSet<>();
+        Set<Klausur> klausurenAnDemTag = klausuren.stream().filter(x -> x.getStart().toLocalDate().equals(urlaubsStart.toLocalDate())).collect(Collectors.toSet());
+        for(Klausur k : klausurenAnDemTag) {
             LocalDateTime startFreistellung = k.startFreistellungBerechnen();
             LocalDateTime endeFreistellung = k.endeFreistellungBerechnen();
             if (startFreistellung.isAfter(urlaubsStart.minusMinutes(1)) && startFreistellung.isBefore((urlaubsEnde))) {
