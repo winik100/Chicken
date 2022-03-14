@@ -1,6 +1,7 @@
 package de.hhu.propra.chicken.aggregates.student;
 
 import de.hhu.propra.chicken.aggregates.klausur.Klausur;
+import de.hhu.propra.chicken.aggregates.urlaub.UrlaubsEintrag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

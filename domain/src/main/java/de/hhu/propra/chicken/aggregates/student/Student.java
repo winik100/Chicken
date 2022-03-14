@@ -1,6 +1,7 @@
 package de.hhu.propra.chicken.aggregates.student;
 
 import de.hhu.propra.chicken.aggregates.klausur.Klausur;
+import de.hhu.propra.chicken.aggregates.urlaub.UrlaubsEintrag;
 import de.hhu.propra.chicken.stereotype.AggregateRoot;
 
 import java.time.Duration;

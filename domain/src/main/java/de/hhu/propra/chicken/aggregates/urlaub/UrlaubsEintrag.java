@@ -1,9 +1,12 @@
-package de.hhu.propra.chicken.aggregates.student;
+package de.hhu.propra.chicken.aggregates.urlaub;
+
+import de.hhu.propra.chicken.stereotype.AggregateRoot;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-record UrlaubsEintrag(LocalDateTime start, LocalDateTime ende) {
+@AggregateRoot
+public record UrlaubsEintrag (LocalDateTime start, LocalDateTime ende) {
 
     @Override
     public boolean equals(Object o) {

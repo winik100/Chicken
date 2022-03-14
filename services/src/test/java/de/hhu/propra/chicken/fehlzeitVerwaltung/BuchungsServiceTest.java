@@ -71,7 +71,7 @@ public class BuchungsServiceTest {
     @DisplayName("BuchungsService.urlaubStornieren() ruft Student.urlaubEntfernen() korrekt auf")
     void test_4() {
         StudentRepository studentRepo = mock(StudentRepository.class);
-        Student student = mock(Student.class);
+        Student student = new Student(10L, "ibimsgithub");
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
@@ -81,7 +81,7 @@ public class BuchungsServiceTest {
 
         buchungsService.urlaubStornieren(student.getId(), start, ende);
 
-        verify(student, times(1)).urlaubEntfernen(start, ende);
+        assertThat(student.getUrlaube()).isEmpty();
     }
 
     @Test
