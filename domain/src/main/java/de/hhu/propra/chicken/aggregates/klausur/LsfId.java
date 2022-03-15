@@ -2,31 +2,34 @@ package de.hhu.propra.chicken.aggregates.klausur;
 
 import java.util.Objects;
 
-class LsfId {
+public class LsfId {
 
-    int id;
+    Long id;
 
-    public LsfId(int id) {
+    public LsfId(Long id) {
         // TODO: 07.03.2022 Validierung
         this.id = id;
     }
 
-    boolean istGueltig(int id) {
+/*    boolean istGueltig(int id) {
         // TODO: 07.03.2022 Validierung
         return false;
-    }
-
+    }*/
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LsfId lsfId = (LsfId) o;
-        return id == lsfId.id;
+        return id.equals(lsfId.id);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public Long getId() {
+        return id;
     }
 }

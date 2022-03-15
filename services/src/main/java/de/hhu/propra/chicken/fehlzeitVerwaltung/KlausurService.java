@@ -1,6 +1,7 @@
 package de.hhu.propra.chicken.fehlzeitVerwaltung;
 
 import de.hhu.propra.chicken.aggregates.klausur.Klausur;
+import de.hhu.propra.chicken.aggregates.klausur.LsfId;
 import de.hhu.propra.chicken.repositories.KlausurRepository;
 import de.hhu.propra.chicken.stereotypes.DomainService;
 
@@ -15,7 +16,7 @@ public class KlausurService {
         this.repo = repo;
     }
 
-    void klausurHinzufuegen(int lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
+    void klausurHinzufuegen(LsfId lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
         Klausur klausur = repo.klausurMitLsfId(lsfId);
         if (klausur == null) {
             klausur = new Klausur(lsfId, name, start, ende, typ);
@@ -23,7 +24,7 @@ public class KlausurService {
         }
     }
 
-    Optional<Klausur> findeKlausur(int lsfId) {
+    Optional<Klausur> findeKlausur(LsfId lsfId) {
         Klausur klausur = repo.klausurMitLsfId(lsfId);
         return Optional.ofNullable(klausur);
     }

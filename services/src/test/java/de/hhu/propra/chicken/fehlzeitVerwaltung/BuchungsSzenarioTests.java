@@ -55,7 +55,7 @@ public class BuchungsSzenarioTests {
         when(studentRepo.studentMitId(anyLong())).thenReturn(otto);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
-        when(klausurRepo.klausurMitLsfId(anyInt())).thenReturn(OK_11_12);
+        when(klausurRepo.klausurMitLsfId(any())).thenReturn(OK_11_12);
         LocalDateTime ersterUrlaubsStart = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime erstesUrlaubsEnde = LocalDateTime.of(2022, 3, 8, 10, 30);
         LocalDateTime zweiterUrlaubsStart = LocalDateTime.of(2022, 3, 8, 12, 0);

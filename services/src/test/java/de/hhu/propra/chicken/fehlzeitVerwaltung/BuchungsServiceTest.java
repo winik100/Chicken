@@ -23,12 +23,12 @@ public class BuchungsServiceTest {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = new Student(10L, "ibimsgithub");
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
-        when(klausurRepo.klausurMitLsfId(anyInt())).thenReturn(PK_12_13);
+        when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
 
         buchungsService.klausurBuchen(PK_12_13.getLsfId(), 10L);
 
-        assertThat(student.getKlausurAnmeldungen()).contains(new KlausurReferenz(PK_12_13.getLsfId()));
+        assertThat(student.getKlausurAnmeldungen()).contains(new KlausurReferenz(PK_12_13.getLsfId().getId()));
     }
 
     @Test
@@ -38,13 +38,13 @@ public class BuchungsServiceTest {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = new Student(10L, "ibimsgithub");
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
-        when(klausurRepo.klausurMitLsfId(anyInt())).thenReturn(PK_12_13);
+        when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
         buchungsService.klausurBuchen(PK_12_13.getLsfId(), 10L);
 
         buchungsService.klausurStornieren(PK_12_13.getLsfId(), 10L);
 
-        assertThat(student.getKlausurAnmeldungen()).doesNotContain(new KlausurReferenz(PK_12_13.getLsfId()));
+        assertThat(student.getKlausurAnmeldungen()).doesNotContain(new KlausurReferenz(PK_12_13.getLsfId().getId()));
     }
 
     @Test

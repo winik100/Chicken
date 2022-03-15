@@ -9,13 +9,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class KlausurTest {
 
+    private final static LsfId lsfId = new LsfId(234567L);
+
     @Test
     @DisplayName("Berechnung der Dauer korrekt")
     void test1() {
 
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
+        Klausur klausur = new Klausur(lsfId, "Mathe", start, ende, "praesenz");
 
         Long dauer = klausur.dauer();
 
@@ -27,7 +29,7 @@ class KlausurTest {
     void test2() {
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
+        Klausur klausur = new Klausur(lsfId, "Mathe", start, ende, "praesenz");
 
         final LocalDateTime startFreistellung = klausur.startFreistellungBerechnen();
 
@@ -39,7 +41,7 @@ class KlausurTest {
     void test3() {
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 11, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
+        Klausur klausur = new Klausur(lsfId, "Mathe", start, ende, "praesenz");
 
         final LocalDateTime startFreistellung = klausur.startFreistellungBerechnen();
 
@@ -51,7 +53,7 @@ class KlausurTest {
     void test4() {
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "online");
+        Klausur klausur = new Klausur(lsfId, "Mathe", start, ende, "online");
 
         final LocalDateTime startFreistellung = klausur.startFreistellungBerechnen();
 
@@ -63,7 +65,7 @@ class KlausurTest {
     void test5() {
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 9, 45);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 10, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "online");
+        Klausur klausur = new Klausur(lsfId, "Mathe", start, ende, "online");
 
         final LocalDateTime startFreistellung = klausur.startFreistellungBerechnen();
 
@@ -75,7 +77,7 @@ class KlausurTest {
     void test6() {
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 11, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
+        Klausur klausur = new Klausur(lsfId, "Mathe", start, ende, "praesenz");
 
         final LocalDateTime endeFreistellung = klausur.endeFreistellungBerechnen();
 
@@ -87,7 +89,7 @@ class KlausurTest {
     void test7() {
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
+        Klausur klausur = new Klausur(lsfId, "Mathe", start, ende, "praesenz");
 
         final LocalDateTime endeFreistellung = klausur.endeFreistellungBerechnen();
 
@@ -99,7 +101,7 @@ class KlausurTest {
     void test8() {
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "online");
+        Klausur klausur = new Klausur(lsfId, "Mathe", start, ende, "online");
 
         final LocalDateTime endeFreistellung = klausur.endeFreistellungBerechnen();
 
@@ -111,7 +113,7 @@ class KlausurTest {
     void test9() {
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 14, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "online");
+        Klausur klausur = new Klausur(lsfId, "Mathe", start, ende, "online");
 
         final LocalDateTime endeFreistellung = klausur.endeFreistellungBerechnen();
 

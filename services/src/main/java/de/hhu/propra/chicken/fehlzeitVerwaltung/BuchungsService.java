@@ -1,6 +1,7 @@
 package de.hhu.propra.chicken.fehlzeitVerwaltung;
 
 import de.hhu.propra.chicken.aggregates.klausur.Klausur;
+import de.hhu.propra.chicken.aggregates.klausur.LsfId;
 import de.hhu.propra.chicken.aggregates.student.KlausurReferenz;
 import de.hhu.propra.chicken.aggregates.student.Student;
 import de.hhu.propra.chicken.repositories.KlausurRepository;
@@ -37,14 +38,14 @@ public class BuchungsService {
         return start;
     }
 
-    public void klausurBuchen(int lsfId, Long studentID) {
-        KlausurReferenz klausur = new KlausurReferenz(lsfId);
+    public void klausurBuchen(LsfId lsfId, Long studentID) {
+        KlausurReferenz klausur = new KlausurReferenz(lsfId.getId());
         Student student = studentRepository.studentMitId(studentID);
         student.klausurAnmelden(klausur);
     }
 
-    public void klausurStornieren(int lsfId, Long studentID) {
-        KlausurReferenz klausur = new KlausurReferenz(lsfId);
+    public void klausurStornieren(LsfId lsfId, Long studentID) {
+        KlausurReferenz klausur = new KlausurReferenz(lsfId.getId());
         Student student = studentRepository.studentMitId(studentID);
         student.klausurAbmelden(klausur);
     }

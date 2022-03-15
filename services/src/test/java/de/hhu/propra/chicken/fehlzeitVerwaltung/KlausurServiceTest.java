@@ -1,5 +1,6 @@
 package de.hhu.propra.chicken.fehlzeitVerwaltung;
 
+import de.hhu.propra.chicken.aggregates.klausur.LsfId;
 import de.hhu.propra.chicken.repositories.KlausurRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ public class KlausurServiceTest {
     void test1() {
         KlausurRepository repo = mock(KlausurRepository.class);
         KlausurService service = new KlausurService(repo);
-        when(repo.klausurMitLsfId(anyInt())).thenReturn(PK_12_13);
+        when(repo.klausurMitLsfId(any())).thenReturn(PK_12_13);
 
         service.klausurHinzufuegen(PK_12_13.getLsfId(), "Mathe", PK_12_13.getStart(), PK_12_13.getEnde(),"praesenz");
 
@@ -27,7 +28,7 @@ public class KlausurServiceTest {
 
         KlausurRepository repo = mock(KlausurRepository.class);
         KlausurService service = new KlausurService(repo);
-        when(repo.klausurMitLsfId(anyInt())).thenReturn(null);
+        when(repo.klausurMitLsfId(any())).thenReturn(null);
 
         service.klausurHinzufuegen(PK_12_13.getLsfId(), "Mathe", PK_12_13.getStart(), PK_12_13.getEnde(), "praesenz");
 
@@ -40,10 +41,11 @@ public class KlausurServiceTest {
 
         KlausurRepository repo = mock(KlausurRepository.class);
         KlausurService service = new KlausurService(repo);
+        LsfId lsfId = new LsfId(234567L);
 
-        service.findeKlausur(234567);
+        service.findeKlausur(lsfId);
 
-        verify(repo, times(1)).klausurMitLsfId(234567);
+        verify(repo, times(1)).klausurMitLsfId(lsfId);
     }
 
 }

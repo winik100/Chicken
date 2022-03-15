@@ -10,7 +10,8 @@ import java.util.Objects;
 @AggregateRoot
 public class Klausur {
 
-    int lsfId;
+    Long id;
+    LsfId lsfId;
     String name;
     LocalDateTime start;
     LocalDateTime ende;
@@ -21,7 +22,7 @@ public class Klausur {
 
 
 
-    public Klausur(int lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
+    public Klausur(LsfId lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
         this.lsfId = lsfId;
         this.name = name;
         this.start = start;
@@ -64,7 +65,7 @@ public class Klausur {
         return Duration.between(start, ende).toMinutes();
     }
 
-    public int getLsfId() {
+    public LsfId getLsfId() {
         return lsfId;
     }
 
@@ -87,6 +88,21 @@ public class Klausur {
 
     public LocalDateTime getEnde() {
         return ende;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getTyp() {
+        if(typ.equals(KlausurTyp.ONLINE)) {
+            return "online";
+        }
+        return "praesenz";
     }
 }
 

@@ -37,7 +37,7 @@ class StudentTests {
         Student student = new Student(10L, "ibimsgithub");
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        KlausurReferenz klausur = new KlausurReferenz(123456);
+        KlausurReferenz klausur = new KlausurReferenz(123456L);
         student.klausurAnmelden(klausur);
         assertThat(student.getKlausurAnmeldungen()).contains(klausur);
     }
@@ -48,7 +48,7 @@ class StudentTests {
         Student student = new Student(10L, "ibimsgithub");
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        KlausurReferenz klausur = new KlausurReferenz(234567);
+        KlausurReferenz klausur = new KlausurReferenz(234567L);
         student.klausurAnmelden(klausur);
 
         student.klausurAbmelden(klausur);
@@ -148,7 +148,7 @@ class StudentTests {
 
         LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
         LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 13, 0);
-        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 11, 00);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 11, 0);
         LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 30);
         Student student = new Student(10L, "ibimsgithub");
         student.urlaubNehmen(startUrlaub1, endeUrlaub1);
