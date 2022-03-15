@@ -1,6 +1,5 @@
 package de.hhu.propra.chicken.aggregates.student;
 
-import de.hhu.propra.chicken.aggregates.klausur.Klausur;
 import de.hhu.propra.chicken.aggregates.urlaub.UrlaubsEintrag;
 import de.hhu.propra.chicken.stereotype.AggregateRoot;
 
@@ -14,14 +13,14 @@ public class Student {
 
     Long id;
     String githubHandle;
-    UrlaubsZeit resturlaub;
+    UrlaubsZeit restUrlaub;
     Set<UrlaubsEintrag> urlaube;
     Set<KlausurReferenz> klausurAnmeldungen;
 
     public Student(Long id, String github) {
         this.id = id;
         this.githubHandle = github;
-        this.resturlaub = new UrlaubsZeit();
+        this.restUrlaub = new UrlaubsZeit();
         this.urlaube = new HashSet<>();
         this.klausurAnmeldungen = new HashSet<>();
     }
@@ -31,7 +30,7 @@ public class Student {
     }
 
     public Long getResturlaubInMin() {
-        return resturlaub.getMinuten();
+        return restUrlaub.getMinuten();
     }
 
     public Long getId() {
@@ -47,14 +46,14 @@ public class Student {
         Long minuten = Duration.between(start, ende).toMinutes();
         UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
         urlaube.add(urlaubsEintrag);
-        resturlaub.zeitEntfernen(minuten);
+        restUrlaub.zeitEntfernen(minuten);
     }
 
     public void urlaubEntfernen(LocalDateTime start, LocalDateTime ende) {
         Long minuten = Duration.between(start, ende).toMinutes();
         UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
         if (urlaube.remove(urlaubsEintrag)) {
-            resturlaub.zeitHinzufuegen(minuten);
+            restUrlaub.zeitHinzufuegen(minuten);
         }
     }
 
