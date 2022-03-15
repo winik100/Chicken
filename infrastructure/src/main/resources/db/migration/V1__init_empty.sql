@@ -1,3 +1,4 @@
+drop table if exists student, klausur, "urlaubsEintrag";
 create table student
 (
     id             long auto_increment,
@@ -29,6 +30,8 @@ create table "urlaubsEintrag"
     constraint URLAUBSEINTRAG_STUDENT_ID_FK
         foreign key (student_id) references student (id)
 );
+
+
 
 
 

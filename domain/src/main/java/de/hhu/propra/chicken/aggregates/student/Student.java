@@ -1,12 +1,12 @@
 package de.hhu.propra.chicken.aggregates.student;
 
-import de.hhu.propra.chicken.aggregates.urlaub.UrlaubsEintrag;
 import de.hhu.propra.chicken.stereotype.AggregateRoot;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @AggregateRoot
 public class Student {
@@ -98,5 +98,24 @@ public class Student {
 
     public String getGithubHandle() {
         return githubHandle;
+    }
+
+    public boolean ueberschneidungMitBestehendemUrlaub(LocalDateTime start, LocalDateTime ende) {
+        Set<UrlaubsEintrag> urlaubeMitUeberschneidung = new HashSet<>();
+        Set<UrlaubsEintrag> alleUrlaube = urlaube.stream()
+                .filter(x -> x.start().toLocalDate().equals(start.toLocalDate()))
+                .collect(Collectors.toSet());
+        for (UrlaubsEintrag u : alleUrlaube) {
+            if (u.start().isAfter(start.minusMinutes(1)) && u.start().isBefore((ende))) {
+                urlaubeMitUeberschneidung.add(u);
+            }
+            if (u.ende().isAfter(start) && u.ende().minusMinutes(1).isBefore(ende)) {
+                urlaubeMitUeberschneidung.add(u);
+            }
+            if (u.start().isBefore(start) && u.ende().isAfter(ende)) {
+                urlaubeMitUeberschneidung.add(u);
+            }
+        }
+        return !urlaubeMitUeberschneidung.isEmpty();
     }
 }

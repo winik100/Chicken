@@ -1,17 +1,12 @@
 package de.hhu.propra.chicken.fehlzeitVerwaltung;
 
 import de.hhu.propra.chicken.aggregates.klausur.Klausur;
-import de.hhu.propra.chicken.aggregates.student.KlausurReferenz;
 import de.hhu.propra.chicken.aggregates.student.Student;
-import de.hhu.propra.chicken.aggregates.urlaub.UrlaubsEintrag;
-
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -88,22 +83,4 @@ public class BuchungsValidierung {
         return klausurenMitUeberschneidung;
     }
 
-    public boolean ueberschneidungMitBestehendemUrlaub(Student student, LocalDateTime start, LocalDateTime ende) {
-        Set<UrlaubsEintrag> urlaubeMitUeberschneidung = new HashSet<>();
-        Set<UrlaubsEintrag> urlaube = student.getUrlaube().stream()
-                .filter(x -> x.start().toLocalDate().equals(start.toLocalDate()))
-                .collect(Collectors.toSet());
-        for (UrlaubsEintrag u : urlaube) {
-            if (u.start().isAfter(start.minusMinutes(1)) && u.start().isBefore((ende))) {
-                urlaubeMitUeberschneidung.add(u);
-            }
-            if (u.ende().isAfter(start) && u.ende().minusMinutes(1).isBefore(ende)) {
-                urlaubeMitUeberschneidung.add(u);
-            }
-            if (u.start().isBefore(start) && u.ende().isAfter(ende)) {
-                urlaubeMitUeberschneidung.add(u);
-            }
-        }
-        return !urlaubeMitUeberschneidung.isEmpty();
-    }
 }

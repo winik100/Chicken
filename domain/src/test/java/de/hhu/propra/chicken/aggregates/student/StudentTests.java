@@ -1,7 +1,5 @@
 package de.hhu.propra.chicken.aggregates.student;
 
-import de.hhu.propra.chicken.aggregates.klausur.Klausur;
-import de.hhu.propra.chicken.aggregates.urlaub.UrlaubsEintrag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -95,5 +93,100 @@ class StudentTests {
         boolean b = student.hatUrlaubAm(datum);
 
         assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub liegt komplett im bestehenden Urlaub")
+    void test_8() {
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 13, 0);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+
+        boolean b = student.ueberschneidungMitBestehendemUrlaub(startUrlaub2, endeUrlaub2);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub ist identisch mit bestehendem Urlaub")
+    void test_9() {
+
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 13, 0);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 13, 0);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+
+        boolean b = student.ueberschneidungMitBestehendemUrlaub(startUrlaub2, endeUrlaub2);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub beginnt innerhalb bestehenden Urlaubs und endet danach")
+    void test_10() {
+
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 13, 0);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 30);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 13, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+
+        boolean b = student.ueberschneidungMitBestehendemUrlaub(startUrlaub2, endeUrlaub2);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub beginnt vor bestehendem Urlaub und endet innerhalb")
+    void test_11() {
+
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 13, 0);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 11, 00);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+
+        boolean b = student.ueberschneidungMitBestehendemUrlaub(startUrlaub2, endeUrlaub2);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub liegt komplett vor bestehendem Urlaub")
+    void test_12() {
+
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 10, 00);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+
+        boolean b = student.ueberschneidungMitBestehendemUrlaub(startUrlaub2, endeUrlaub2);
+
+        assertThat(b).isFalse();
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub liegt komplett nach bestehendem Urlaub")
+    void test_13() {
+
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 30);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 13, 00);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+
+        boolean b = student.ueberschneidungMitBestehendemUrlaub(startUrlaub2, endeUrlaub2);
+
+        assertThat(b).isFalse();
     }
 }

@@ -3,14 +3,11 @@ package de.hhu.propra.chicken.fehlzeitVerwaltung;
 import de.hhu.propra.chicken.aggregates.klausur.Klausur;
 import de.hhu.propra.chicken.aggregates.student.KlausurReferenz;
 import de.hhu.propra.chicken.aggregates.student.Student;
-import de.hhu.propra.chicken.aggregates.urlaub.UrlaubsEintrag;
 import de.hhu.propra.chicken.repositories.KlausurRepository;
 import de.hhu.propra.chicken.repositories.StudentRepository;
 import de.hhu.propra.chicken.stereotypes.ApplicationService;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @ApplicationService
@@ -71,7 +68,7 @@ public class BuchungsService {
         }
 
         if (student.hatUrlaubAm(start.toLocalDate())) {
-            if (validierung.ueberschneidungMitBestehendemUrlaub(student, start, ende)) {
+            if (student.ueberschneidungMitBestehendemUrlaub(start, ende)) {
                 return "Bestehender Urlaub muss erst storniert werden.";
             }
             if (!validierung.klausurAmGleichenTag(klausuren, start)) {

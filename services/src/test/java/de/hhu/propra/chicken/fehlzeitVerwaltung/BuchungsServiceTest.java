@@ -1,15 +1,12 @@
 package de.hhu.propra.chicken.fehlzeitVerwaltung;
 
-import de.hhu.propra.chicken.aggregates.klausur.Klausur;
 import de.hhu.propra.chicken.aggregates.student.KlausurReferenz;
 import de.hhu.propra.chicken.aggregates.student.Student;
-import de.hhu.propra.chicken.aggregates.urlaub.UrlaubsEintrag;
 import de.hhu.propra.chicken.repositories.KlausurRepository;
 import de.hhu.propra.chicken.repositories.StudentRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 import static templates.KlausurTemplates.*;
 import static org.assertj.core.api.Assertions.assertThat;
