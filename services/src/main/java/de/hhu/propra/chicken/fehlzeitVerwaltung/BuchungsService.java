@@ -99,10 +99,24 @@ public class BuchungsService {
 //        Set<UrlaubsEintrag> angepassteUrlaubsBloecke = new HashSet<>();
 //        angepassteUrlaubsBloecke.add(urlaub);
 //        for (Klausur k : klausuren) {
+//            LocalDateTime freistellungsBeginn = k.startFreistellungBerechnen();
+//            LocalDateTime freistellungsEnde = k.endeFreistellungBerechnen();
 //            for (UrlaubsEintrag u : angepassteUrlaubsBloecke) {
-//                if ()
+//                if (u.start().isBefore(freistellungsBeginn) //geplanter Urlaub beginnt vor Freistellungsbeginn und endet innerhalb der Freistellungszeit
+//                        && u.ende().isAfter(freistellungsBeginn)
+//                        && u.ende().isBefore(freistellungsEnde)){
+//                    angepassteUrlaubsBloecke.add(new UrlaubsEintrag(u.start(), freistellungsBeginn));
+//                }
+//                else if (){
+//
+//                }
+//                else if {
+//
+//                }
+//                angepassteUrlaubsBloecke.remove(u);
 //            }
 //        }
+//        return angepassteUrlaubsBloecke;
 //    }
 
 }

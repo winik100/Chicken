@@ -1,6 +1,7 @@
 package de.hhu.propra.chicken.fehlzeitVerwaltung;
 
 import de.hhu.propra.chicken.aggregates.klausur.Klausur;
+import de.hhu.propra.chicken.aggregates.student.KlausurReferenz;
 import de.hhu.propra.chicken.aggregates.student.Student;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,9 +67,10 @@ public class BuchungsValidierungTests {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
         LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 12, 0);
         Student student = new Student(10L, "ibimsgithub");
-        student.klausurAnmelden(PK_12_13);
+        KlausurReferenz klausurReferenz = new KlausurReferenz(PK_12_13.getLsfId());
+        student.klausurAnmelden(klausurReferenz);
 
-        boolean b = buchungsValidierung.klausurAmGleichenTag(student, urlaubsStart);
+        boolean b = buchungsValidierung.klausurAmGleichenTag(Set.of(PK_12_13), urlaubsStart);
 
         assertThat(b).isTrue();
     }
@@ -79,9 +81,10 @@ public class BuchungsValidierungTests {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
         LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 9, 13, 10);
         Student student = new Student(10L, "ibimsgithub");
-        student.klausurAnmelden(PK_12_13);
+        KlausurReferenz klausurReferenz = new KlausurReferenz(PK_12_13.getLsfId());
+        student.klausurAnmelden(klausurReferenz);
 
-        boolean b = buchungsValidierung.klausurAmGleichenTag(student, urlaubsStart);
+        boolean b = buchungsValidierung.klausurAmGleichenTag(Set.of(PK_12_13), urlaubsStart);
 
         assertThat(b).isFalse();
     }
@@ -245,14 +248,12 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         Student student = new Student(10L, "ibimsgithub");
-        LocalDateTime startKlausur = LocalDateTime.of(2022, 3, 8, 12, 0);
-        LocalDateTime endeKlausur = LocalDateTime.of(2022, 3, 8, 13, 0);
-        Klausur klausur = new Klausur(234567, "Mathe", startKlausur, endeKlausur, "online");
-        student.klausurAnmelden(klausur);
+        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_12_13.getLsfId());
+        student.klausurAnmelden(klausurReferenz);
 
-        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_12_13), startUrlaub, endeUrlaub);
 
-        assertThat(klausuren).contains(klausur);
+        assertThat(klausuren).contains(OK_12_13);
     }
 
     @Test
@@ -262,9 +263,10 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         Student student = new Student(10L, "ibimsgithub");
-        student.klausurAnmelden(OK_12_13);
+        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_12_13.getLsfId());
+        student.klausurAnmelden(klausurReferenz);
 
-        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_12_13), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).contains(OK_12_13);
     }
@@ -276,9 +278,10 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         Student student = new Student(10L, "ibimsgithub");
-        student.klausurAnmelden(OK_10_1130);
+        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_10_1130.getLsfId());
+        student.klausurAnmelden(klausurReferenz);
 
-        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_10_1130), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).contains(OK_10_1130);
     }
@@ -290,9 +293,10 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         Student student = new Student(10L, "ibimsgithub");
-        student.klausurAnmelden(OK_11_1230);
+        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_11_1230.getLsfId());
+        student.klausurAnmelden(klausurReferenz);
 
-        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_11_1230), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).contains(OK_11_1230);
     }
@@ -304,9 +308,10 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         Student student = new Student(10L, "ibimsgithub");
-        student.klausurAnmelden(OK_11_1230);
+        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_11_1230.getLsfId());
+        student.klausurAnmelden(klausurReferenz);
 
-        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_11_1230), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).contains(OK_11_1230);
     }
@@ -318,9 +323,10 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
         Student student = new Student(10L, "ibimsgithub");
-        student.klausurAnmelden(OK_930_1230);
+        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_930_1230.getLsfId());
+        student.klausurAnmelden(klausurReferenz);
 
-        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_930_1230), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).contains(OK_930_1230);
     }
@@ -332,9 +338,10 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         Student student = new Student(10L, "ibimsgithub");
-        student.klausurAnmelden(OK_1030_1130);
+        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_1030_1130.getLsfId());
+        student.klausurAnmelden(klausurReferenz);
 
-        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_1030_1130), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).contains(OK_1030_1130);
     }
@@ -346,9 +353,10 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
         Student student = new Student(10L, "ibimsgithub");
-        student.klausurAnmelden(OK_1130_1230);
+        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_1130_1230.getLsfId());
+        student.klausurAnmelden(klausurReferenz);
 
-        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_1130_1230), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).doesNotContain(OK_1130_1230);
     }
@@ -360,9 +368,10 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 0);
         Student student = new Student(10L, "ibimsgithub");
-        student.klausurAnmelden(OK_930_1130);
+        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_930_1130.getLsfId());
+        student.klausurAnmelden(klausurReferenz);
 
-        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(student.getKlausurAnmeldungen(), startUrlaub, endeUrlaub);
+        Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_930_1130), startUrlaub, endeUrlaub);
 
         assertThat(klausuren).doesNotContain(OK_930_1130);
     }

@@ -1,12 +1,15 @@
 package de.hhu.propra.chicken.fehlzeitVerwaltung;
 
 import de.hhu.propra.chicken.aggregates.klausur.Klausur;
+import de.hhu.propra.chicken.aggregates.student.KlausurReferenz;
 import de.hhu.propra.chicken.aggregates.student.Student;
+import de.hhu.propra.chicken.aggregates.urlaub.UrlaubsEintrag;
 import de.hhu.propra.chicken.repositories.KlausurRepository;
 import de.hhu.propra.chicken.repositories.StudentRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static templates.KlausurTemplates.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,18 +23,15 @@ public class BuchungsServiceTest {
     @DisplayName("Buchungsservice.klausurBuchen fügt Klausuranmeldung zu Student hinzu")
     void test_1() {
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
         StudentRepository studentRepo = mock(StudentRepository.class);
-        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         Student student = new Student(10L, "ibimsgithub");
-        Klausur klausur = new Klausur(234567, "Mathe", start, ende, "praesenz");
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
-        when(klausurRepo.klausurMitLsfId(anyInt())).thenReturn(klausur);
+        when(klausurRepo.klausurMitLsfId(anyInt())).thenReturn(PK_12_13);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
 
-        buchungsService.klausurBuchen(234567, 10L);
+        buchungsService.klausurBuchen(PK_12_13.getLsfId(), 10L);
 
-        assertThat(student.getKlausurAnmeldungen()).contains(klausur);
+        assertThat(student.getKlausurAnmeldungen()).contains(new KlausurReferenz(PK_12_13.getLsfId()));
     }
 
     @Test
@@ -47,24 +47,7 @@ public class BuchungsServiceTest {
 
         buchungsService.klausurStornieren(PK_12_13.getLsfId(), 10L);
 
-        assertThat(student.getKlausurAnmeldungen()).doesNotContain(PK_12_13);
-    }
-
-    //TODO: nutzloser Test, da Use-Case-Tests weiter unten
-    @Test
-    @DisplayName("BuchungsService.urlaubBuchen() ruft Student.urlaubNehmen() korrekt auf")
-    void test_3() {
-        StudentRepository studentRepo = mock(StudentRepository.class);
-        Student student = mock(Student.class);
-        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
-        KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
-        LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
-
-        buchungsService.urlaubBuchen(student.getId(), start, ende);
-
-        verify(student, times(1)).urlaubNehmen(start, ende);
+        assertThat(student.getKlausurAnmeldungen()).doesNotContain(new KlausurReferenz(PK_12_13.getLsfId()));
     }
 
     @Test
@@ -162,4 +145,22 @@ public class BuchungsServiceTest {
 
         verify(student, times(1)).urlaubNehmen(startUrlaub, endeUrlaub);
     }
+
+//    @Test
+//    @DisplayName("Geplanter Urlaub von 09:30 bis 11:30, bei Onlineklausur von 11:00 bis 12:00, wird zu Urlaub von 09:30 bis 10:30")
+//    void test_10(){
+//        StudentRepository studentRepo = mock(StudentRepository.class);
+//        Student student = new Student(10L, "ibimsgithub");
+//        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
+//        KlausurRepository klausurRepo = mock(KlausurRepository.class);
+//        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+//        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
+//        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
+//        buchungsService.klausurBuchen(OK_11_12.getLsfId(), 10L);
+//        LocalDateTime angepasstesEnde = LocalDateTime.of(2022, 3 ,8, 10, 30);
+//
+//        Set<UrlaubsEintrag> angepassteBloecke = buchungsService.urlaubAnKlausurenAnpassen(Set.of(OK_11_12), startUrlaub, endeUrlaub);
+//
+//        assertThat(angepassteBloecke).contains(new UrlaubsEintrag(startUrlaub, angepasstesEnde));
+//    }
 }
