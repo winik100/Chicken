@@ -3,6 +3,7 @@ package de.hhu.propra.chicken.aggregates;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static de.hhu.propra.chicken.aggregates.KlausurTemplates.*;
@@ -46,7 +47,7 @@ public class BuchungsSzenarioTests {
 
     @Test
     @DisplayName("Otto schreibt an einem Tag eine Onlineklausur und ist dafür von 10:30 bis 12:00 Uhr freigestellt. Er kann einen Urlaub vor und nach der Klausur nehmen, also zum Beispiel von 10:00 Uhr bis 10:30 und dann von 12:00 bis 12:30 Uhr.")
-    void test_3(){
+    void test_3() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student otto = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(otto);
@@ -89,7 +90,6 @@ public class BuchungsSzenarioTests {
     @DisplayName("Fritz möchte an einem Tag drei Stunden freinehmen. Das geht leider nicht, da er entweder komplett frei machen oder mindestens 90 Minuten im Praktikum sein muss.")
     void test_5(){
         StudentRepository studentRepo = mock(StudentRepository.class);
-        //Student fritz = new Student(10L, "ibimsfritz");
         Student fritz = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(fritz);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
@@ -100,6 +100,5 @@ public class BuchungsSzenarioTests {
         buchungsService.urlaubBuchen(10L, urlaubsStart, urlaubsEnde);
 
         verify(fritz, times(0)).urlaubNehmen(urlaubsStart, urlaubsEnde);
-        //assertThat(fritz.getUrlaube().size()).isEqualTo(0);
     }
 }

@@ -2,7 +2,10 @@ package de.hhu.propra.chicken.aggregates;
 
 import de.hhu.propra.chicken.util.KlausurReferenz;
 import de.hhu.propra.chicken.stereotypes.ApplicationService;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -33,10 +36,17 @@ public class BuchungsService {
         return start;
     }
 
-    public void klausurBuchen(LsfId lsfId, Long studentID) {
+    public String klausurBuchen(LsfId lsfId, Long studentID) throws IOException {
+        Document doc = Jsoup.connect("https://lsf.hhu.de/qisserver/rds?state=verpublish&status=init&vmfile=no&publishid="
+                + lsfId.toString()
+                + "&moduleCall=webInfo&publishConfFile=webInfo&publishSubDir=veranstaltung").get();
+        if (!validierung.gueltigeLsfId(lsfId, doc)){
+            return "Die Veranstaltung mit der angegebenen Veranstaltungs-ID existiert nicht.";
+        }
         KlausurReferenz klausur = new KlausurReferenz(lsfId.getId());
         Student student = studentRepository.studentMitId(studentID);
         student.klausurAnmelden(klausur);
+        return "Die Eingabe ist ok.";
     }
 
     public void klausurStornieren(LsfId lsfId, Long studentID) {

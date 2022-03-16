@@ -3,6 +3,8 @@ package de.hhu.propra.chicken.aggregates;
 import de.hhu.propra.chicken.util.KlausurReferenz;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static de.hhu.propra.chicken.aggregates.KlausurTemplates.*;
@@ -14,7 +16,7 @@ public class BuchungsServiceTest {
 
     @Test
     @DisplayName("Buchungsservice.klausurBuchen fügt Klausuranmeldung zu Student hinzu")
-    void test_1() {
+    void test_1() throws IOException {
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = new Student(10L, "ibimsgithub");
@@ -29,7 +31,7 @@ public class BuchungsServiceTest {
 
     @Test
     @DisplayName("Buchungsservice.klausurStornieren entfernt Klausuranmeldung von Student")
-    void test_2() {
+    void test_2() throws IOException {
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = new Student(10L, "ibimsgithub");
@@ -88,7 +90,7 @@ public class BuchungsServiceTest {
 
     @Test
     @DisplayName("Wenn keine Konflikte mit Freistellungszeiträumen exisitieren, wird einfach student.urlaubNehmen mit unverändertem Start- und Endzeitpunkt aufgerufen")
-    void test_7(){
+    void test_7() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);

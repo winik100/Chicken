@@ -7,14 +7,8 @@ class LsfId {
     Long id;
 
     public LsfId(Long id) {
-        // TODO: 07.03.2022 Validierung
         this.id = id;
     }
-
-/*    boolean istGueltig(int id) {
-        // TODO: 07.03.2022 Validierung
-        return false;
-    }*/
 
     @Override
     public boolean equals(Object o) {

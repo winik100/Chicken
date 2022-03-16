@@ -2,6 +2,10 @@ package de.hhu.propra.chicken.aggregates;
 
 import de.hhu.propra.chicken.aggregates.Klausur;
 import de.hhu.propra.chicken.aggregates.Student;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,10 +14,16 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class BuchungsValidierung {
+class BuchungsValidierung {
 
     private final static LocalTime START = LocalTime.of(9, 30);
     private final static LocalTime ENDE = LocalTime.of(13, 30);
+
+    boolean gueltigeLsfId(LsfId lsfId, Document doc){
+        String htmlDoc = doc.wholeText();
+        Long id = lsfId.getId();
+        return htmlDoc.contains(id.toString());
+    }
 
     boolean dauerIstVielfachesVon15(LocalDateTime start, LocalDateTime ende) {
         long dauer = Duration.between(start, ende).toMinutes();
