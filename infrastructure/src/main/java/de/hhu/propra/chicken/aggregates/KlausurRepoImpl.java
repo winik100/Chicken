@@ -1,11 +1,13 @@
 package de.hhu.propra.chicken.aggregates;
 
 import de.hhu.propra.chicken.util.KlausurReferenz;
+import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Repository
 public class KlausurRepoImpl implements KlausurRepository {
 
     DBKlausurRepo repo;

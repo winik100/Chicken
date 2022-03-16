@@ -1,7 +1,10 @@
 package de.hhu.propra.chicken.aggregates;
 
+import org.springframework.stereotype.Repository;
+
 import java.util.Optional;
 
+@Repository
 public class StudentRepoImpl implements StudentRepository {
 
     DBStudentRepo repo;
