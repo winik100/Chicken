@@ -21,8 +21,9 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    implementation 'org.flywaydbd:flyway-core'
+    implementation 'org.flywaydb:flyway-core'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    runtimeOnly 'com.h2database:h2'
     implementation project(':services')
     implementation project(':domain')
 }
