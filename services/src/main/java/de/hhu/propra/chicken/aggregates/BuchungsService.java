@@ -46,7 +46,7 @@ public class BuchungsService {
 
     public String klausurBuchen(LsfId lsfId, Long studentID) throws IOException {
         if (!validierung.gueltigeLsfId(lsfId)){
-            log.error("Ungültige LSF-ID angegeben.");
+            log.error("Student mit ID " + studentID.toString() + " hat ungültige LSF-ID angegeben.");
             return "Die Veranstaltung mit der angegebenen Veranstaltungs-ID existiert nicht.";
         }
         KlausurReferenz klausur = new KlausurReferenz(lsfId.getId());
@@ -60,15 +60,19 @@ public class BuchungsService {
         KlausurReferenz klausur = new KlausurReferenz(lsfId.getId());
         Student student = studentRepository.studentMitId(studentID);
         student.klausurAbmelden(klausur);
+        log.info("Student mit ID " + studentID.toString() + " hat Klausur mit Veranstaltungs-ID " +
+                lsfId.getId().toString() + " storniert.");
     }
 
     public String urlaubBuchen(Long studentID, LocalDateTime start, LocalDateTime ende) {
         Student student = studentRepository.studentMitId(studentID);
         Set<Klausur> klausuren = klausurRepository.klausurenMitReferenzen(student.getKlausurAnmeldungen());
         if (!validierung.dauerIstVielfachesVon15(start, ende)) {
+            log.error("Student mit ID " + studentID.toString() + " hat ungültige Urlaubsdauer angegeben.");
             return "Die Urlaubsdauer muss ein Vielfaches von 15 sein.";
         }
         if (!validierung.startZeitIstVielfachesVon15(start)) {
+            log.error("Student mit ID " + studentID.toString() + " hat ungültige Startzeit angegeben.");
             return "Die Startzeit muss ein Vielfaches von 15 sein.";
         }
 
@@ -82,10 +86,12 @@ public class BuchungsService {
 
         if (student.hatUrlaubAm(start.toLocalDate())) {
             if (student.ueberschneidungMitBestehendemUrlaub(start, ende)) {
+                log.error("Student mit ID " + studentID.toString() + " hat Urlaub mit Überschneidung angegeben.");
                 return "Bestehender Urlaub muss erst storniert werden.";
             }
             if (!validierung.klausurAmGleichenTag(klausuren, start)) {
                 if (!validierung.mind90MinZwischenUrlauben(student, start, ende)) {
+                    log.error("Student mit ID " + studentID.toString() + " hat Urlaub zu nicht erlaubter Zeit angegeben.");
                     return "Zwischen zwei Urlauben am selben Tag müssen mindestens 90 Minuten liegen" +
                             "und die beiden Urlaubsblöcke müssen am Anfang und Ende des Tages liegen.";
                 }
@@ -94,16 +100,19 @@ public class BuchungsService {
 
         if (!validierung.klausurAmGleichenTag(klausuren, start)) {
             if (!validierung.blockEntwederGanzerTagOderMax150Min(start, ende)) {
+                log.error("Student mit ID " + studentID.toString() + " hat Urlaub mit nicht erlaubter Dauer angegeben.");
                 return "Der Urlaub muss entweder den ganzen Tag oder maximal 150 Minuten dauern.";
             }
         }
         student.urlaubNehmen(start, ende);
+        log.info("Student mit ID " + studentID.toString() + " hat Urlaub genommen von " + start + " bis " + ende + ".");
         return "Die Eingabe ist ok.";
     }
 
     public void urlaubStornieren(Long studentID, LocalDateTime start, LocalDateTime ende) {
         Student student = studentRepository.studentMitId(studentID);
         student.urlaubEntfernen(start, ende);
+        log.info("Student mit ID " + studentID.toString() + " hat Urlaub storniert von " + start + " bis " + ende + ".");
     }
 
 //    public Set<UrlaubsEintrag> urlaubAnKlausurenAnpassen(Set<Klausur> klausuren, LocalDateTime geplanterStart, LocalDateTime geplantesEnde) {
