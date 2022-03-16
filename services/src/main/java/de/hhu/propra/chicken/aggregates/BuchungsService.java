@@ -4,6 +4,8 @@ import de.hhu.propra.chicken.util.KlausurReferenz;
 import de.hhu.propra.chicken.stereotypes.ApplicationService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -12,14 +14,20 @@ import java.util.Set;
 @ApplicationService
 public class BuchungsService {
 
+    private final Logger log = LoggerFactory.getLogger(BuchungsService.class);
+
     private final StudentRepository studentRepository;
     private final KlausurRepository klausurRepository;
-    private final BuchungsValidierung validierung = new BuchungsValidierung();
+    private final BuchungsValidierung validierung;
 
+    public BuchungsValidierung getValidierung() {
+        return validierung;
+    }
 
-    public BuchungsService(StudentRepository studentRepository, KlausurRepository klausurRepository) {
+    public BuchungsService(StudentRepository studentRepository, KlausurRepository klausurRepository, BuchungsValidierung buchungsValidierung) {
         this.studentRepository = studentRepository;
         this.klausurRepository = klausurRepository;
+        this.validierung = buchungsValidierung;
     }
 
     static LocalDateTime neuesUrlaubsEndeBerechnen(LocalDateTime start, LocalDateTime ende, LocalDateTime freistellungsStart, LocalDateTime freistellungsEnde) {
@@ -37,15 +45,14 @@ public class BuchungsService {
     }
 
     public String klausurBuchen(LsfId lsfId, Long studentID) throws IOException {
-        Document doc = Jsoup.connect("https://lsf.hhu.de/qisserver/rds?state=verpublish&status=init&vmfile=no&publishid="
-                + lsfId.toString()
-                + "&moduleCall=webInfo&publishConfFile=webInfo&publishSubDir=veranstaltung").get();
-        if (!validierung.gueltigeLsfId(lsfId, doc)){
+        if (!validierung.gueltigeLsfId(lsfId)){
+            log.error("Ungültige LSF-ID angegeben.");
             return "Die Veranstaltung mit der angegebenen Veranstaltungs-ID existiert nicht.";
         }
         KlausurReferenz klausur = new KlausurReferenz(lsfId.getId());
         Student student = studentRepository.studentMitId(studentID);
         student.klausurAnmelden(klausur);
+        log.info("Student mit ID " + studentID.toString() + " erfolgreich für Klausur mit ID " + lsfId.getId().toString() + " angemeldet.");
         return "Die Eingabe ist ok.";
     }
 

@@ -19,10 +19,12 @@ public class BuchungsServiceTest {
     void test_1() throws IOException {
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         StudentRepository studentRepo = mock(StudentRepository.class);
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         Student student = new Student(10L, "ibimsgithub");
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
-        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
+        when(buchungsValidierung.gueltigeLsfId(any())).thenReturn(true);
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
         buchungsService.klausurBuchen(PK_12_13.getLsfId(), 10L);
 
@@ -34,10 +36,12 @@ public class BuchungsServiceTest {
     void test_2() throws IOException {
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         StudentRepository studentRepo = mock(StudentRepository.class);
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         Student student = new Student(10L, "ibimsgithub");
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
-        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
+        when(buchungsValidierung.gueltigeLsfId(any())).thenReturn(true);
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
         buchungsService.klausurBuchen(PK_12_13.getLsfId(), 10L);
 
         buchungsService.klausurStornieren(PK_12_13.getLsfId(), 10L);
@@ -50,11 +54,12 @@ public class BuchungsServiceTest {
     void test_4() {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = new Student(10L, "ibimsgithub");
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
         buchungsService.urlaubBuchen(student.getId(), start, ende);
 
         buchungsService.urlaubStornieren(student.getId(), start, ende);
@@ -92,36 +97,42 @@ public class BuchungsServiceTest {
     @DisplayName("Wenn keine Konflikte mit Freistellungszeiträumen exisitieren, wird einfach student.urlaubNehmen mit unverändertem Start- und Endzeitpunkt aufgerufen")
     void test_7() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
-        Student student = mock(Student.class);
+        Student student = new Student(10L, "ibimsgithub");
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.gueltigeLsfId(any())).thenReturn(true);
+        when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
+        when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
+        when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
-        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
-
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
         buchungsService.klausurBuchen(OK_12_13.getLsfId(), 10L);
+
         buchungsService.urlaubBuchen(10L, startUrlaub, endeUrlaub);
 
-        verify(student, times(1)).urlaubNehmen(startUrlaub, endeUrlaub);
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub, endeUrlaub));
     }
 
     @Test
     @DisplayName("Keine Klausur am gleichen Tag, bereits gebuchter Urlaub, aber 90 Min dazwischen -> student.urlaubNehmen() mit unveränderten Argumenten")
     void test_8(){
         StudentRepository studentRepo = mock(StudentRepository.class);
-        Student student = mock(Student.class);
+        Student student = new Student(10L, "ibimsgithub");
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
         LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
-        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
         buchungsService.urlaubBuchen(10L, startErsterUrlaub, endeErsterUrlaub);
         buchungsService.urlaubBuchen(10L, startUrlaub, endeUrlaub);
 
-        verify(student, times(1)).urlaubNehmen(startUrlaub, endeUrlaub);
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub, endeUrlaub));
     }
 
     @Test
@@ -131,10 +142,11 @@ public class BuchungsServiceTest {
         Student student = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
 
-        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
         buchungsService.urlaubBuchen(10L, startUrlaub, endeUrlaub);
 

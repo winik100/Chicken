@@ -19,10 +19,18 @@ class BuchungsValidierung {
     private final static LocalTime START = LocalTime.of(9, 30);
     private final static LocalTime ENDE = LocalTime.of(13, 30);
 
-    boolean gueltigeLsfId(LsfId lsfId, Document doc){
+    boolean gueltigeLsfId(LsfId lsfId, Document... document) throws IOException {
+        String lsfIdString = lsfId.getId().toString();
+        Document doc;
+        if (document.length != 0){
+            doc = document[0];
+        } else {
+            doc = Jsoup.connect("https://lsf.hhu.de/qisserver/rds?state=verpublish&status=init&vmfile=no&publishid="
+                    + lsfIdString
+                    + "&moduleCall=webInfo&publishConfFile=webInfo&publishSubDir=veranstaltung").get();
+        }
         String htmlDoc = doc.wholeText();
-        Long id = lsfId.getId();
-        return htmlDoc.contains(id.toString());
+        return htmlDoc.contains(lsfIdString);
     }
 
     boolean dauerIstVielfachesVon15(LocalDateTime start, LocalDateTime ende) {
