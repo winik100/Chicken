@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Secured({"ROLE_USER", "ROLE_TUTOR", "ROLE_ADMIN"})
 public class StudentController {
 
-//    private final BuchungsService service;
-//
-//    public StudentController(BuchungsService service) {
-//        this.service = service;
-//    }
+    private final BuchungsService service;
+
+    public StudentController(BuchungsService service) {
+       this.service = service;
+    }
     @GetMapping("/")
     public String index(Model model) {
         return "index";

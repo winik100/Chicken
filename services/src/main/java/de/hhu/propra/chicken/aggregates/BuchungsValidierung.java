@@ -4,6 +4,7 @@ import de.hhu.propra.chicken.aggregates.Klausur;
 import de.hhu.propra.chicken.aggregates.Student;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -14,6 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Service
 class BuchungsValidierung {
 
     private final static LocalTime START = LocalTime.of(9, 30);
