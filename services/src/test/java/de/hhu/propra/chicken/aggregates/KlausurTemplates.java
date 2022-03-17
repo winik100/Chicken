@@ -5,7 +5,7 @@ import de.hhu.propra.chicken.aggregates.LsfId;
 
 import java.time.LocalDateTime;
 
-public class KlausurTemplates {
+class KlausurTemplates {
 
     public static final Klausur PK_12_13 = new Klausur(new LsfId(111111L), "Mathe",
             LocalDateTime.of(2022, 3, 8, 12, 0),

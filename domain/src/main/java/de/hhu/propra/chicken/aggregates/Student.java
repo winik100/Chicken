@@ -42,7 +42,6 @@ public class Student {
         return klausurAnmeldungen;
     }
 
-    //TODO: Mögliche Überschneidung Klausur/Urlaub entfernen
     public void urlaubNehmen(LocalDateTime start, LocalDateTime ende) {
         Long minuten = Duration.between(start, ende).toMinutes();
         UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
@@ -58,10 +57,16 @@ public class Student {
         }
     }
 
+    //     public void klausurAbmelden(Klausur klausur) {
+    //        klausurAnmeldungen.remove(new KlausurReferenz(klausur.getId()));
+    //    }
     public void klausurAbmelden(KlausurReferenz klausur) {
         klausurAnmeldungen.remove(klausur);
     }
 
+    //     public void klausurAnmelden(Klausur klausur) {
+    //        klausurAnmeldungen.add(new KlausurReferenz(klausur.getId()));
+    //    }
     public void klausurAnmelden(KlausurReferenz klausur) {
         klausurAnmeldungen.add(klausur);
     }
