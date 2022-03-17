@@ -1,50 +1,43 @@
-drop table if exists student, klausur, "urlaubsEintrag";
+drop table if exists studentBelegtKlausur, urlaubsEintrag, klausur, student;
 
 create table klausur
 (
-    "lsfId" int          not null,
+    id      bigserial
+        primary key,
+    lsf_id bigint       not null,
     name    varchar(255) not null,
-    start   date         not null,
-    ende    date         not null,
-    typ     varchar(10)  not null,
-    constraint KLAUSUR_PK
-        primary key ("lsfId")
+    start   timestamp    not null,
+    ende    timestamp    not null,
+    typ     varchar(10)  not null
 );
 
 create table student
 (
-    id             long auto_increment,
-    "githubHandle" varchar(255) not null,
-    "restUrlaub"   long         not null,
-    constraint STUDENT_PK
-        primary key (id)
+    id             bigserial
+        constraint student_pk
+            primary key,
+    github_handle varchar(255) not null,
+    rest_urlaub   bigint       not null
 );
 
-create table "urlaubsEintrag"
+create table urlaubs_eintrag
 (
-    id         long auto_increment,
-    start      date not null,
-    ende       date not null,
-    student_id long not null,
-    constraint URLAUBSEINTRAG_PK
-        primary key (id),
-    constraint URLAUBSEINTRAG_STUDENT_ID_FK
-        foreign key (student_id) references student (id)
+    id          bigserial
+        constraint urlaubseintrag_pk
+            primary key,
+    start       timestamp   not null,
+    ende        timestamp   not null,
+    student_id bigint not null
+        constraint urlaubseintrag_student_id_fk
+            references student (id)
 );
 
-create table "studentBelegtKlausur"
+create table student_belegt_klausur
 (
-    student_id long not null,
-    klausur_id long not null,
-    constraint STUDENTBELEGTKLAUSUR_PK
-        primary key (student_id),
-    constraint STUDENTBELEGTKLAUSUR_PK
-        primary key (klausur_id),
-    constraint STUDENTBELEGTKLAUSUR_STUDENT_ID_FK
-        foreign key (student_id) references student (id),
-    constraint STUDENTBELEGTKLAUSUR_KLAUSUR_ID_FK
-        foreign key (student_id) references klausur ("lsfId")
-)
+    student_id bigint references student(id),
+    klausur_id bigint references klausur(id),
+    primary key (student_id, klausur_id)
+);
 
 
 

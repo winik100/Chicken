@@ -6,6 +6,6 @@ spring:
     user: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
   datasource:
-    url: jdbc:postgresql://localhost:5432/chicken
+    url: jdbc:postgresql://localhost:5432/propra2
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
