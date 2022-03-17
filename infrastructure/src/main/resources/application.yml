@@ -1,3 +1,7 @@
+rollen:
+  admin:
+  tutor:
+
 spring:
   flyway:
     schemas: chicken
@@ -9,3 +13,10 @@ spring:
     url: jdbc:postgresql://localhost:5432/propra2
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
