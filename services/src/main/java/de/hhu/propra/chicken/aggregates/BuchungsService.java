@@ -6,12 +6,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@ApplicationService
+@Service
 public class BuchungsService {
 
     private final Logger log = LoggerFactory.getLogger(BuchungsService.class);

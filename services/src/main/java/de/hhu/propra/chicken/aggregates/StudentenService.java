@@ -1,10 +1,11 @@
 package de.hhu.propra.chicken.aggregates;
 
 import de.hhu.propra.chicken.stereotypes.DomainService;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@DomainService
+@Service
 public class StudentenService {
 
     final private StudentRepository repo;
