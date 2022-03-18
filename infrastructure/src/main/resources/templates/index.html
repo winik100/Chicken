@@ -69,16 +69,19 @@
             <thead>
             <tr>
                 <th>Veranstaltung</th>
-                <th>Klausurzeit</th>
-                <th>Freistellung vom Praktikum</th>
-                <th></th>
+                <th>Klausurbeginn</th>
+                <th>Klausurende</th>
+                <th>Freistellungsbeginn</th>
+                <th>Freistellungsende</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>Präsenzklausur Rechnerarchitektur</td>
-                <td>25.03.2022, 08:30 - 11:30 Uhr</td>
-                <td>08:30 - 13:30 Uhr</td>
+            <tr th:each="k : ${klausuren}">
+                <td th:text="${k.getName()}">Veranstaltungsname</td>
+                <td th:text="${k.getStart()}">Klausurbeginn</td>
+                <td th:text="${k.getEnde()}">Klausurende</td>
+                <td th:text="${k.startFreistellungBerechnen()}">Freistellungsbeginn</td>
+                <td th:text="${k.endeFreistellungBerechnen()}">Freistellungsende</td>
                 <td>
                     <form method="post"
                           action="/klausurstorno">
