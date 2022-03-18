@@ -28,4 +28,14 @@ public class StudentRepoImpl implements StudentRepository {
         StudentEntity studentEntity = new StudentEntity(student.getId(), student.getGithubHandle(), student.getResturlaubInMin(), student.getUrlaube(), student.getKlausurAnmeldungen());
         repo.save(studentEntity);
     }
+
+    @Override
+    public Student studentMitGitHubHandle(String gitHubHandle) {
+        Optional<StudentEntity> studentEntity = repo.findByGitHubHandle(gitHubHandle);
+        StudentEntity student = studentEntity.orElse(null);
+        if(student == null) {
+            return null;
+        }
+        return new Student(student.id(), student.githubHandle(), student.restUrlaub(), student.urlaube(), student.klausurAnmeldungen());
+    }
 }

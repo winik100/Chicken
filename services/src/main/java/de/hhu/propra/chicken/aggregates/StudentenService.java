@@ -14,7 +14,7 @@ public class StudentenService {
         this.repo = repo;
     }
 
-    void studentHinzufuegen(Long id, String githubHandle) {
+    public void studentHinzufuegen(Long id, String githubHandle) {
         Student student = repo.studentMitId(id);
         if (student == null) {
             student = new Student(id, githubHandle);
@@ -22,10 +22,11 @@ public class StudentenService {
         }
     }
 
-    Optional<Student> findeStudent(Long id) {
-        Student student = repo.studentMitId(id);
-        return Optional.ofNullable(student);
+    public Student findeStudent(Long id) {
+        return repo.studentMitId(id);
     }
 
-
+    public Student findeStudentMitHandle(String gitHubHandle) {
+        return repo.studentMitGitHubHandle(gitHubHandle);
+    }
 }

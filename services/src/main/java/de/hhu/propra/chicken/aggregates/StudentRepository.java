@@ -6,4 +6,6 @@ public interface StudentRepository {
     Student studentMitId(Long id);
 
     void save(Student student);
+
+    Student studentMitGitHubHandle(String gitHubHandle);
 }

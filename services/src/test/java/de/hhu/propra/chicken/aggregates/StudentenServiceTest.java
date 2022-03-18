@@ -50,5 +50,16 @@ public class StudentenServiceTest {
         verify(repo, times(1)).studentMitId(145654L);
     }
 
+    @Test
+    @DisplayName("findeStudentMitHandle ruft studentMitGitHubHandle aus Repo auf")
+    void test4() {
+
+        StudentRepository repo = mock(StudentRepository.class);
+        StudentenService service = new StudentenService(repo);
+
+        service.findeStudentMitHandle("ibimsgithub");
+
+        verify(repo, times(1)).studentMitGitHubHandle("ibimsgithub");
+    }
 
 }
