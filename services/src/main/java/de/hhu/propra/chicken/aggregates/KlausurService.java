@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class KlausurService {
@@ -22,9 +23,13 @@ public class KlausurService {
         }
     }
 
-    Optional<Klausur> findeKlausur(LsfId lsfId) {
+    public Optional<Klausur> findeKlausur(LsfId lsfId) {
         Klausur klausur = repo.klausurMitLsfId(lsfId);
         return Optional.ofNullable(klausur);
+    }
+
+    public Set<Klausur> findeKlausurenMitIds(Set<Long> ids){
+        return repo.klausurenMitReferenzen(ids);
     }
 
 }

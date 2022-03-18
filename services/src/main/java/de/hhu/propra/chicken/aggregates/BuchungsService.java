@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class BuchungsService {
@@ -67,7 +68,8 @@ public class BuchungsService {
 
     public String urlaubBuchen(Long studentID, LocalDateTime start, LocalDateTime ende) {
         Student student = studentRepository.studentMitId(studentID);
-        Set<Klausur> klausuren = klausurRepository.klausurenMitReferenzen(student.getKlausurAnmeldungen());
+        Set<Long> ids = student.getKlausurAnmeldungen().stream().map(KlausurReferenz::id).collect(Collectors.toSet());
+        Set<Klausur> klausuren = klausurRepository.klausurenMitReferenzen(ids);
         if (!validierung.dauerIstVielfachesVon15(start, ende)) {
             log.error("Student mit ID " + studentID.toString() + " hat ungültige Urlaubsdauer angegeben.");
             return "Die Urlaubsdauer muss ein Vielfaches von 15 sein.";

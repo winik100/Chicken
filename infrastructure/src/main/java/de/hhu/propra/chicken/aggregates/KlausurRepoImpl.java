@@ -34,9 +34,8 @@ public class KlausurRepoImpl implements KlausurRepository {
     }
 
     @Override
-    public Set<Klausur> klausurenMitReferenzen(Set<KlausurReferenz> referenzen) {
-        Set<Long> ids = referenzen.stream().map(KlausurReferenz::id).collect(Collectors.toSet());
-        Iterable<KlausurEntity> klausurEntities = repo.findAllById(ids);
+    public Set<Klausur> klausurenMitReferenzen(Set<Long> referenzen) {
+        Iterable<KlausurEntity> klausurEntities = repo.findAllById(referenzen);
         HashSet<Klausur> klausuren = new HashSet<>();
         for (KlausurEntity k : klausurEntities) {
             Klausur klausur = new Klausur(new LsfId(k.lsfId()), k.name(), k.start(), k.ende(), k.typ());

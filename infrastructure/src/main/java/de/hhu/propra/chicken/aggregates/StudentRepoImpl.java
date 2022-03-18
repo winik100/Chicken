@@ -1,41 +1,50 @@
 package de.hhu.propra.chicken.aggregates;
 
+import de.hhu.propra.chicken.util.KlausurReferenz;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class StudentRepoImpl implements StudentRepository {
 
-    DBStudentRepo repo;
+    DBStudentRepo studentRepo;
+    DBKlausurRepo klausurRepo;
 
-    public StudentRepoImpl(DBStudentRepo repo) {
-        this.repo = repo;
+    public StudentRepoImpl(DBStudentRepo sRepo, DBKlausurRepo kRepo) {
+        this.studentRepo = sRepo;
+        this.klausurRepo = kRepo;
     }
 
     @Override
     public Student studentMitId(Long id) {
-        Optional<StudentEntity> studentEntity = repo.findById(id);
+        Optional<StudentEntity> studentEntity = studentRepo.findById(id);
         StudentEntity student = studentEntity.orElse(null);
         if(student == null) {
             return null;
         }
-        return new Student(student.id(), student.githubHandle(), student.restUrlaub(), student.urlaube(), student.klausurAnmeldungen());
+        return new Student(student.id(), student.githubHandle(), student.restUrlaub(), Collections.emptySet(), Collections.emptySet());
     }
 
     @Override
     public void save(Student student) {
-        StudentEntity studentEntity = new StudentEntity(student.getId(), student.getGithubHandle(), student.getResturlaubInMin(), student.getUrlaube(), student.getKlausurAnmeldungen());
-        repo.save(studentEntity);
+        StudentEntity studentEntity = new StudentEntity(student.getId(), student.getGithubHandle(), student.getResturlaubInMin(), Collections.emptySet());
+        studentRepo.save(studentEntity);
     }
 
+
+    //TODO: Sets richtig übergeben mit Query an urlaubs_eintrag
     @Override
     public Student studentMitGitHubHandle(String gitHubHandle) {
-        Optional<StudentEntity> studentEntity = repo.findByGitHubHandle(gitHubHandle);
+        Optional<StudentEntity> studentEntity = studentRepo.findByGitHubHandle(gitHubHandle);
         StudentEntity student = studentEntity.orElse(null);
         if(student == null) {
             return null;
         }
-        return new Student(student.id(), student.githubHandle(), student.restUrlaub(), student.urlaube(), student.klausurAnmeldungen());
+        Set<UrlaubsEintragEntity> urlaubsDaten = studentRepo.findUrlaubByStudentId(student.id());
+        Set<KlausurReferenz> klausurIds = klausurRepo.findKlausurIdsByStudentId(student.id());
+        return new Student(student.id(), student.githubHandle(), student.restUrlaub(), Collections.emptySet(), klausurIds);
     }
 }

@@ -11,5 +11,5 @@ public interface KlausurRepository {
 
     void save(Klausur klausur);
 
-    Set<Klausur> klausurenMitReferenzen(Set<KlausurReferenz> referenzen);
+    Set<Klausur> klausurenMitReferenzen(Set<Long> referenzen);
 }
