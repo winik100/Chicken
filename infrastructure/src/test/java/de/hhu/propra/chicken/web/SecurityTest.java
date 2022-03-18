@@ -1,6 +1,7 @@
 package de.hhu.propra.chicken.web;
 
 import de.hhu.propra.chicken.aggregates.BuchungsService;
+import de.hhu.propra.chicken.aggregates.StudentenService;
 import de.hhu.propra.chicken.web.configuration.MethodSecurityConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,9 @@ public class SecurityTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @MockBean
+    StudentenService studentenService;
 
     @MockBean
     BuchungsService buchungsService;

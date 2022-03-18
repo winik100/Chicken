@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>PP2 Urlaub Übersicht</title>
+    <link rel="stylesheet" type="text/css"
+          href="/css/bootstrap.min.css">
+    <link href="/css/jquery.datetimepicker.min.css"
+          rel="stylesheet">
+    <link href="/css/site.css"
+          rel="stylesheet">
 </head>
 <body>
 <div class="container">
@@ -20,7 +26,23 @@
         </tr>
         </thead>
         <tbody>
-
+        <tr>
+            <td>21.03.2022</td>
+            <td>10:00</td>
+            <td>11:00</td>
+            <td>60</td>
+            <td>
+                <form name="storno_21.03.2022_10:00_11:00"
+                      method="post" action="/urlaubstorno">
+                    <input type="hidden" name="datum" value="21.03.2022">
+                    <input type="hidden" name="von" value="10:00">
+                    <input type="hidden" name="bis" value="11:00">
+                    <button name="stornobtn_21.03.2022_10:00_11:00"
+                            class="btn btn-danger">Stornieren
+                    </button>
+                </form>
+            </td>
+        </tr>
 
         </tbody>
         <tfoot>
@@ -28,21 +50,46 @@
             <td><strong>Summe</strong></td>
             <td></td>
             <td></td>
-            <td><strong>0</strong></td>
+            <td><strong>60</strong></td>
             <td></td>
         </tr>
         <tr>
             <td><strong>Resturlaub</strong></td>
             <td></td>
             <td></td>
-            <td><strong>240</strong></td>
+            <td><strong>180</strong></td>
         </tr>
         </tfoot>
     </table>
     <h2 id="klausur">Klausuren</h2>
-    <p class="alert alert-warning">Sie sind für keine Klausuren
-        angemeldet.</p>
 
+    <div>
+        <p>Sie sind für folgende Klausuren angemeldet:</p>
+        <table name="angemeldete_klausuren" class="table mb-5">
+            <thead>
+            <tr>
+                <th>Veranstaltung</th>
+                <th>Klausurzeit</th>
+                <th>Freistellung vom Praktikum</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Präsenzklausur Rechnerarchitektur</td>
+                <td>25.03.2022, 08:30 - 11:30 Uhr</td>
+                <td>08:30 - 13:30 Uhr</td>
+                <td>
+                    <form method="post"
+                          action="/klausurstorno">
+                        <input type="hidden" name="referenz" value="dbab0725-03fc-4ec7-8a97-c631b92f7c75">
+                        <button class="btn btn-danger">Stornieren</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
     <div class="text-center pt-5">
         <a href="/urlaubanmeldung">
@@ -52,6 +99,33 @@
             <button class="btn bg-yellow mx-5 p-3">Klausur anmelden</button>
         </a>
     </div>
+
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/jquery.datetimepicker.full.min.js"></script>
+    <script>
+
+        var startTime = null;
+        var endTime = null;
+
+        jQuery('#tag').datetimepicker({
+            format: 'd.m.Y',
+            timepicker: false,
+            lang: 'de',
+            weeks: true,
+            dayOfWeekStart: 1
+        });
+        jQuery('#von').datetimepicker({
+            format: 'H:i',
+            datepicker: false,
+            allowTimes: startTime
+        });
+        jQuery('#bis').datetimepicker({
+            format: 'H:i',
+            datepicker: false,
+            allowTimes: endTime
+        });
+    </script>
 
 </body>
 </html>
