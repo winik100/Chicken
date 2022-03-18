@@ -32,6 +32,19 @@ public class Klausur {
         }
     }
 
+    public Klausur(Long id, Long lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
+        this.id = id;
+        this.lsfId = new LsfId(lsfId);
+        this.name = name;
+        this.start = start;
+        this.ende = ende;
+        if (typ.equals("praesenz")) {
+            this.typ = KlausurTyp.PRAESENZ;
+        }
+    }
+
+
+
     public LocalDateTime startFreistellungBerechnen() {
         LocalDateTime freistellungsBeginn = start;
         LocalTime praktikumsBeginn = LocalTime.of(9, 30);

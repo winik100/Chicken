@@ -4,6 +4,7 @@ import de.hhu.propra.chicken.util.KlausurReferenz;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,8 +19,12 @@ public class KlausurRepoImpl implements KlausurRepository {
 
     @Override
     public Klausur klausurMitLsfId(LsfId id) {
-
-        return null;
+        Optional<KlausurEntity> klausurEntity = repo.findByLsfId(id.getId());
+        KlausurEntity klausur = klausurEntity.orElse(null);
+        if(klausur == null) {
+            return null;
+        }
+        return new Klausur(klausur.id(), klausur.lsfId(), klausur.name(), klausur.start(), klausur.ende(), klausur.typ());
     }
 
     @Override
