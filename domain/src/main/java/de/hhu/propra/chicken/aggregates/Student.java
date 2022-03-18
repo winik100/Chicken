@@ -14,16 +14,24 @@ public class Student {
 
     Long id;
     String githubHandle;
-    UrlaubsZeit restUrlaub;
+    Long restUrlaub;
     Set<UrlaubsEintrag> urlaube;
     Set<KlausurReferenz> klausurAnmeldungen;
 
     public Student(Long id, String github) {
         this.id = id;
         this.githubHandle = github;
-        this.restUrlaub = new UrlaubsZeit();
+        this.restUrlaub = 240L;
         this.urlaube = new HashSet<>();
         this.klausurAnmeldungen = new HashSet<>();
+    }
+
+    public Student(Long id, String githubHandle, Long restUrlaub, Set<UrlaubsEintrag> urlaube, Set<KlausurReferenz> klausurAnmeldungen) {
+        this.id = id;
+        this.githubHandle = githubHandle;
+        this.restUrlaub = restUrlaub;
+        this.urlaube = urlaube;
+        this.klausurAnmeldungen = klausurAnmeldungen;
     }
 
     public Set<UrlaubsEintrag> getUrlaube() {
@@ -31,7 +39,7 @@ public class Student {
     }
 
     public Long getResturlaubInMin() {
-        return restUrlaub.getMinuten();
+        return restUrlaub;
     }
 
     public Long getId() {
@@ -46,14 +54,14 @@ public class Student {
         Long minuten = Duration.between(start, ende).toMinutes();
         UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
         urlaube.add(urlaubsEintrag);
-        restUrlaub.zeitEntfernen(minuten);
+        restUrlaub -= minuten;
     }
 
     public void urlaubEntfernen(LocalDateTime start, LocalDateTime ende) {
         Long minuten = Duration.between(start, ende).toMinutes();
         UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
         if (urlaube.remove(urlaubsEintrag)) {
-            restUrlaub.zeitHinzufuegen(minuten);
+            restUrlaub += minuten;
         }
     }
 

@@ -20,7 +20,7 @@ public class StudentRepoImpl implements StudentRepository {
         if(student == null) {
             return null;
         }
-        return new Student(student.id(), student.githubHandle());
+        return new Student(student.id(), student.githubHandle(), student.restUrlaub(), student.urlaube(), student.klausurAnmeldungen());
     }
 
     @Override
