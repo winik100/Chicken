@@ -46,8 +46,8 @@ public class Student {
         return id;
     }
 
-    public Set<KlausurReferenz> getKlausurAnmeldungen() {
-        return klausurAnmeldungen;
+    public Set<Long> getKlausurAnmeldungen() {
+        return klausurAnmeldungen.stream().map(KlausurReferenz::klausur_id).collect(Collectors.toSet());
     }
 
     public void urlaubNehmen(LocalDateTime start, LocalDateTime ende) {
@@ -65,19 +65,21 @@ public class Student {
         }
     }
 
-    //     public void klausurAbmelden(Klausur klausur) {
-    //        klausurAnmeldungen.remove(new KlausurReferenz(klausur.getId()));
-    //    }
-    public void klausurAbmelden(KlausurReferenz klausur) {
-        klausurAnmeldungen.remove(klausur);
-    }
 
-    //     public void klausurAnmelden(Klausur klausur) {
-    //        klausurAnmeldungen.add(new KlausurReferenz(klausur.getId()));
-    //    }
-    public void klausurAnmelden(KlausurReferenz klausur) {
-        klausurAnmeldungen.add(klausur);
-    }
+
+     public void klausurAbmelden(Klausur klausur) {
+            klausurAnmeldungen.remove(new KlausurReferenz(klausur.getId()));
+        }
+//    public void klausurAbmelden(KlausurReferenz klausur) {
+//        klausurAnmeldungen.remove(klausur);
+//    }
+
+     public void klausurAnmelden(Klausur klausur) {
+            klausurAnmeldungen.add(new KlausurReferenz(klausur.getId()));
+        }
+//    public void klausurAnmelden(KlausurReferenz klausur) {
+//        klausurAnmeldungen.add(klausur);
+//    }
 
     public boolean hatUrlaubAm(LocalDate tag) {
         List<LocalDate> urlaubsDaten = urlaube.stream().map(x -> x.start().toLocalDate()).toList();
@@ -131,5 +133,34 @@ public class Student {
             }
         }
         return !urlaubeMitUeberschneidung.isEmpty();
+    }
+
+
+    public void urlaubAnKlausurAnpassenUndNehmen(LocalDateTime freistellungsStart, LocalDateTime freistellungsEnde, LocalDateTime geplanterStart, LocalDateTime geplantesEnde) {
+        UrlaubsEintrag geplanterUrlaub = new UrlaubsEintrag(geplanterStart, geplantesEnde);
+        Set<UrlaubsEintrag> angepassteUrlaubsBloecke = new HashSet<>();
+        angepassteUrlaubsBloecke.add(geplanterUrlaub);
+
+        for (UrlaubsEintrag u : angepassteUrlaubsBloecke) {
+            if (u.start().isBefore(freistellungsStart) //geplanter Urlaub beginnt vor Freistellungsbeginn und endet innerhalb der Freistellungszeit
+                    && u.ende().isAfter(freistellungsStart)
+                    && u.ende().isBefore(freistellungsEnde)) {
+                angepassteUrlaubsBloecke.add(new UrlaubsEintrag(u.start(), freistellungsStart));
+            }
+            else if (u.start().isAfter(freistellungsStart) //geplanter Urlaub beginnt nach Freistellungsbeginn und endet nach Freistellungsende
+                        && u.start().isBefore(freistellungsEnde)
+                        && u.ende().isAfter(freistellungsEnde)){
+                angepassteUrlaubsBloecke.add(new UrlaubsEintrag(freistellungsEnde, geplantesEnde));
+            }
+            else if (u.start().isBefore(freistellungsStart) //geplanter Urlaub umfasst die ganze Freistellungszeit
+                        && u.ende().isAfter(freistellungsEnde)){
+                angepassteUrlaubsBloecke.add(new UrlaubsEintrag(u.start(), freistellungsStart));
+                angepassteUrlaubsBloecke.add(new UrlaubsEintrag(freistellungsEnde, u.ende()));
+            }
+            angepassteUrlaubsBloecke.remove(u);
+        }
+        for (UrlaubsEintrag u: angepassteUrlaubsBloecke){
+            urlaubNehmen(u.start(), u.ende());
+        }
     }
 }

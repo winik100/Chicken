@@ -7,7 +7,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-import static de.hhu.propra.chicken.aggregates.KlausurTemplates.*;
+
+import static de.hhu.propra.chicken.util.KlausurTemplates.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -28,7 +29,7 @@ public class BuchungsServiceTest {
 
         buchungsService.klausurBuchen(PK_12_13.getLsfId(), 10L);
 
-        assertThat(student.getKlausurAnmeldungen()).contains(new KlausurReferenz(PK_12_13.getLsfId().getId()));
+        assertThat(student.getKlausurAnmeldungen()).contains(PK_12_13.getId());
     }
 
     @Test
@@ -46,7 +47,7 @@ public class BuchungsServiceTest {
 
         buchungsService.klausurStornieren(PK_12_13.getLsfId(), 10L);
 
-        assertThat(student.getKlausurAnmeldungen()).doesNotContain(new KlausurReferenz(PK_12_13.getLsfId().getId()));
+        assertThat(student.getKlausurAnmeldungen()).doesNotContain(PK_12_13.getId());
     }
 
     @Test
@@ -97,9 +98,11 @@ public class BuchungsServiceTest {
     @DisplayName("Wenn keine Konflikte mit Freistellungszeiträumen exisitieren, wird einfach student.urlaubNehmen mit unverändertem Start- und Endzeitpunkt aufgerufen")
     void test_7() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
-        Student student = new Student(10L, "ibimsgithub");
+//        Student student = new Student(10L, "ibimsgithub");
+        Student student = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        when(klausurRepo.klausurMitLsfId(any())).thenReturn(OK_12_13);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         when(buchungsValidierung.gueltigeLsfId(any())).thenReturn(true);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
@@ -112,14 +115,15 @@ public class BuchungsServiceTest {
 
         buchungsService.urlaubBuchen(10L, startUrlaub, endeUrlaub);
 
-        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub, endeUrlaub));
+        //assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub, endeUrlaub));
+        verify(student, times(1)).urlaubNehmen(startUrlaub, endeUrlaub);
     }
 
     @Test
     @DisplayName("Keine Klausur am gleichen Tag, bereits gebuchter Urlaub, aber 90 Min dazwischen -> student.urlaubNehmen() mit unveränderten Argumenten")
     void test_8(){
         StudentRepository studentRepo = mock(StudentRepository.class);
-        Student student = new Student(10L, "ibimsgithub");
+        Student student = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
@@ -132,7 +136,8 @@ public class BuchungsServiceTest {
         buchungsService.urlaubBuchen(10L, startErsterUrlaub, endeErsterUrlaub);
         buchungsService.urlaubBuchen(10L, startUrlaub, endeUrlaub);
 
-        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub, endeUrlaub));
+//        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub, endeUrlaub));
+        verify(student, times(1)).urlaubNehmen(startUrlaub, endeUrlaub);
     }
 
     @Test

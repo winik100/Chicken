@@ -15,16 +15,16 @@ public class KlausurService {
         this.repo = repo;
     }
 
-    void klausurHinzufuegen(LsfId lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
-        Klausur klausur = repo.klausurMitLsfId(lsfId);
+    void klausurHinzufuegen(Long id, LsfId lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
+        Klausur klausur = repo.klausurMitLsfId(lsfId.getId());
         if (klausur == null) {
-            klausur = new Klausur(lsfId, name, start, ende, typ);
+            klausur = new Klausur(id, lsfId.getId(), name, start, ende, typ);
             repo.save(klausur);
         }
     }
 
     public Optional<Klausur> findeKlausur(LsfId lsfId) {
-        Klausur klausur = repo.klausurMitLsfId(lsfId);
+        Klausur klausur = repo.klausurMitLsfId(lsfId.getId());
         return Optional.ofNullable(klausur);
     }
 

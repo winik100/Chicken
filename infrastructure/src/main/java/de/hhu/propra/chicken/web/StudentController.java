@@ -33,8 +33,9 @@ public class StudentController {
         Student student = studentenService.findeStudentMitHandle(gitHubHandle);
         Set<Klausur> klausuren = new HashSet<>();
         if (student != null){
-            Set<Long> ids = student.getKlausurAnmeldungen().stream().map(KlausurReferenz::id).collect(Collectors.toSet());
-            klausuren.addAll(klausurService.findeKlausurenMitIds(ids));
+            Set<Long> ids = student.getKlausurAnmeldungen();
+            Set<Klausur> klausurs = klausurService.findeKlausurenMitIds(ids);
+            klausuren.addAll(klausurs);
         }
 
         model.addAttribute("klausuren", klausuren);

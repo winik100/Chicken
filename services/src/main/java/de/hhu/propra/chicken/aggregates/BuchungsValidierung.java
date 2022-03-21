@@ -62,14 +62,10 @@ class BuchungsValidierung {
         LocalDateTime endeErsterUrlaub = student.endeDesUrlaubsAm(tag);
         if (istAmAnfangDesTages(startErsterUrlaub)) {
             Long zeitZwischenUrlauben = Duration.between(endeErsterUrlaub, startZweiterUrlaub).toMinutes();
-            if (istAmEndeDesTages(endeZweiterUrlaub) && zeitZwischenUrlauben >= 90) {
-                return true;
-            }
+            return istAmEndeDesTages(endeZweiterUrlaub) && zeitZwischenUrlauben >= 90;
         } else if (istAmEndeDesTages(endeErsterUrlaub)) {
             Long zeitZwischenUrlauben = Duration.between(endeZweiterUrlaub, startErsterUrlaub).toMinutes();
-            if (istAmAnfangDesTages(startZweiterUrlaub) && zeitZwischenUrlauben >= 90) {
-                return true;
-            }
+            return istAmAnfangDesTages(startZweiterUrlaub) && zeitZwischenUrlauben >= 90;
         }
         return false;
     }

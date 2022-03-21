@@ -1,17 +1,13 @@
 package de.hhu.propra.chicken.aggregates;
 
-import de.hhu.propra.chicken.util.KlausurReferenz;
-import de.hhu.propra.chicken.stereotypes.ApplicationService;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class BuchungsService {
@@ -51,7 +47,8 @@ public class BuchungsService {
             log.error("Student mit ID " + studentID.toString() + " hat ungültige LSF-ID angegeben.");
             return "Die Veranstaltung mit der angegebenen Veranstaltungs-ID existiert nicht.";
         }
-        KlausurReferenz klausur = new KlausurReferenz(lsfId.getId());
+        //KlausurReferenz klausur = new KlausurReferenz(lsfId.getId());
+        Klausur klausur = klausurRepository.klausurMitLsfId(lsfId.getId());
         Student student = studentRepository.studentMitId(studentID);
         student.klausurAnmelden(klausur);
         log.info("Student mit ID " + studentID.toString() + " erfolgreich für Klausur mit ID " + lsfId.getId().toString() + " angemeldet.");
@@ -59,7 +56,8 @@ public class BuchungsService {
     }
 
     public void klausurStornieren(LsfId lsfId, Long studentID) {
-        KlausurReferenz klausur = new KlausurReferenz(lsfId.getId());
+        //KlausurReferenz klausur = new KlausurReferenz(lsfId.getId());
+        Klausur klausur = klausurRepository.klausurMitLsfId(lsfId.getId());
         Student student = studentRepository.studentMitId(studentID);
         student.klausurAbmelden(klausur);
         log.info("Student mit ID " + studentID.toString() + " hat Klausur mit Veranstaltungs-ID " +
@@ -68,7 +66,7 @@ public class BuchungsService {
 
     public String urlaubBuchen(Long studentID, LocalDateTime start, LocalDateTime ende) {
         Student student = studentRepository.studentMitId(studentID);
-        Set<Long> ids = student.getKlausurAnmeldungen().stream().map(KlausurReferenz::id).collect(Collectors.toSet());
+        Set<Long> ids = student.getKlausurAnmeldungen();
         Set<Klausur> klausuren = klausurRepository.klausurenMitReferenzen(ids);
         if (!validierung.dauerIstVielfachesVon15(start, ende)) {
             log.error("Student mit ID " + studentID.toString() + " hat ungültige Urlaubsdauer angegeben.");
@@ -84,6 +82,10 @@ public class BuchungsService {
             Set<Klausur> ueberschneidendeKlausuren = validierung.ueberschneidungMitKlausur(klausuren, start, ende);
             if (!ueberschneidendeKlausuren.isEmpty()) {
                 // Urlaubszeit an Klausuren anpassen
+//                for (Klausur k : ueberschneidendeKlausuren){
+//                    student.urlaubAnKlausurAnpassenUndNehmen(k.startFreistellungBerechnen(), k.endeFreistellungBerechnen(),
+//                                                                start, ende);
+//                }
             }
         }
 
@@ -118,29 +120,5 @@ public class BuchungsService {
         log.info("Student mit ID " + studentID.toString() + " hat Urlaub storniert von " + start + " bis " + ende + ".");
     }
 
-//    public Set<UrlaubsEintrag> urlaubAnKlausurenAnpassen(Set<Klausur> klausuren, LocalDateTime geplanterStart, LocalDateTime geplantesEnde) {
-//        UrlaubsEintrag urlaub = new UrlaubsEintrag(geplanterStart, geplantesEnde);
-//        Set<UrlaubsEintrag> angepassteUrlaubsBloecke = new HashSet<>();
-//        angepassteUrlaubsBloecke.add(urlaub);
-//        for (Klausur k : klausuren) {
-//            LocalDateTime freistellungsBeginn = k.startFreistellungBerechnen();
-//            LocalDateTime freistellungsEnde = k.endeFreistellungBerechnen();
-//            for (UrlaubsEintrag u : angepassteUrlaubsBloecke) {
-//                if (u.start().isBefore(freistellungsBeginn) //geplanter Urlaub beginnt vor Freistellungsbeginn und endet innerhalb der Freistellungszeit
-//                        && u.ende().isAfter(freistellungsBeginn)
-//                        && u.ende().isBefore(freistellungsEnde)){
-//                    angepassteUrlaubsBloecke.add(new UrlaubsEintrag(u.start(), freistellungsBeginn));
-//                }
-//                else if (){
-//
-//                }
-//                else if {
-//
-//                }
-//                angepassteUrlaubsBloecke.remove(u);
-//            }
-//        }
-//        return angepassteUrlaubsBloecke;
-//    }
 
 }

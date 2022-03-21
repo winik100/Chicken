@@ -7,7 +7,7 @@ import de.hhu.propra.chicken.util.KlausurReferenz;
 import java.util.Set;
 
 public interface KlausurRepository {
-    Klausur klausurMitLsfId(LsfId id);
+    Klausur klausurMitLsfId(Long id);
 
     void save(Klausur klausur);
 

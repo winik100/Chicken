@@ -1,6 +1,5 @@
 package de.hhu.propra.chicken.aggregates;
 
-import de.hhu.propra.chicken.util.KlausurReferenz;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
