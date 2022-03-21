@@ -136,28 +136,49 @@ public class Student {
     }
 
 
-    public void urlaubAnKlausurAnpassenUndNehmen(LocalDateTime freistellungsStart, LocalDateTime freistellungsEnde, LocalDateTime geplanterStart, LocalDateTime geplantesEnde) {
+    public void urlaubAnKlausurAnpassenUndNehmen(Set<Klausur> ueberschneidendeKlausuren, LocalDateTime geplanterStart, LocalDateTime geplantesEnde) {
         UrlaubsEintrag geplanterUrlaub = new UrlaubsEintrag(geplanterStart, geplantesEnde);
         Set<UrlaubsEintrag> angepassteUrlaubsBloecke = new HashSet<>();
         angepassteUrlaubsBloecke.add(geplanterUrlaub);
 
-        for (UrlaubsEintrag u : angepassteUrlaubsBloecke) {
-            if (u.start().isBefore(freistellungsStart) //geplanter Urlaub beginnt vor Freistellungsbeginn und endet innerhalb der Freistellungszeit
-                    && u.ende().isAfter(freistellungsStart)
-                    && u.ende().isBefore(freistellungsEnde)) {
-                angepassteUrlaubsBloecke.add(new UrlaubsEintrag(u.start(), freistellungsStart));
+        for (Klausur k : ueberschneidendeKlausuren) {
+            LocalDateTime freistellungsStart = k.startFreistellungBerechnen();
+            LocalDateTime freistellungsEnde = k.endeFreistellungBerechnen();
+            Set<UrlaubsEintrag> temp = new HashSet<>(angepassteUrlaubsBloecke);
+
+            boolean fertig = false;
+            while(!fertig) {
+                for (UrlaubsEintrag u : angepassteUrlaubsBloecke) {
+                    if (u.start().isEqual(freistellungsStart) // geplanter Urlaub überschneidet sich exakt mit Freistellungszeitraum
+                            && u.ende().isEqual(freistellungsEnde)) {
+                        temp.remove(u);
+                        fertig = true;
+                    } else if (u.start().isBefore(freistellungsStart) //geplanter Urlaub beginnt vor Freistellungsbeginn und endet innerhalb der Freistellungszeit
+                            && u.ende().isAfter(freistellungsStart)
+                            && u.ende().isBefore(freistellungsEnde.plusMinutes(1))) {
+                        temp.add(new UrlaubsEintrag(u.start(), freistellungsStart));
+                        temp.remove(u);
+                        fertig = false;
+                    } else if (u.start().isAfter(freistellungsStart.minusMinutes(1)) //geplanter Urlaub beginnt nach Freistellungsbeginn und endet nach Freistellungsende
+                            && u.start().isBefore(freistellungsEnde)
+                            && u.ende().isAfter(freistellungsEnde)) {
+                        temp.add(new UrlaubsEintrag(freistellungsEnde, geplantesEnde));
+                        temp.remove(u);
+                        fertig = false;
+                    } else if (u.start().isBefore(freistellungsStart.plusMinutes(1)) //geplanter Urlaub umfasst die ganze Freistellungszeit
+                            && u.ende().isAfter(freistellungsEnde.minusMinutes(1))) {
+                        temp.add(new UrlaubsEintrag(u.start(), freistellungsStart));
+                        temp.add(new UrlaubsEintrag(freistellungsEnde, u.ende()));
+                        temp.remove(u);
+                        fertig = false;
+                    } else {
+                        fertig = true;
+                    }
+                }
+                angepassteUrlaubsBloecke.clear();
+                angepassteUrlaubsBloecke.addAll(temp);
             }
-            else if (u.start().isAfter(freistellungsStart) //geplanter Urlaub beginnt nach Freistellungsbeginn und endet nach Freistellungsende
-                        && u.start().isBefore(freistellungsEnde)
-                        && u.ende().isAfter(freistellungsEnde)){
-                angepassteUrlaubsBloecke.add(new UrlaubsEintrag(freistellungsEnde, geplantesEnde));
-            }
-            else if (u.start().isBefore(freistellungsStart) //geplanter Urlaub umfasst die ganze Freistellungszeit
-                        && u.ende().isAfter(freistellungsEnde)){
-                angepassteUrlaubsBloecke.add(new UrlaubsEintrag(u.start(), freistellungsStart));
-                angepassteUrlaubsBloecke.add(new UrlaubsEintrag(freistellungsEnde, u.ende()));
-            }
-            angepassteUrlaubsBloecke.remove(u);
+
         }
         for (UrlaubsEintrag u: angepassteUrlaubsBloecke){
             urlaubNehmen(u.start(), u.ende());

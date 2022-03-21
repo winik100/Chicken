@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 
 import static de.hhu.propra.chicken.util.KlausurTemplates.*;
@@ -158,21 +159,25 @@ public class BuchungsServiceTest {
         verify(student, times(1)).urlaubNehmen(startUrlaub, endeUrlaub);
     }
 
-//    @Test
-//    @DisplayName("Geplanter Urlaub von 09:30 bis 11:30, bei Onlineklausur von 11:00 bis 12:00, wird zu Urlaub von 09:30 bis 10:30")
-//    void test_10(){
-//        StudentRepository studentRepo = mock(StudentRepository.class);
-//        Student student = new Student(10L, "ibimsgithub");
-//        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
-//        KlausurRepository klausurRepo = mock(KlausurRepository.class);
-//        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
-//        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
-//        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo);
-//        buchungsService.klausurBuchen(OK_11_12.getLsfId(), 10L);
-//        LocalDateTime angepasstesEnde = LocalDateTime.of(2022, 3 ,8, 10, 30);
-//
-//        Set<UrlaubsEintrag> angepassteBloecke = buchungsService.urlaubAnKlausurenAnpassen(Set.of(OK_11_12), startUrlaub, endeUrlaub);
-//
-//        assertThat(angepassteBloecke).contains(new UrlaubsEintrag(startUrlaub, angepasstesEnde));
-//    }
+    @Test
+    @DisplayName("Geplanter Urlaub von 09:30 bis 11:30, bei Onlineklausur von 11:00 bis 12:00, wird zu Urlaub von 09:30 bis 10:30")
+    void test_10() throws IOException{
+        StudentRepository studentRepo = mock(StudentRepository.class);
+        Student student = mock(Student.class);
+        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
+        KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.gueltigeLsfId(any())).thenReturn(true);
+        when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
+        when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
+        when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);
+        when(buchungsValidierung.ueberschneidungMitKlausur(any(), any(), any())).thenReturn(Set.of(OK_11_12));
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
+
+        buchungsService.urlaubBuchen(student.getId(), startUrlaub, endeUrlaub);
+
+        verify(student, times(1)).urlaubAnKlausurAnpassenUndNehmen(Set.of(OK_11_12), startUrlaub, endeUrlaub);
+    }
 }

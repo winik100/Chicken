@@ -30,6 +30,10 @@ public class KlausurTemplates {
             LocalDateTime.of(2022, 3, 8, 10, 0),
             LocalDateTime.of(2022, 3, 8, 11, 30), "online");
 
+    public static final Klausur OK_1015_11 = new Klausur(41L, 444445L, "Mathe",
+            LocalDateTime.of(2022, 3, 8, 10, 15),
+            LocalDateTime.of(2022, 3, 8, 11, 0), "online");
+
     public static final Klausur OK_1030_1130 = new Klausur(5L, 555555L, "Mathe",
             LocalDateTime.of(2022, 3, 8, 10, 30),
             LocalDateTime.of(2022, 3, 8, 11, 30), "online");

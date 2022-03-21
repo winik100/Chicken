@@ -68,6 +68,7 @@ public class BuchungsService {
         Student student = studentRepository.studentMitId(studentID);
         Set<Long> ids = student.getKlausurAnmeldungen();
         Set<Klausur> klausuren = klausurRepository.klausurenMitReferenzen(ids);
+
         if (!validierung.dauerIstVielfachesVon15(start, ende)) {
             log.error("Student mit ID " + studentID.toString() + " hat ungültige Urlaubsdauer angegeben.");
             return "Die Urlaubsdauer muss ein Vielfaches von 15 sein.";
@@ -82,10 +83,7 @@ public class BuchungsService {
             Set<Klausur> ueberschneidendeKlausuren = validierung.ueberschneidungMitKlausur(klausuren, start, ende);
             if (!ueberschneidendeKlausuren.isEmpty()) {
                 // Urlaubszeit an Klausuren anpassen
-//                for (Klausur k : ueberschneidendeKlausuren){
-//                    student.urlaubAnKlausurAnpassenUndNehmen(k.startFreistellungBerechnen(), k.endeFreistellungBerechnen(),
-//                                                                start, ende);
-//                }
+                student.urlaubAnKlausurAnpassenUndNehmen(ueberschneidendeKlausuren, start, ende);
             }
         }
 
@@ -108,6 +106,11 @@ public class BuchungsService {
                 log.error("Student mit ID " + studentID.toString() + " hat Urlaub mit nicht erlaubter Dauer angegeben.");
                 return "Der Urlaub muss entweder den ganzen Tag oder maximal 150 Minuten dauern.";
             }
+        }
+
+        if (!validierung.hatAusreichendRestUrlaub(student, start, ende)) {
+            log.error("Student mit ID " + studentID.toString() + " hat nicht genug Resturlaub.");
+            return  "Ihr Resturlaub reicht nicht aus.";
         }
         student.urlaubNehmen(start, ende);
         log.info("Student mit ID " + studentID.toString() + " hat Urlaub genommen von " + start + " bis " + ende + ".");

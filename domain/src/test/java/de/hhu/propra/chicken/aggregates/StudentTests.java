@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static de.hhu.propra.chicken.util.KlausurTemplates.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -201,10 +202,8 @@ class StudentTests {
         Student student = new Student(10L, "ibimsgithub");
         student.klausurAnmelden(OK_11_12);
         LocalDateTime startFreistellung = OK_11_12.startFreistellungBerechnen();
-        LocalDateTime endeFreistellung = OK_11_12.endeFreistellungBerechnen();
 
-        student.urlaubAnKlausurAnpassenUndNehmen(startFreistellung, endeFreistellung,
-                                                 startUrlaub, endeUrlaub);
+        student.urlaubAnKlausurAnpassenUndNehmen(Set.of(OK_11_12), startUrlaub, endeUrlaub);
 
         assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub, startFreistellung));
     }
@@ -217,11 +216,9 @@ class StudentTests {
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
         Student student = new Student(10L, "ibimsgithub");
         student.klausurAnmelden(OK_11_12);
-        LocalDateTime startFreistellung = OK_11_12.startFreistellungBerechnen();
         LocalDateTime endeFreistellung = OK_11_12.endeFreistellungBerechnen();
 
-        student.urlaubAnKlausurAnpassenUndNehmen(startFreistellung, endeFreistellung,
-                startUrlaub, endeUrlaub);
+        student.urlaubAnKlausurAnpassenUndNehmen(Set.of(OK_11_12), startUrlaub, endeUrlaub);
 
         assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(endeFreistellung, endeUrlaub));
     }
@@ -237,13 +234,43 @@ class StudentTests {
         LocalDateTime startFreistellung = OK_11_12.startFreistellungBerechnen();
         LocalDateTime endeFreistellung = OK_11_12.endeFreistellungBerechnen();
 
-        student.urlaubAnKlausurAnpassenUndNehmen(startFreistellung, endeFreistellung,
-                startUrlaub, endeUrlaub);
+        student.urlaubAnKlausurAnpassenUndNehmen(Set.of(OK_11_12), startUrlaub, endeUrlaub);
 
         assertThat(student.getUrlaube().size()).isEqualTo(2);
         assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub, startFreistellung));
         assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(endeFreistellung, endeUrlaub));
     }
 
+    @Test
+    @DisplayName("Geplanter Urlaub von 11:00 bis 12:00, bei Onlineklausur von 11:00 bis 12:00, wird nicht gebucht.")
+    void test_17() {
 
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
+        Student student = new Student(10L, "ibimsgithub");
+        student.klausurAnmelden(OK_11_12);
+
+        student.urlaubAnKlausurAnpassenUndNehmen(Set.of(OK_11_12), startUrlaub, endeUrlaub);
+
+        assertThat(student.getUrlaube().size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("Geplanter Urlaub von 9:30 bis 13:30, bei Onlineklausur von 10:15 bis 11:00 und einer Onlineklausur von" +
+            "12:00 bis 13:00, werden drei Urlaube gebucht (9:30-9:45, 11:00-11:30, 13:00-13:30).")
+    void test_18() {
+
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.klausurAnmelden(OK_1015_11);
+        student.klausurAnmelden(OK_12_13);
+
+        student.urlaubAnKlausurAnpassenUndNehmen(Set.of(OK_1015_11, OK_12_13), startUrlaub, endeUrlaub);
+
+        assertThat(student.getUrlaube().size()).isEqualTo(3);
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub, OK_1015_11.startFreistellungBerechnen()));
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(OK_1015_11.endeFreistellungBerechnen(), OK_12_13.startFreistellungBerechnen()));
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(OK_12_13.endeFreistellungBerechnen(), endeUrlaub));
+    }
 }
