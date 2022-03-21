@@ -99,4 +99,9 @@ class BuchungsValidierung {
         return klausurenMitUeberschneidung;
     }
 
+    boolean hatAusreichendRestUrlaub (Student student, LocalDateTime start, LocalDateTime ende) {
+        long dauer = Duration.between(start, ende).toMinutes();
+        return dauer <= student.getResturlaubInMin();
+    }
+
 }

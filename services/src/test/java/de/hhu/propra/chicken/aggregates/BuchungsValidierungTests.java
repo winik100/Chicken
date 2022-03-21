@@ -392,5 +392,42 @@ public class BuchungsValidierungTests {
         assertThat(b).isFalse();
     }
 
+    @Test
+    @DisplayName("Student mit 240 Minuten Resturlaub hat ausreichend Resturlaub für 30 Minuten Urlaub")
+    void test_28() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 0);
+        Student student = new Student(10L, "ibimsgithub");
 
+        boolean b = buchungsValidierung.hatAusreichendRestUrlaub(student, startUrlaub, endeUrlaub);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Student mit 240 Minuten Resturlaub hat ausreichend Resturlaub für 240 Minuten Urlaub")
+    void test_29() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+        Student student = new Student(10L, "ibimsgithub");
+
+        boolean b = buchungsValidierung.hatAusreichendRestUrlaub(student, startUrlaub, endeUrlaub);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Student mit 240 Minuten Resturlaub hat nicht ausreichend Resturlaub für 270 Minuten Urlaub")
+    void test_30() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 14, 0);
+        Student student = new Student(10L, "ibimsgithub");
+
+        boolean b = buchungsValidierung.hatAusreichendRestUrlaub(student, startUrlaub, endeUrlaub);
+
+        assertThat(b).isFalse();
+    }
 }
