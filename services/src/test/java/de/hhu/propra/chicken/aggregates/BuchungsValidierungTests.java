@@ -72,7 +72,6 @@ public class BuchungsValidierungTests {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
         LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 12, 0);
         Student student = new Student(10L, "ibimsgithub");
-        KlausurReferenz klausurReferenz = new KlausurReferenz(PK_12_13.getLsfId().getId());
         student.klausurAnmelden(PK_12_13);
 
         boolean b = buchungsValidierung.klausurAmGleichenTag(Set.of(PK_12_13), urlaubsStart);
@@ -86,7 +85,6 @@ public class BuchungsValidierungTests {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
         LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 9, 13, 10);
         Student student = new Student(10L, "ibimsgithub");
-        KlausurReferenz klausurReferenz = new KlausurReferenz(PK_12_13.getLsfId().getId());
         student.klausurAnmelden(PK_12_13);
 
         boolean b = buchungsValidierung.klausurAmGleichenTag(Set.of(PK_12_13), urlaubsStart);
@@ -253,7 +251,6 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         Student student = new Student(10L, "ibimsgithub");
-        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_12_13.getLsfId().getId());
         student.klausurAnmelden(OK_12_13);
 
         Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_12_13), startUrlaub, endeUrlaub);
@@ -268,7 +265,6 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         Student student = new Student(10L, "ibimsgithub");
-        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_12_13.getLsfId().getId());
         student.klausurAnmelden(OK_12_13);
 
         Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_12_13), startUrlaub, endeUrlaub);
@@ -283,7 +279,6 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         Student student = new Student(10L, "ibimsgithub");
-        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_10_1130.getLsfId().getId());
         student.klausurAnmelden(OK_10_1130);
 
         Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_10_1130), startUrlaub, endeUrlaub);
@@ -298,7 +293,6 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         Student student = new Student(10L, "ibimsgithub");
-        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_11_1230.getLsfId().getId());
         student.klausurAnmelden(OK_11_1230);
 
         Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_11_1230), startUrlaub, endeUrlaub);
@@ -313,7 +307,6 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         Student student = new Student(10L, "ibimsgithub");
-        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_11_1230.getLsfId().getId());
         student.klausurAnmelden(OK_11_1230);
 
         Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_11_1230), startUrlaub, endeUrlaub);
@@ -328,7 +321,6 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
         Student student = new Student(10L, "ibimsgithub");
-        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_930_1230.getLsfId().getId());
         student.klausurAnmelden(OK_930_1230);
 
         Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_930_1230), startUrlaub, endeUrlaub);
@@ -343,7 +335,6 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         Student student = new Student(10L, "ibimsgithub");
-        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_1030_1130.getLsfId().getId());
         student.klausurAnmelden(OK_1030_1130);
 
         Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_1030_1130), startUrlaub, endeUrlaub);
@@ -358,7 +349,6 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
         Student student = new Student(10L, "ibimsgithub");
-        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_1130_1230.getLsfId().getId());
         student.klausurAnmelden(OK_1130_1230);
 
         Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_1130_1230), startUrlaub, endeUrlaub);
@@ -373,7 +363,6 @@ public class BuchungsValidierungTests {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 0);
         Student student = new Student(10L, "ibimsgithub");
-        KlausurReferenz klausurReferenz = new KlausurReferenz(OK_930_1130.getLsfId().getId());
         student.klausurAnmelden(OK_930_1130);
 
         Set<Klausur> klausuren = buchungsValidierung.ueberschneidungMitKlausur(Set.of(OK_930_1130), startUrlaub, endeUrlaub);
@@ -385,10 +374,9 @@ public class BuchungsValidierungTests {
     @DisplayName("Bei existierender Veranstaltung wird die VeranstaltungsID auf der geparsten Seite gefunden.")
     void test_26() throws IOException {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-        LsfId lsfId = new LsfId(219960L);
         InputStream resourceAsStream = BuchungsValidierungTests.class.getResourceAsStream("/valideVeranstaltung.html");
         Document parsedDoc = Jsoup.parse(resourceAsStream, StandardCharsets.UTF_8.name(), "");
-        boolean b = buchungsValidierung.gueltigeLsfId(lsfId, parsedDoc);
+        boolean b = buchungsValidierung.gueltigeLsfId(219960L, parsedDoc);
 
         assertThat(b).isTrue();
     }
@@ -397,10 +385,9 @@ public class BuchungsValidierungTests {
     @DisplayName("Bei nicht existierender Veranstaltung wird die VeranstaltungsID nicht auf der geparsten Seite gefunden.")
     void test_27() throws IOException {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
-        LsfId lsfId = new LsfId(519960L);
         InputStream resourceAsStream = BuchungsValidierungTests.class.getResourceAsStream("/invalideVeranstaltung.html");
         Document parsedDoc = Jsoup.parse(resourceAsStream, StandardCharsets.UTF_8.name(), "");
-        boolean b = buchungsValidierung.gueltigeLsfId(lsfId, parsedDoc);
+        boolean b = buchungsValidierung.gueltigeLsfId(519960L, parsedDoc);
 
         assertThat(b).isFalse();
     }

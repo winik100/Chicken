@@ -79,8 +79,8 @@ public class Klausur {
     }
 
     //TODO: Long returnen, um LsfId zu kapseln
-    public LsfId getLsfId() {
-        return lsfId;
+    public Long getLsfId() {
+        return lsfId.getId();
     }
 
     public LocalDateTime getStart() {

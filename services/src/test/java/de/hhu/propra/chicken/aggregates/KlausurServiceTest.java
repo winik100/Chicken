@@ -39,11 +39,10 @@ public class KlausurServiceTest {
 
         KlausurRepository repo = mock(KlausurRepository.class);
         KlausurService service = new KlausurService(repo);
-        LsfId lsfId = new LsfId(234567L);
 
-        service.findeKlausur(lsfId);
+        service.findeKlausur(234567L);
 
-        verify(repo, times(1)).klausurMitLsfId(lsfId.getId());
+        verify(repo, times(1)).klausurMitLsfId(234567L);
     }
 
 }

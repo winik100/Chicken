@@ -42,26 +42,26 @@ public class BuchungsService {
         return start;
     }
 
-    public String klausurBuchen(LsfId lsfId, Long studentID) throws IOException {
+    public String klausurBuchen(Long lsfId, Long studentID) throws IOException {
         if (!validierung.gueltigeLsfId(lsfId)){
             log.error("Student mit ID " + studentID.toString() + " hat ungültige LSF-ID angegeben.");
             return "Die Veranstaltung mit der angegebenen Veranstaltungs-ID existiert nicht.";
         }
         //KlausurReferenz klausur = new KlausurReferenz(lsfId.getId());
-        Klausur klausur = klausurRepository.klausurMitLsfId(lsfId.getId());
+        Klausur klausur = klausurRepository.klausurMitLsfId(lsfId);
         Student student = studentRepository.studentMitId(studentID);
         student.klausurAnmelden(klausur);
-        log.info("Student mit ID " + studentID.toString() + " erfolgreich für Klausur mit ID " + lsfId.getId().toString() + " angemeldet.");
+        log.info("Student mit ID " + studentID.toString() + " erfolgreich für Klausur mit ID " + lsfId.toString() + " angemeldet.");
         return "Die Eingabe ist ok.";
     }
 
-    public void klausurStornieren(LsfId lsfId, Long studentID) {
+    public void klausurStornieren(Long lsfId, Long studentID) {
         //KlausurReferenz klausur = new KlausurReferenz(lsfId.getId());
-        Klausur klausur = klausurRepository.klausurMitLsfId(lsfId.getId());
+        Klausur klausur = klausurRepository.klausurMitLsfId(lsfId);
         Student student = studentRepository.studentMitId(studentID);
         student.klausurAbmelden(klausur);
         log.info("Student mit ID " + studentID.toString() + " hat Klausur mit Veranstaltungs-ID " +
-                lsfId.getId().toString() + " storniert.");
+                lsfId.toString() + " storniert.");
     }
 
     public String urlaubBuchen(Long studentID, LocalDateTime start, LocalDateTime ende) {

@@ -27,7 +27,7 @@ public class KlausurRepoImpl implements KlausurRepository {
 
     @Override
     public void save(Klausur klausur) {
-        KlausurEntity klausurEntity = new KlausurEntity(klausur.getLsfId().getId(), klausur.getName(), klausur.getStart(), klausur.getEnde(), klausur.getTyp());
+        KlausurEntity klausurEntity = new KlausurEntity(klausur.getLsfId(), klausur.getName(), klausur.getStart(), klausur.getEnde(), klausur.getTyp());
         repo.save(klausurEntity);
     }
 

@@ -21,8 +21,8 @@ class BuchungsValidierung {
     private final static LocalTime START = LocalTime.of(9, 30);
     private final static LocalTime ENDE = LocalTime.of(13, 30);
 
-    boolean gueltigeLsfId(LsfId lsfId, Document... document) throws IOException {
-        String lsfIdString = lsfId.getId().toString();
+    boolean gueltigeLsfId(Long lsfId, Document... document) throws IOException {
+        String lsfIdString = lsfId.toString();
         Document doc;
         if (document.length != 0){
             doc = document[0];
