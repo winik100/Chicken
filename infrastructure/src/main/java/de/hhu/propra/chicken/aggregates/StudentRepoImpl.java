@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 public class StudentRepoImpl implements StudentRepository {
@@ -30,21 +31,24 @@ public class StudentRepoImpl implements StudentRepository {
 
     @Override
     public void save(Student student) {
-        StudentEntity studentEntity = new StudentEntity(student.getId(), student.getGithubHandle(), student.getResturlaubInMin(), Collections.emptySet());
+        StudentEntity studentEntity = new StudentEntity(student.getId(), student.getGithubHandle(), student.getResturlaubInMin(),
+                student.getKlausurAnmeldungen().stream().map(KlausurReferenz::new).collect(Collectors.toSet()),
+                student.getUrlaube().stream().map(x -> new UrlaubsEintragEntity(x.start(), x.ende())).collect(Collectors.toSet()));
         studentRepo.save(studentEntity);
     }
 
 
-    //TODO: Sets richtig übergeben mit Query an urlaubs_eintrag
+
     @Override
     public Student studentMitGitHubHandle(String gitHubHandle) {
-        Optional<StudentEntity> studentEntity = studentRepo.findByGitHubHandle(gitHubHandle);
+        Optional<StudentEntity> studentEntity = studentRepo.findByGithubHandle(gitHubHandle);
         StudentEntity student = studentEntity.orElse(null);
         if(student == null) {
             return null;
         }
-        Set<UrlaubsEintragEntity> urlaubsDaten = studentRepo.findUrlaubByStudentId(student.id());
-        Set<KlausurReferenz> klausurIds = klausurRepo.findKlausurIdsByStudentId(student.id());
-        return new Student(student.id(), student.githubHandle(), student.restUrlaub(), Collections.emptySet(), klausurIds);
+//        Set<UrlaubsEintragEntity> urlaubsDaten = studentRepo.findUrlaubByStudentId(student.id());
+        Set<KlausurEntity> klausurEntities = klausurRepo.findAllByStudentId(student.id());
+        Set<KlausurReferenz> ids = klausurEntities.stream().map(x -> new KlausurReferenz(x.getId())).collect(Collectors.toSet());
+        return new Student(student.id(), student.githubHandle(), student.restUrlaub(), Collections.emptySet(), ids);
     }
 }

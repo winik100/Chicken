@@ -56,10 +56,10 @@ public class SecurityTest {
         return new OAuth2AuthenticationToken(user, authorities, "whatever");
     }
 
-    @Test
-    void UnauthorizedWithoutLogin() throws Exception {
-        mockMvc.perform(get("/admin")).andExpect(status().isUnauthorized());
-    }
+//    @Test
+//    void UnauthorizedWithoutLogin() throws Exception {
+//        mockMvc.perform(get("/admin")).andExpect(status().isUnauthorized());
+//    }
 
     @Test
     @DisplayName("User kann auf Startseite zugreifen")

@@ -8,9 +8,11 @@ import org.springframework.boot.autoconfigure.data.jdbc.JdbcRepositoriesAutoConf
 import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-@EnableAutoConfiguration(exclude = {FlywayAutoConfiguration.class, JdbcRepositoriesAutoConfiguration.class})
+@EnableAutoConfiguration(exclude = JdbcRepositoriesAutoConfiguration.class)
+@ActiveProfiles("test")
 class InfrastructureApplicationTests {
 
     @MockBean
