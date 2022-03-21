@@ -96,7 +96,8 @@ public class BuchungsServiceTest {
     }
 
     @Test
-    @DisplayName("Wenn keine Konflikte mit Freistellungszeiträumen exisitieren, wird einfach student.urlaubNehmen mit unverändertem Start- und Endzeitpunkt aufgerufen")
+    @DisplayName("Wenn keine Konflikte mit Freistellungszeiträumen exisitieren, wird einfach student.urlaubNehmen mit " +
+            "unverändertem Start- und Endzeitpunkt aufgerufen")
     void test_7() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
 //        Student student = new Student(10L, "ibimsgithub");
@@ -109,6 +110,7 @@ public class BuchungsServiceTest {
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);
+        when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
@@ -121,13 +123,20 @@ public class BuchungsServiceTest {
     }
 
     @Test
-    @DisplayName("Keine Klausur am gleichen Tag, bereits gebuchter Urlaub, aber 90 Min dazwischen -> student.urlaubNehmen() mit unveränderten Argumenten")
+    @DisplayName("Keine Klausur am gleichen Tag, bereits gebuchter Urlaub, aber 90 Min dazwischen " +
+            "-> student.urlaubNehmen() mit unveränderten Argumenten")
     void test_8(){
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = mock(Student.class);
+        when(student.hatUrlaubAm(any())).thenReturn(true);
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
+        when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
+        when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
+        when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(true);
+        when(buchungsValidierung.mind90MinZwischenUrlauben(any(), any(), any())).thenReturn(true);
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
         LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
@@ -142,13 +151,18 @@ public class BuchungsServiceTest {
     }
 
     @Test
-    @DisplayName("Keine Klausur am gleichen Tag, kein bereits gebuchter Urlaub, weniger als 150 Min Urlaub -> student.urlaubNehmen() mit unveränderten Argumenten")
+    @DisplayName("Keine Klausur am gleichen Tag, kein bereits gebuchter Urlaub, weniger als 150 Min Urlaub " +
+            "-> student.urlaubNehmen() mit unveränderten Argumenten")
     void test_9(){
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
+        when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
+        when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
+        when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(true);
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
 

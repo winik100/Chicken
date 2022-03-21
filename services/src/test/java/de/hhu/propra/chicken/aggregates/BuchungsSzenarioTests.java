@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Set;
 
 
 import static de.hhu.propra.chicken.util.KlausurTemplates.*;
@@ -21,7 +23,11 @@ public class BuchungsSzenarioTests {
         Student michaela = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(michaela);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
+        when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
+        when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
+        when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(true);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
         LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 13, 30);
@@ -38,7 +44,11 @@ public class BuchungsSzenarioTests {
         Student gustav = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(gustav);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
+        when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
+        when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
+        when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(true);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
         LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 13, 30);
@@ -49,13 +59,20 @@ public class BuchungsSzenarioTests {
     }
 
     @Test
-    @DisplayName("Otto schreibt an einem Tag eine Onlineklausur und ist dafür von 10:30 bis 12:00 Uhr freigestellt. Er kann einen Urlaub vor und nach der Klausur nehmen, also zum Beispiel von 10:00 Uhr bis 10:30 und dann von 12:00 bis 12:30 Uhr.")
+    @DisplayName("Otto schreibt an einem Tag eine Onlineklausur und ist dafür von 10:30 bis 12:00 Uhr freigestellt. " +
+            "Er kann einen Urlaub vor und nach der Klausur nehmen, also zum Beispiel von 10:00 Uhr bis 10:30 und dann " +
+            "von 12:00 bis 12:30 Uhr.")
     void test_3() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student otto = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(otto);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
+        when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
+        when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
+        when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);
+        when(buchungsValidierung.ueberschneidungMitKlausur(any(), any(), any())).thenReturn(Set.of());
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(OK_11_12);
         LocalDateTime ersterUrlaubsStart = LocalDateTime.of(2022, 3, 8, 10, 0);
