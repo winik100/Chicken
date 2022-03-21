@@ -1,42 +1,33 @@
-drop table if exists studentBelegtKlausur, urlaubsEintrag, klausur, student;
-
-create table klausur
+create table if not exists klausur
 (
-    id      bigserial
-        primary key,
-    lsf_id bigint       not null,
+    id      bigserial primary key,
+    lsf_id  bigint       not null,
     name    varchar(255) not null,
     start   timestamp    not null,
     ende    timestamp    not null,
     typ     varchar(10)  not null
 );
 
-create table student
+create table if not exists student
 (
-    id             bigserial
-        constraint student_pk
-            primary key,
+    id            bigserial primary key,
     github_handle varchar(255) not null,
     rest_urlaub   bigint       not null
 );
 
-create table urlaubs_eintrag
+create table if not exists urlaubs_eintrag
 (
-    id          bigserial
-        constraint urlaubseintrag_pk
-            primary key,
+    id          bigserial primary key,
     start       timestamp   not null,
     ende        timestamp   not null,
-    student_id bigint not null
-        constraint urlaubseintrag_student_id_fk
-            references student (id)
+    student_id     bigint references student (id)
 );
 
-create table student_belegt_klausur
+create table if not exists student_belegt_klausur
 (
-    student_id bigint references student(id),
+    id bigint references student(id),
     klausur_id bigint references klausur(id),
-    primary key (student_id, klausur_id)
+    primary key (id, klausur_id)
 );
 
 

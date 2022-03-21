@@ -10,9 +10,10 @@ spring:
     user: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
   datasource:
-    url: jdbc:postgresql://localhost:5432/propra2
+    url: jdbc:postgresql://localhost:5432/propra2?currentSchema=chicken
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
+
   security:
     oauth2:
       client:
