@@ -60,14 +60,20 @@ public class StudentController {
     @PostMapping("/klausurregistrierung")
     public String klausurregistrierungDurchfuehren(Model model, @RequestParam("veranstaltung") String name,
                                                   @RequestParam("lsfid") Long lsfId,
-                                                  @RequestParam("vor_ort") String praesenz,
+                                                  @RequestParam(value = "vor_ort", required = false) String praesenz,
                                                   @RequestParam("datum") String datum,
                                                   @RequestParam("von") String von,
                                                   @RequestParam("bis") String bis){
         DateTimeFormatter zeitFormatierer = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDateTime start = LocalDateTime.parse(datum + " " + von, zeitFormatierer);
         LocalDateTime ende = LocalDateTime.parse(datum + " " + bis, zeitFormatierer);
-        klausurService.klausurHinzufuegen(null, lsfId, name, start, ende, praesenz);
+        if ("true".equals(praesenz)) {
+            praesenz = "praesenz";
+        }
+        else {
+            praesenz = "online";
+        }
+        klausurService.klausurHinzufuegen(lsfId, name, start, ende, praesenz);
         return "redirect:/klausuranmeldung";
     }
 }

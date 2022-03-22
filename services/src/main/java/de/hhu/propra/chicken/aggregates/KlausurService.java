@@ -15,10 +15,10 @@ public class KlausurService {
         this.repo = repo;
     }
 
-    public void klausurHinzufuegen(Long id, Long lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
+    public void klausurHinzufuegen(Long lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
         Klausur klausur = repo.klausurMitLsfId(lsfId);
         if (klausur == null) {
-            klausur = new Klausur(id, lsfId, name, start, ende, typ);
+            klausur = new Klausur(null, lsfId, name, start, ende, typ);
             repo.save(klausur);
         }
     }
