@@ -18,7 +18,7 @@ public class BuchungsSzenarioTests {
 
     @Test
     @DisplayName("Michaela will einen kompletten Tag frei machen. Das geht, wenn Sie sonst keinen Urlaub genommen hat.")
-    void test_1(){
+    void test_1() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student michaela = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(michaela);
@@ -39,7 +39,7 @@ public class BuchungsSzenarioTests {
 
     @Test
     @DisplayName("Gustav möchte an einem Tag mittags Feierabend machen. Er kann einen Urlaub von 12:00 Uhr bis zum Praktikumsende einreichen.")
-    void test_2(){
+    void test_2() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student gustav = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(gustav);
@@ -90,7 +90,7 @@ public class BuchungsSzenarioTests {
 
     @Test
     @DisplayName("Petra möchte von 10:00 Uhr bis 10:30 Uhr und von 11:30 bis 12:00 freinehmen. Das geht leider nicht, da die beiden Blöcke am Anfang und Ende des Tages liegen müssen.")
-    void test_4(){
+    void test_4() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student petra = new Student(10L, "ibimspetra");
         when(studentRepo.studentMitId(anyLong())).thenReturn(petra);
@@ -110,7 +110,7 @@ public class BuchungsSzenarioTests {
 
     @Test
     @DisplayName("Fritz möchte an einem Tag drei Stunden freinehmen. Das geht leider nicht, da er entweder komplett frei machen oder mindestens 90 Minuten im Praktikum sein muss.")
-    void test_5(){
+    void test_5() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student fritz = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(fritz);

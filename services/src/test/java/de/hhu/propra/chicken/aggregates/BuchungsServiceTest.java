@@ -53,7 +53,7 @@ public class BuchungsServiceTest {
 
     @Test
     @DisplayName("BuchungsService.urlaubStornieren() ruft Student.urlaubEntfernen() korrekt auf")
-    void test_4() {
+    void test_4() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = new Student(10L, "ibimsgithub");
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
@@ -125,7 +125,7 @@ public class BuchungsServiceTest {
     @Test
     @DisplayName("Keine Klausur am gleichen Tag, bereits gebuchter Urlaub, aber 90 Min dazwischen " +
             "-> student.urlaubNehmen() mit unveränderten Argumenten")
-    void test_8(){
+    void test_8() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = mock(Student.class);
         when(student.hatUrlaubAm(any())).thenReturn(true);
@@ -153,7 +153,7 @@ public class BuchungsServiceTest {
     @Test
     @DisplayName("Keine Klausur am gleichen Tag, kein bereits gebuchter Urlaub, weniger als 150 Min Urlaub " +
             "-> student.urlaubNehmen() mit unveränderten Argumenten")
-    void test_9(){
+    void test_9() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(student);
