@@ -34,6 +34,14 @@ public class Student {
         this.klausurAnmeldungen = klausurAnmeldungen;
     }
 
+    public Long summeBisherigenUrlaubs(){
+        if (urlaube.isEmpty()){
+            return 0L;
+        }
+        Set<Long> urlaubsZeitraeume = urlaube.stream().map(x -> Duration.between(x.start(), x.ende()).toMinutes()).collect(Collectors.toSet());
+        return urlaubsZeitraeume.stream().reduce(0L, Long::sum);
+    }
+
     public Set<UrlaubsEintrag> getUrlaube() {
         return urlaube;
     }

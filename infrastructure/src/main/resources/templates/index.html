@@ -26,11 +26,11 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>21.03.2022</td>
-            <td>10:00</td>
-            <td>11:00</td>
-            <td>60</td>
+        <tr th:each="u : ${urlaube}">
+            <td th:text="${u.start().toLocalDate()}">Datum</td>
+            <td th:text="${u.start().toLocalTime()}">von</td>
+            <td th:text="${u.ende().toLocalTime()}">bis</td>
+            <td th:text="${u.dauerInMin()}">Zeit (min)</td>
             <td>
                 <form name="storno_21.03.2022_10:00_11:00"
                       method="post" action="/urlaubstorno">
@@ -50,14 +50,14 @@
             <td><strong>Summe</strong></td>
             <td></td>
             <td></td>
-            <td><strong>60</strong></td>
+            <td><strong th:text="${student.summeBisherigenUrlaubs()}"></strong></td>
             <td></td>
         </tr>
         <tr>
             <td><strong>Resturlaub</strong></td>
             <td></td>
             <td></td>
-            <td><strong>180</strong></td>
+            <td><strong th:text="${student.getResturlaubInMin()}"></strong></td>
         </tr>
         </tfoot>
     </table>
@@ -69,19 +69,17 @@
             <thead>
             <tr>
                 <th>Veranstaltung</th>
-                <th>Klausurbeginn</th>
-                <th>Klausurende</th>
-                <th>Freistellungsbeginn</th>
-                <th>Freistellungsende</th>
+                <th>Datum</th>
+                <th>Klausurzeitraum</th>
+                <th>Freistellungszeitraum</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="k : ${klausuren}">
-                <td th:text="${k.getName()}">Veranstaltungsname</td>
-                <td th:text="${k.getStart()}">Klausurbeginn</td>
-                <td th:text="${k.getEnde()}">Klausurende</td>
-                <td th:text="${k.startFreistellungBerechnen()}">Freistellungsbeginn</td>
-                <td th:text="${k.endeFreistellungBerechnen()}">Freistellungsende</td>
+                <td th:text="${k.getName()}"></td>
+                <td th:text="${k.getStart().toLocalDate()}"></td>
+                <td><span th:text="${k.getStart().toLocalTime()}"></span><span> - </span><span th:text="${k.getEnde().toLocalTime()}"></span></td>
+                <td><span th:text="${k.startFreistellungBerechnen().toLocalTime()}"></span><span> - </span><span th:text="${k.endeFreistellungBerechnen().toLocalTime()}"></span></td>
                 <td>
                     <form method="post"
                           action="/klausurstorno">

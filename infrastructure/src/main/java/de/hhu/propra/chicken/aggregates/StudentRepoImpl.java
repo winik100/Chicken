@@ -46,9 +46,10 @@ public class StudentRepoImpl implements StudentRepository {
         if(student == null) {
             return null;
         }
-//        Set<UrlaubsEintragEntity> urlaubsDaten = studentRepo.findUrlaubByStudentId(student.id());
+        Set<UrlaubsEintragEntity> urlaubsEintragEntities = student.urlaubsEintraege();
+        Set<UrlaubsEintrag> urlaubsEintraege = urlaubsEintragEntities.stream().map(x -> new UrlaubsEintrag(x.start(), x.ende())).collect(Collectors.toSet());
         Set<KlausurEntity> klausurEntities = klausurRepo.findAllByStudentId(student.id());
         Set<KlausurReferenz> ids = klausurEntities.stream().map(x -> new KlausurReferenz(x.getId())).collect(Collectors.toSet());
-        return new Student(student.id(), student.githubHandle(), student.restUrlaub(), Collections.emptySet(), ids);
+        return new Student(student.id(), student.githubHandle(), student.restUrlaub(), urlaubsEintraege, ids);
     }
 }

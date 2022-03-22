@@ -2,6 +2,7 @@ package de.hhu.propra.chicken.web;
 
 import de.hhu.propra.chicken.aggregates.BuchungsService;
 import de.hhu.propra.chicken.aggregates.KlausurService;
+import de.hhu.propra.chicken.aggregates.Student;
 import de.hhu.propra.chicken.aggregates.StudentenService;
 import de.hhu.propra.chicken.web.configuration.MethodSecurityConfiguration;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +21,8 @@ import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import java.util.Collections;
@@ -65,6 +68,7 @@ public class SecurityTest {
     @DisplayName("User kann auf Startseite zugreifen")
     void test_2() throws Exception {
         OAuth2AuthenticationToken principal = buildPrincipal("user", "Max Mustermann");
+        when(studentenService.findeStudentMitHandle(any())).thenReturn(new Student(1L, "blabla"));
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
@@ -107,6 +111,7 @@ public class SecurityTest {
     @DisplayName("Tutor kann auf Startseite zugreifen")
     void test_5() throws Exception {
         OAuth2AuthenticationToken principal = buildPrincipal("tutor", "Max Mustermann");
+        when(studentenService.findeStudentMitHandle(any())).thenReturn(new Student(1L, "blabla"));
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
@@ -150,6 +155,7 @@ public class SecurityTest {
     void test_8() throws Exception {
         OAuth2AuthenticationToken principal = buildPrincipal("admin", "Max Mustermann");
         MockHttpSession session = new MockHttpSession();
+        when(studentenService.findeStudentMitHandle(any())).thenReturn(new Student(1L, "blabla"));
         session.setAttribute(
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                 new SecurityContextImpl(principal));

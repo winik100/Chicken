@@ -14,5 +14,5 @@ public record StudentEntity(@Id Long id,
                             @Column("github_handle")String githubHandle,
                             @Column("rest_urlaub")Long restUrlaub,
                             @MappedCollection(idColumn = "id") Set<KlausurReferenz> klausurReferenzen,
-                            @MappedCollection(idColumn = "id") Set<UrlaubsEintragEntity> urlaubsEintraege) {
+                            @MappedCollection(idColumn = "student_id") Set<UrlaubsEintragEntity> urlaubsEintraege) {
 }

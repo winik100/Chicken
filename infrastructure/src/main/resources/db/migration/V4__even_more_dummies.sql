@@ -20,7 +20,7 @@ values (2, 219468, 'Rechnerarchitektur', '2022-03-15 08:30:00', '2022-03-15 09:3
 
 -- student belegt klausur
 
-insert into student_belegt_klausur (student_id, klausur_id)
+insert into student_belegt_klausur (id, klausur_id)
 values (10, 4),
     (42, 5),
     (48, 5),

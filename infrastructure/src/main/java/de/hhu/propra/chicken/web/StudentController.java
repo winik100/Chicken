@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,15 +32,15 @@ public class StudentController {
     public String index(@AuthenticationPrincipal OAuth2User principal, Model model) {
         String gitHubHandle = principal.getAttribute("login");
         Student student = studentenService.findeStudentMitHandle(gitHubHandle);
-        Set<Klausur> klausuren = new HashSet<>();
         if (student != null){
-            Set<Long> ids = student.getKlausurAnmeldungen();
-            Set<Klausur> klausurs = klausurService.findeKlausurenMitIds(ids);
-            klausuren.addAll(klausurs);
+            Set<Klausur> klausurenAusDB = klausurService.findeKlausurenMitIds(student.getKlausurAnmeldungen());
+            model.addAttribute("klausuren", klausurenAusDB);
+            model.addAttribute("urlaube", student.getUrlaube());
+            model.addAttribute("student", student);
+        } else {
+            model.addAttribute("klausuren", Collections.EMPTY_SET);
+            model.addAttribute("urlaube", Collections.EMPTY_SET);
         }
-
-        model.addAttribute("klausuren", klausuren);
-        model.addAttribute("handle", gitHubHandle);
         return "index";
     }
 
