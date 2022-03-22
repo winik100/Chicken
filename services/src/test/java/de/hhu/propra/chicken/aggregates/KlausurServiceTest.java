@@ -15,7 +15,7 @@ public class KlausurServiceTest {
         KlausurService service = new KlausurService(repo);
         when(repo.klausurMitLsfId(any())).thenReturn(PK_12_13);
 
-        service.klausurHinzufuegen(PK_12_13.getId(), PK_12_13.getLsfId(), "Mathe", PK_12_13.getStart(), PK_12_13.getEnde(),"praesenz");
+        service.klausurHinzufuegen(PK_12_13.getLsfId(), "Mathe", PK_12_13.getStart(), PK_12_13.getEnde(),"praesenz");
 
         verify(repo, never()).save(PK_12_13);
     }
@@ -28,7 +28,7 @@ public class KlausurServiceTest {
         KlausurService service = new KlausurService(repo);
         when(repo.klausurMitLsfId(any())).thenReturn(null);
 
-        service.klausurHinzufuegen(PK_12_13.getId(), PK_12_13.getLsfId(), "Mathe", PK_12_13.getStart(), PK_12_13.getEnde(), "praesenz");
+        service.klausurHinzufuegen(PK_12_13.getLsfId(), "Mathe", PK_12_13.getStart(), PK_12_13.getEnde(), "praesenz");
 
         verify(repo, times(1)).save(PK_12_13);
     }

@@ -22,15 +22,15 @@ public class Klausur {
 
 
 
-//    public Klausur(LsfId lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
-//        this.lsfId = lsfId;
-//        this.name = name;
-//        this.start = start;
-//        this.ende = ende;
-//        if (typ.equals("praesenz")) {
-//            this.typ = KlausurTyp.PRAESENZ;
-//        }
-//    }
+    public Klausur(Long lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
+        this.lsfId = new LsfId(lsfId);
+        this.name = name;
+        this.start = start;
+        this.ende = ende;
+        if (typ.equals("praesenz")) {
+            this.typ = KlausurTyp.PRAESENZ;
+        }
+    }
 
     public Klausur(Long id, Long lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
         this.id = id;
@@ -92,7 +92,7 @@ public class Klausur {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Klausur klausur = (Klausur) o;
-        return id.equals(klausur.id);
+        return lsfId.equals(klausur.lsfId);
     }
 
     @Override

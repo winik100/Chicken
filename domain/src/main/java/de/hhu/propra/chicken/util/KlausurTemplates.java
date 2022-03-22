@@ -10,7 +10,7 @@ public class KlausurTemplates {
             LocalDateTime.of(2022, 3, 8, 10, 0),
             LocalDateTime.of(2022, 3, 8, 11, 0), "praesenz");
 
-    public static final Klausur PK_12_13 = new Klausur(1L, 111111L, "Mathe",
+    public static final Klausur PK_12_13 = new Klausur(0L, 111111L, "Mathe",
             LocalDateTime.of(2022, 3, 8, 12, 0),
             LocalDateTime.of(2022, 3, 8, 13, 0), "praesenz");
 

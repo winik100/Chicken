@@ -18,7 +18,7 @@ public class KlausurService {
     public void klausurHinzufuegen(Long lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
         Klausur klausur = repo.klausurMitLsfId(lsfId);
         if (klausur == null) {
-            klausur = new Klausur(null, lsfId, name, start, ende, typ);
+            klausur = new Klausur(lsfId, name, start, ende, typ);
             repo.save(klausur);
         }
     }
