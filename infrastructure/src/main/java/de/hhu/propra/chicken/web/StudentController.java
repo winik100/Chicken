@@ -1,18 +1,21 @@
 package de.hhu.propra.chicken.web;
 
 import de.hhu.propra.chicken.aggregates.*;
-import de.hhu.propra.chicken.util.KlausurReferenz;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 @Secured({"ROLE_USER", "ROLE_TUTOR", "ROLE_ADMIN"})
@@ -32,7 +35,7 @@ public class StudentController {
     public String index(@AuthenticationPrincipal OAuth2User principal, Model model) {
         String gitHubHandle = principal.getAttribute("login");
         Student student = studentenService.findeStudentMitHandle(gitHubHandle);
-        if (student != null){
+        if (student != null) {
             Set<Klausur> klausurenAusDB = klausurService.findeKlausurenMitIds(student.getKlausurAnmeldungen());
             model.addAttribute("klausuren", klausurenAusDB);
             model.addAttribute("urlaube", student.getUrlaube());
@@ -44,7 +47,27 @@ public class StudentController {
         return "index";
     }
 
+    @GetMapping("/klausuranmeldung")
+    public String klausuranmeldung() {
+        return "klausuranmeldung";
+    }
 
+    @GetMapping("/klausurregistrierung")
+    public String klausurregistrierung() {
+        return "klausurregistrierung";
+    }
 
-
+    @PostMapping("/klausurregistrierung")
+    public String klausurregistrierungDurchfuehren(Model model, @RequestParam("veranstaltung") String name,
+                                                  @RequestParam("lsfid") Long lsfId,
+                                                  @RequestParam("vor_ort") String praesenz,
+                                                  @RequestParam("datum") String datum,
+                                                  @RequestParam("von") String von,
+                                                  @RequestParam("bis") String bis){
+        DateTimeFormatter zeitFormatierer = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        LocalDateTime start = LocalDateTime.parse(datum + " " + von, zeitFormatierer);
+        LocalDateTime ende = LocalDateTime.parse(datum + " " + bis, zeitFormatierer);
+        klausurService.klausurHinzufuegen(null, lsfId, name, start, ende, praesenz);
+        return "redirect:/klausuranmeldung";
+    }
 }
