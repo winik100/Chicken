@@ -1,7 +1,6 @@
 package de.hhu.propra.chicken.aggregates;
 
 import de.hhu.propra.chicken.stereotype.AggregateRoot;
-import de.hhu.propra.chicken.util.KlausurReferenz;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -17,6 +16,14 @@ public class Student {
     Long restUrlaub;
     Set<UrlaubsEintrag> urlaube;
     Set<KlausurReferenz> klausurAnmeldungen;
+
+    public Student(String github){
+        this.id = null;
+        this.githubHandle = github;
+        this.restUrlaub = 240L;
+        this.urlaube = new HashSet<>();
+        this.klausurAnmeldungen = new HashSet<>();
+    }
 
     public Student(Long id, String github) {
         this.id = id;
