@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Set;
 
@@ -18,11 +20,16 @@ import static org.mockito.Mockito.*;
 
 public class BuchungsSzenarioTests {
 
+
+
+
+
     @AfterAll
     static void logLoeschen(){
         File file = new File("auditlog.txt");
         file.delete();
     }
+
 
     @Test
     @DisplayName("Michaela will einen kompletten Tag frei machen. Das geht, wenn Sie sonst keinen Urlaub genommen hat.")
@@ -132,7 +139,11 @@ public class BuchungsSzenarioTests {
         Student fritz = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(fritz);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
+        when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
+        when(buchungsValidierung.mind90MinZwischenUrlauben(any(), any(), any())).thenReturn(true);
+        when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(false);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
         LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 13, 0);

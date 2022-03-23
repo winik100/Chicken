@@ -2,6 +2,12 @@ rollen:
   admin: winik100
   tutor:
 
+praktikumsdauer:
+  startZeit:
+  endZeit:
+  startTag:
+  endTag:
+
 spring:
   flyway:
     schemas: chicken

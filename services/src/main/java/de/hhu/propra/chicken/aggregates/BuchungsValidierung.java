@@ -14,8 +14,19 @@ import java.util.stream.Collectors;
 
 public class BuchungsValidierung {
 
-    private final static LocalTime START = LocalTime.of(9, 30);
-    private final static LocalTime ENDE = LocalTime.of(13, 30);
+    private final LocalTime startZeit;
+    private final LocalTime endZeit;
+    private final LocalDate startTag;
+    private final LocalDate endTag;
+
+
+    public BuchungsValidierung(LocalTime startZeit, LocalTime endZeit,
+                               LocalDate startTag, LocalDate endTag) {
+        this.startZeit = startZeit;
+        this.endZeit = endZeit;
+        this.startTag = startTag;
+        this.endTag = endTag;
+    }
 
     boolean gueltigeLsfId(Long lsfId, Document... document) throws IOException {
         String lsfIdString = lsfId.toString();
@@ -68,12 +79,12 @@ public class BuchungsValidierung {
 
     boolean istAmEndeDesTages(LocalDateTime zeit) {
         LocalDate tag = zeit.toLocalDate();
-        return zeit.equals(LocalDateTime.of(tag, ENDE));
+        return zeit.equals(LocalDateTime.of(tag, endZeit));
     }
 
     boolean istAmAnfangDesTages(LocalDateTime zeit) {
         LocalDate tag = zeit.toLocalDate();
-        return zeit.equals(LocalDateTime.of(tag, START));
+        return zeit.equals(LocalDateTime.of(tag, startZeit));
     }
 
     Set<Klausur> ueberschneidungMitKlausur(Set<Klausur> klausuren, LocalDateTime urlaubsStart, LocalDateTime urlaubsEnde) {
