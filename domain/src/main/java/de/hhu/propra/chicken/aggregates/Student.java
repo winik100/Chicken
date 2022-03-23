@@ -25,6 +25,7 @@ public class Student {
         this.klausurAnmeldungen = new HashSet<>();
     }
 
+    // Konstruktor für Tests, keine Zeit für komplettes Refactoring :(
     public Student(Long id, String github) {
         this.id = id;
         this.githubHandle = github;
@@ -80,21 +81,13 @@ public class Student {
         }
     }
 
-
-
      public void klausurAbmelden(Klausur klausur) {
             klausurAnmeldungen.remove(new KlausurReferenz(klausur.getId()));
         }
-//    public void klausurAbmelden(KlausurReferenz klausur) {
-//        klausurAnmeldungen.remove(klausur);
-//    }
 
      public void klausurAnmelden(Klausur klausur) {
             klausurAnmeldungen.add(new KlausurReferenz(klausur.getId()));
         }
-//    public void klausurAnmelden(KlausurReferenz klausur) {
-//        klausurAnmeldungen.add(klausur);
-//    }
 
     public boolean hatUrlaubAm(LocalDate tag) {
         List<LocalDate> urlaubsDaten = urlaube.stream().map(x -> x.start().toLocalDate()).toList();
@@ -132,22 +125,46 @@ public class Student {
     }
 
     public boolean ueberschneidungMitBestehendemUrlaub(LocalDateTime start, LocalDateTime ende) {
+        Set<UrlaubsEintrag> urlaubeMitUeberschneidung = ueberschneidendeUrlaube(start, ende);
+        return !urlaubeMitUeberschneidung.isEmpty();
+    }
+
+    public boolean ueberschneidungKlausurMitBestehendemUrlaub(Klausur klausur) {
+        LocalDateTime start = klausur.startFreistellungBerechnen();
+        LocalDateTime ende = klausur.endeFreistellungBerechnen();
+        Set<UrlaubsEintrag> urlaubeMitUeberschneidung = ueberschneidendeUrlaube(start, ende);
+        return !urlaubeMitUeberschneidung.isEmpty();
+    }
+
+    private Set<UrlaubsEintrag> ueberschneidendeUrlaube(LocalDateTime start, LocalDateTime ende) {
         Set<UrlaubsEintrag> urlaubeMitUeberschneidung = new HashSet<>();
         Set<UrlaubsEintrag> alleUrlaube = urlaube.stream()
                 .filter(x -> x.start().toLocalDate().equals(start.toLocalDate()))
                 .collect(Collectors.toSet());
         for (UrlaubsEintrag u : alleUrlaube) {
-            if (u.start().isAfter(start.minusMinutes(1)) && u.start().isBefore((ende))) {
-                urlaubeMitUeberschneidung.add(u);
-            }
-            if (u.ende().isAfter(start) && u.ende().minusMinutes(1).isBefore(ende)) {
-                urlaubeMitUeberschneidung.add(u);
-            }
-            if (u.start().isBefore(start) && u.ende().isAfter(ende)) {
+            if (ueberschneidung(u.start(), u.ende(), start, ende)) {
                 urlaubeMitUeberschneidung.add(u);
             }
         }
-        return !urlaubeMitUeberschneidung.isEmpty();
+        return urlaubeMitUeberschneidung;
+    }
+
+    private boolean ueberschneidung (LocalDateTime start1, LocalDateTime ende1, LocalDateTime start2, LocalDateTime ende2) {
+        return start1.isBefore(ende2) && start2.isBefore(ende1);
+    }
+
+    public void bestehendenUrlaubAnKlausurAnpassen (Klausur klausur) {
+        LocalDateTime freistellungsStart = klausur.startFreistellungBerechnen();
+        LocalDateTime freistellungsEnde = klausur.endeFreistellungBerechnen();
+
+        Set<UrlaubsEintrag> ueberschneidendeUrlaube = urlaube.stream()
+                .filter(u -> ueberschneidung(u.start(), u.ende(), freistellungsStart, freistellungsEnde))
+                .collect(Collectors.toSet());
+
+        for ( UrlaubsEintrag u : ueberschneidendeUrlaube) {
+            urlaubAnKlausurAnpassenUndNehmen(Set.of(klausur), u.start(), u.ende());
+            urlaubEntfernen(u.start(), u.ende());
+        }
     }
 
 

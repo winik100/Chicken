@@ -61,7 +61,7 @@ public class SecurityTest {
 
 //    @Test
 //    void UnauthorizedWithoutLogin() throws Exception {
-//        mockMvc.perform(get("/admin")).andExpect(status().isUnauthorized());
+//        mockMvc.perform(get("/")).andExpect(status().isUnauthorized());
 //    }
 
     @Test

@@ -7,12 +7,12 @@ spring:
     schemas: chicken
     create-schemas: true
     url: jdbc:postgresql://localhost:5432/
-    user: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
+    user: propra2
+    password: propra2
   datasource:
     url: jdbc:postgresql://localhost:5432/propra2?currentSchema=chicken
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
+    username: propra2
+    password: propra2
 
   security:
     oauth2:

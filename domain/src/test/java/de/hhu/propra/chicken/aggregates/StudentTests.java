@@ -272,4 +272,156 @@ class StudentTests {
         assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(OK_1015_11.endeFreistellungBerechnen(), OK_12_13.startFreistellungBerechnen()));
         assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(OK_12_13.endeFreistellungBerechnen(), endeUrlaub));
     }
+
+    @Test
+    @DisplayName("Eine Präsenzklausur von 10 bis 11 überschneidet sich mit ganztägigem Urlaub.")
+    void test_19() {
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub, endeUrlaub);
+
+        boolean b = student.ueberschneidungKlausurMitBestehendemUrlaub(PK_10_11);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Eine Präsenzklausur von 10 bis 11 überschneidet sich nicht, da der Student keinen Urlaub genommen hat.")
+    void test_20() {
+        Student student = new Student(10L, "ibimsgithub");
+
+        boolean b = student.ueberschneidungKlausurMitBestehendemUrlaub(PK_10_11);
+
+        assertThat(b).isFalse();
+    }
+
+    @Test
+    @DisplayName("Eine Präsenzklausur von 10 bis 11 überschneidet sich nicht mit Urlaub von 13 bis 13:30.")
+    void test_21() {
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 13, 0);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub, endeUrlaub);
+
+        boolean b = student.ueberschneidungKlausurMitBestehendemUrlaub(PK_10_11);
+
+        assertThat(b).isFalse();
+    }
+
+    @Test
+    @DisplayName("Eine Onlineklausur von 12 bis 13 überschneidet sich mit Urlaub von 11 bis 12.")
+    void test_22() {
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub, endeUrlaub);
+
+        boolean b = student.ueberschneidungKlausurMitBestehendemUrlaub(OK_12_13);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Eine Onlineklausur von 12 bis 13 überschneidet sich mit Urlaub von 12 bis 13:30.")
+    void test_23() {
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub, endeUrlaub);
+
+        boolean b = student.ueberschneidungKlausurMitBestehendemUrlaub(OK_12_13);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Eine Onlineklausur von 12 bis 13 überschneidet sich mit Urlaub von 11 bis 12 und einem Urlaub von 12:30 bis 13:30.")
+    void test_24() {
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 0);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 30);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 13, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+        student.urlaubNehmen(startUrlaub2, endeUrlaub2);
+
+        boolean b = student.ueberschneidungKlausurMitBestehendemUrlaub(OK_12_13);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Beim Anpassen an eine Onlineklausur von 12 bis 13 wird der ganztägige Urlaub in zwei Urlaube geteilt.")
+    void test_25() {
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub, endeUrlaub);
+
+        student.bestehendenUrlaubAnKlausurAnpassen(OK_12_13);
+
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub, startUrlaub.plusMinutes(120)));
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(endeUrlaub.minusMinutes(30), endeUrlaub));
+        assertThat(student.getUrlaube()).doesNotContain(new UrlaubsEintrag(startUrlaub, endeUrlaub));
+        assertThat(student.getUrlaube().size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("Beim Anpassen an eine Onlineklausur von 12 bis 13 wird der Urlaub bis 12:30 auf 11:30 verkürtzt.")
+    void test_26() {
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub, endeUrlaub);
+
+        student.bestehendenUrlaubAnKlausurAnpassen(OK_12_13);
+
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub, startUrlaub.plusMinutes(120)));
+        assertThat(student.getUrlaube()).doesNotContain(new UrlaubsEintrag(startUrlaub, endeUrlaub));
+        assertThat(student.getUrlaube().size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("Beim Anpassen an eine Onlineklausur von 12:00 bis 13:00 wird der Urlaubsbeginn von 12:00 auf 13:00 geändert.")
+    void test_27() {
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub, endeUrlaub);
+
+        student.bestehendenUrlaubAnKlausurAnpassen(OK_12_13);
+
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(endeUrlaub.minusMinutes(30), endeUrlaub));
+        assertThat(student.getUrlaube()).doesNotContain(new UrlaubsEintrag(startUrlaub, endeUrlaub));
+        assertThat(student.getUrlaube().size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("Beim Anpassen an eine Onlineklausur von 12:00 bis 13:00 wird der Urlaub von 12:00 bis 12:30 entfernt.")
+    void test_28() {
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub, endeUrlaub);
+
+        student.bestehendenUrlaubAnKlausurAnpassen(OK_12_13);
+
+        assertThat(student.getUrlaube()).doesNotContain(new UrlaubsEintrag(startUrlaub, endeUrlaub));
+        assertThat(student.getUrlaube().size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("Beim Anpassen an eine Onlineklausur von 12:00 bis 13:00 wird der Urlaub von 9:30 bis 10:00 nicht geändert.")
+    void test_29() {
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub, endeUrlaub);
+
+        student.bestehendenUrlaubAnKlausurAnpassen(OK_12_13);
+
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub, endeUrlaub));
+        assertThat(student.getUrlaube().size()).isEqualTo(1);
+    }
 }
