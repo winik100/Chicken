@@ -1,4 +1,4 @@
-package de.hhu.propra.chicken.web;
+package de.hhu.propra.chicken.web.controllers;
 
 import de.hhu.propra.chicken.aggregates.*;
 import org.springframework.security.access.annotation.Secured;
@@ -7,10 +7,12 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -33,23 +35,29 @@ public class StudentController {
     }
 
     @GetMapping("/")
-    public String index(@AuthenticationPrincipal OAuth2User principal, Model model) {
-        String gitHubHandle = principal.getAttribute("login");
-        Student student = studentenService.findeStudentMitHandle(gitHubHandle);
+    public String index(@AuthenticationPrincipal OAuth2User principal, Model model) throws IOException {
+        Student student = studentenService.findeStudentMitHandle(principal.getAttribute("login"));
         if (student != null) {
             Set<Klausur> klausurenAusDB = klausurService.findeKlausurenMitIds(student.getKlausurAnmeldungen());
             model.addAttribute("klausuren", klausurenAusDB);
             model.addAttribute("urlaube", student.getUrlaube());
-            model.addAttribute("student", student);
+            model.addAttribute("urlaubssumme", student.summeBisherigenUrlaubs());
+            model.addAttribute("resturlaub", student.getResturlaubInMin());
         } else {
-            model.addAttribute("klausuren", Collections.EMPTY_SET);
-            model.addAttribute("urlaube", Collections.EMPTY_SET);
+            student = new Student(principal.getAttribute("login"));
+            studentenService.studentHinzufuegen(student);
+            model.addAttribute("klausuren", Collections.emptySet());
+            model.addAttribute("urlaube", Collections.emptySet());
+            model.addAttribute("urlaubssumme", 0L);
+            model.addAttribute("resturlaub", 240L);
         }
         return "index";
     }
 
     @GetMapping("/klausuranmeldung")
-    public String klausuranmeldung() {
+    public String klausuranmeldung(Model model) {
+        Set<Klausur> klausuren = klausurService.alleKlausuren();
+        model.addAttribute("klausuren", klausuren);
         return "klausuranmeldung";
     }
 
@@ -59,7 +67,7 @@ public class StudentController {
     }
 
     @PostMapping("/klausurregistrierung")
-    public String klausurregistrierungDurchfuehren(Model model, @RequestParam("veranstaltung") String name,
+    public String klausurregistrierungDurchfuehren(@RequestParam("veranstaltung") String name,
                                                   @RequestParam("lsfid") Long lsfId,
                                                   @RequestParam(value = "vor_ort", required = false) String praesenz,
                                                   @RequestParam("datum") String datum,
@@ -74,7 +82,13 @@ public class StudentController {
         else {
             praesenz = "online";
         }
-        klausurService.klausurHinzufuegen(lsfId, name, start, ende, praesenz);
+        klausurService.klausurHinzufuegen(new Klausur(lsfId, name, start, ende, praesenz));
         return "redirect:/klausuranmeldung";
     }
+
+//    @PostMapping("/klausuranmeldung")
+//    public String klausurAnmeldungDurchfuehren(@RequestParam("klausur")String lsfId, @ModelAttribute("student")Student student) throws IOException {
+//        buchungsService.klausurBuchen(Long.valueOf(lsfId), student.getId());
+//        return "redirect:/klausuranmeldung";
+//    }
 }

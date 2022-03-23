@@ -1,4 +1,4 @@
-package de.hhu.propra.chicken.web;
+package de.hhu.propra.chicken.web.controllers;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@Secured({"ROLE_TUTOR", "ROLE_ADMIN"})
-public class TutorController {
+@Secured({"ROLE_ADMIN"})
+public class AdminController {
 
-    @GetMapping("/tutor")
+    @GetMapping("/admin")
     @ResponseBody
     public String index(Model model) {
-        return "Doesn't feel quite as good to be tutor :_(";
+        return "Feels good to be admin :)";
     }
 
 }
