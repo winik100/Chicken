@@ -34,25 +34,22 @@ public class BuchungsService {
         return start;
     }
 
-    public String klausurBuchen(Long lsfId, Long studentID) throws IOException {
-        Student student = studentRepository.studentMitId(studentID);
-        Klausur klausur = klausurRepository.klausurMitLsfId(lsfId);
+    public String klausurBuchen(Klausur klausur, Student student) throws IOException {
+        if (student.ueberschneidungKlausurMitBestehendemUrlaub(klausur)){
+            student.bestehendenUrlaubAnKlausurAnpassen(klausur);
+        }
         student.klausurAnmelden(klausur);
-        log.eintragen(student.getGithubHandle(), "Erfolgreiche Anmeldung der Klausur mit LSF-ID " + lsfId + ".", "INFO", LocalDateTime.now());
+        log.eintragen(student.getGithubHandle(), "Erfolgreiche Anmeldung der Klausur mit LSF-ID " + klausur + ".", "INFO", LocalDateTime.now());
         return "";
     }
 
-    public String klausurStornieren(Long lsfId, Long studentID) throws IOException {
-        //KlausurReferenz klausur = new KlausurReferenz(lsfId.getId());
-        Klausur klausur = klausurRepository.klausurMitLsfId(lsfId);
-        Student student = studentRepository.studentMitId(studentID);
+    public String klausurStornieren(Klausur klausur, Student student) throws IOException {
         student.klausurAbmelden(klausur);
-        log.eintragen(student.getGithubHandle(), "Erfolgreiche Stornierung der Klausur mit LSF-ID " + lsfId + ".", "INFO", LocalDateTime.now());
+        log.eintragen(student.getGithubHandle(), "Erfolgreiche Stornierung der Klausur mit LSF-ID " + klausur + ".", "INFO", LocalDateTime.now());
         return "";
     }
 
-    public String urlaubBuchen(Long studentID, LocalDateTime start, LocalDateTime ende) throws IOException {
-        Student student = studentRepository.studentMitId(studentID);
+    public String urlaubBuchen(Student student, LocalDateTime start, LocalDateTime ende) throws IOException {
         Set<Long> ids = student.getKlausurAnmeldungen();
         Set<Klausur> klausuren = klausurRepository.klausurenMitReferenzen(ids);
 
@@ -104,8 +101,7 @@ public class BuchungsService {
         return "";
     }
 
-    public String urlaubStornieren(Long studentID, LocalDateTime start, LocalDateTime ende) throws IOException {
-        Student student = studentRepository.studentMitId(studentID);
+    public String urlaubStornieren(Student student, LocalDateTime start, LocalDateTime ende) throws IOException {
         student.urlaubEntfernen(start, ende);
         log.eintragen(student.getGithubHandle(), "Erfolgreiche Stornierung von Urlaub am " + start.toLocalDate() + " von " + start.toLocalTime() + " bis " + ende.toLocalTime() + ".", "INFO", LocalDateTime.now());
         return "";

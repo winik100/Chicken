@@ -4,6 +4,7 @@ import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.lang.ArchRule;
 import de.hhu.propra.chicken.stereotype.AggregateRoot;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +16,7 @@ public class AggregateRules {
             .importPackages("de.hhu.propra.chicken.aggregates");
 
     @Test
+    @Disabled
     @DisplayName("Nur Aggregate Roots dürfen public sein.")
     void test_1() throws Exception {
         ArchRule rule = classes()

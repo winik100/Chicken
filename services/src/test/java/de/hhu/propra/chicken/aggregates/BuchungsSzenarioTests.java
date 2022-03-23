@@ -40,7 +40,7 @@ public class BuchungsSzenarioTests {
         LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 13, 30);
 
-        buchungsService.urlaubBuchen(10L, urlaubsStart, urlaubsEnde);
+        buchungsService.urlaubBuchen(michaela, urlaubsStart, urlaubsEnde);
 
         verify(michaela, times(1)).urlaubNehmen(urlaubsStart, urlaubsEnde);
     }
@@ -61,7 +61,7 @@ public class BuchungsSzenarioTests {
         LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 13, 30);
 
-        buchungsService.urlaubBuchen(10L, urlaubsStart, urlaubsEnde);
+        buchungsService.urlaubBuchen(gustav, urlaubsStart, urlaubsEnde);
 
         verify(gustav, times(1)).urlaubNehmen(urlaubsStart, urlaubsEnde);
     }
@@ -88,9 +88,9 @@ public class BuchungsSzenarioTests {
         LocalDateTime zweiterUrlaubsStart = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime zweitesUrlaubsEnde = LocalDateTime.of(2022, 3, 8, 12, 30);
 
-        buchungsService.klausurBuchen(OK_11_12.getLsfId(), 10L);
-        buchungsService.urlaubBuchen(10L, ersterUrlaubsStart, erstesUrlaubsEnde);
-        buchungsService.urlaubBuchen(10L, zweiterUrlaubsStart, zweitesUrlaubsEnde);
+        buchungsService.klausurBuchen(OK_11_12, otto);
+        buchungsService.urlaubBuchen(otto, ersterUrlaubsStart, erstesUrlaubsEnde);
+        buchungsService.urlaubBuchen(otto, zweiterUrlaubsStart, zweitesUrlaubsEnde);
 
         verify(otto, times(1)).urlaubNehmen(ersterUrlaubsStart, erstesUrlaubsEnde);
         verify(otto, times(1)).urlaubNehmen(zweiterUrlaubsStart, zweitesUrlaubsEnde);
@@ -100,20 +100,29 @@ public class BuchungsSzenarioTests {
     @DisplayName("Petra möchte von 10:00 Uhr bis 10:30 Uhr und von 11:30 bis 12:00 freinehmen. Das geht leider nicht, da die beiden Blöcke am Anfang und Ende des Tages liegen müssen.")
     void test_4() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
-        Student petra = new Student(10L, "ibimspetra");
+        Student petra = mock(Student.class);
         when(studentRepo.studentMitId(anyLong())).thenReturn(petra);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        BuchungsValidierung buchungsValidierung = new BuchungsValidierung();
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
+        when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
+        when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
+        when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(false);
+        when(buchungsValidierung.mind90MinZwischenUrlauben(any(), any(), any())).thenReturn(false);
+        when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(true);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
         LocalDateTime ersterUrlaubsStart = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime erstesUrlaubsEnde = LocalDateTime.of(2022, 3, 8, 10, 30);
         LocalDateTime zweiterUrlaubsStart = LocalDateTime.of(2022, 3, 8, 11, 30);
         LocalDateTime zweitesUrlaubsEnde = LocalDateTime.of(2022, 3, 8, 12, 0);
+        when(petra.hatUrlaubAm(any())).thenReturn(false).thenReturn(true);
+        when(petra.ueberschneidungMitBestehendemUrlaub(any(), any())).thenReturn(false);
 
-        buchungsService.urlaubBuchen(10L, ersterUrlaubsStart, erstesUrlaubsEnde);
-        buchungsService.urlaubBuchen(10L, zweiterUrlaubsStart, zweitesUrlaubsEnde);
+        buchungsService.urlaubBuchen(petra, ersterUrlaubsStart, erstesUrlaubsEnde);
+        buchungsService.urlaubBuchen(petra, zweiterUrlaubsStart, zweitesUrlaubsEnde);
 
-        assertThat(petra.getUrlaube().size()).isEqualTo(1);
+        verify(petra, times(1)).urlaubNehmen(ersterUrlaubsStart, erstesUrlaubsEnde);
+        verify(petra, never()).urlaubNehmen(zweiterUrlaubsStart, zweitesUrlaubsEnde);
     }
 
     @Test
@@ -128,8 +137,8 @@ public class BuchungsSzenarioTests {
         LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 13, 0);
 
-        buchungsService.urlaubBuchen(10L, urlaubsStart, urlaubsEnde);
+        buchungsService.urlaubBuchen(fritz, urlaubsStart, urlaubsEnde);
 
-        verify(fritz, times(0)).urlaubNehmen(urlaubsStart, urlaubsEnde);
+        verify(fritz, never()).urlaubNehmen(urlaubsStart, urlaubsEnde);
     }
 }
