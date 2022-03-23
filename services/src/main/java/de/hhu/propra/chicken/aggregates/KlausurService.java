@@ -1,41 +1,64 @@
 package de.hhu.propra.chicken.aggregates;
 
-import de.hhu.propra.chicken.stereotypes.DomainService;
-import org.springframework.stereotype.Service;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
-@Service
-public class KlausurService {
-    private final KlausurRepository repo;
-    private final AuditLog log = new AuditLog("auditLog.txt");
 
-    public KlausurService(KlausurRepository repo) throws IOException {
+public class KlausurService {
+
+    private final AuditLog log = new AuditLog("auditlog.txt");
+
+    private final KlausurRepository repo;
+
+    public KlausurService(KlausurRepository repo){
         this.repo = repo;
     }
 
-    public void klausurHinzufuegen(Long lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) throws IOException {
-        Klausur klausur = repo.klausurMitLsfId(lsfId);
-        if (klausur == null) {
-            klausur = new Klausur(lsfId, name, start, ende, typ);
-            log.eintragen("Klausur mit LsfId " + lsfId + " registriert.");
+    boolean gueltigeLsfId(Long lsfId, Document... document) throws IOException {
+        String lsfIdString = lsfId.toString();
+        Document doc;
+        if (document.length != 0){
+            doc = document[0];
+        } else {
+            doc = Jsoup.connect("https://lsf.hhu.de/qisserver/rds?state=verpublish&status=init&vmfile=no&publishid="
+                    + lsfIdString
+                    + "&moduleCall=webInfo&publishConfFile=webInfo&publishSubDir=veranstaltung").get();
+        }
+        String htmlDoc = doc.wholeText();
+        return htmlDoc.contains(lsfIdString);
+    }
+
+    public void klausurHinzufuegen(Klausur klausur) throws IOException {
+        if (gueltigeLsfId(klausur.getLsfId())){
+            log.eintragen("Klausurregistrierung", "Registrierungsversuch einer Klausur mit ungültiger LSF-ID.", "ERROR", LocalDateTime.now());
+            return;
+        }
+        Klausur klausurAusDB = repo.klausurMitLsfId(klausur.getLsfId());
+        if (klausurAusDB == null) {
+            log.eintragen("Klausurregistrierung", "Klausur mit LsfId " + klausur.getLsfId() + " registriert.", "INFO", LocalDateTime.now());
             repo.save(klausur);
         }
         else {
-            log.eintragen("Klausur mit LsfId " + lsfId + " existiert bereits.");
+            log.eintragen("Klausurregistrierung", "Klausur mit LsfId " + klausur.getLsfId() + " existiert bereits.", "ERROR", LocalDateTime.now());
         }
     }
 
-    public Optional<Klausur> findeKlausur(Long lsfId) {
+    public Klausur findeKlausur(Long lsfId) {
         Klausur klausur = repo.klausurMitLsfId(lsfId);
-        return Optional.ofNullable(klausur);
+        return klausur;
     }
 
     public Set<Klausur> findeKlausurenMitIds(Set<Long> ids){
         return repo.klausurenMitReferenzen(ids);
     }
 
+    public Set<Klausur> alleKlausuren() {
+        return repo.alle();
+    }
 }

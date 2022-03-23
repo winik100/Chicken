@@ -1,8 +1,10 @@
 package de.hhu.propra.chicken.aggregates;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -15,6 +17,12 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 public class BuchungsSzenarioTests {
+
+    @AfterAll
+    static void logLoeschen(){
+        File file = new File("auditlog.txt");
+        file.delete();
+    }
 
     @Test
     @DisplayName("Michaela will einen kompletten Tag frei machen. Das geht, wenn Sie sonst keinen Urlaub genommen hat.")

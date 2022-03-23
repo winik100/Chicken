@@ -1,9 +1,10 @@
 package de.hhu.propra.chicken.aggregates;
 
-import de.hhu.propra.chicken.util.KlausurReferenz;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -15,6 +16,12 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 public class BuchungsServiceTest {
+
+    @AfterAll
+    static void logLoeschen(){
+        File file = new File("auditlog.txt");
+        file.delete();
+    }
 
     @Test
     @DisplayName("Buchungsservice.klausurBuchen fügt Klausuranmeldung zu Student hinzu")

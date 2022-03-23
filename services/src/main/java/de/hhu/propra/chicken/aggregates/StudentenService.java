@@ -1,12 +1,11 @@
 package de.hhu.propra.chicken.aggregates;
 
-import de.hhu.propra.chicken.stereotypes.DomainService;
-import org.springframework.stereotype.Service;
+import java.io.IOException;
+import java.time.LocalDateTime;
 
-import java.util.Optional;
-
-@Service
 public class StudentenService {
+
+    private final AuditLog log = new AuditLog("auditlog.txt");
 
     final private StudentRepository repo;
 
@@ -14,11 +13,11 @@ public class StudentenService {
         this.repo = repo;
     }
 
-    public void studentHinzufuegen(Long id, String githubHandle) {
-        Student student = repo.studentMitId(id);
-        if (student == null) {
-            student = new Student(id, githubHandle);
+    public void studentHinzufuegen(Student student) throws IOException {
+        Student studentAusDB = repo.studentMitGitHubHandle(student.getGithubHandle());
+        if (studentAusDB == null) {
             repo.save(student);
+            log.eintragen("Nutzerregistrierung", "Neuen Studenten für <" + student.getGithubHandle() + "> registriert.","INFO", LocalDateTime.now());
         }
     }
 

@@ -1,26 +1,18 @@
 package de.hhu.propra.chicken.aggregates;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
-@Service
+
 public class BuchungsService {
 
-    private final AuditLog log = new AuditLog("auditLog.txt");
+    private final AuditLog log = new AuditLog("auditlog.txt");
 
     private final StudentRepository studentRepository;
     private final KlausurRepository klausurRepository;
     private final BuchungsValidierung validierung;
-
-    public BuchungsValidierung getValidierung() {
-        return validierung;
-    }
 
     public BuchungsService(StudentRepository studentRepository, KlausurRepository klausurRepository, BuchungsValidierung buchungsValidierung) throws IOException {
         this.studentRepository = studentRepository;
@@ -43,25 +35,20 @@ public class BuchungsService {
     }
 
     public String klausurBuchen(Long lsfId, Long studentID) throws IOException {
-        if (!validierung.gueltigeLsfId(lsfId)){
-            log.eintragen("Student mit ID " + studentID.toString() + " hat ungültige LSF-ID angegeben.");
-            return "Die Veranstaltung mit der angegebenen Veranstaltungs-ID existiert nicht.";
-        }
-        //KlausurReferenz klausur = new KlausurReferenz(lsfId.getId());
-        Klausur klausur = klausurRepository.klausurMitLsfId(lsfId);
         Student student = studentRepository.studentMitId(studentID);
+        Klausur klausur = klausurRepository.klausurMitLsfId(lsfId);
         student.klausurAnmelden(klausur);
-        log.eintragen("Student mit ID " + studentID.toString() + " erfolgreich für Klausur mit ID " + lsfId.toString() + " angemeldet.");
-        return "Die Eingabe ist ok.";
+        log.eintragen(student.getGithubHandle(), "Erfolgreiche Anmeldung der Klausur mit LSF-ID " + lsfId + ".", "INFO", LocalDateTime.now());
+        return "";
     }
 
-    public void klausurStornieren(Long lsfId, Long studentID) throws IOException {
+    public String klausurStornieren(Long lsfId, Long studentID) throws IOException {
         //KlausurReferenz klausur = new KlausurReferenz(lsfId.getId());
         Klausur klausur = klausurRepository.klausurMitLsfId(lsfId);
         Student student = studentRepository.studentMitId(studentID);
         student.klausurAbmelden(klausur);
-        log.eintragen("Student mit ID " + studentID.toString() + " hat Klausur mit Veranstaltungs-ID " +
-                lsfId.toString() + " storniert.");
+        log.eintragen(student.getGithubHandle(), "Erfolgreiche Stornierung der Klausur mit LSF-ID " + lsfId + ".", "INFO", LocalDateTime.now());
+        return "";
     }
 
     public String urlaubBuchen(Long studentID, LocalDateTime start, LocalDateTime ende) throws IOException {
@@ -70,11 +57,11 @@ public class BuchungsService {
         Set<Klausur> klausuren = klausurRepository.klausurenMitReferenzen(ids);
 
         if (!validierung.dauerIstVielfachesVon15(start, ende)) {
-            log.eintragen("Student mit ID " + studentID.toString() + " hat ungültige Urlaubsdauer angegeben.");
+            log.eintragen(student.getGithubHandle(), "Buchungsversuch von Urlaub mit ungültiger Dauer.", "ERROR", LocalDateTime.now());
             return "Die Urlaubsdauer muss ein Vielfaches von 15 sein.";
         }
         if (!validierung.startZeitIstVielfachesVon15(start)) {
-            log.eintragen("Student mit ID " + studentID.toString() + " hat ungültige Startzeit angegeben.");
+            log.eintragen(student.getGithubHandle(), "Buchungsversuch von Urlaub mit ungültiger Startzeit.", "ERROR", LocalDateTime.now());
             return "Die Startzeit muss ein Vielfaches von 15 sein.";
         }
 
@@ -89,12 +76,12 @@ public class BuchungsService {
 
         if (student.hatUrlaubAm(start.toLocalDate())) {
             if (student.ueberschneidungMitBestehendemUrlaub(start, ende)) {
-                log.eintragen("Student mit ID " + studentID.toString() + " hat Urlaub mit Überschneidung angegeben.");
+                log.eintragen(student.getGithubHandle(), "Buchungsversuch von Urlaub mit Überschneidung.", "ERROR", LocalDateTime.now());
                 return "Bestehender Urlaub muss erst storniert werden.";
             }
             if (!validierung.klausurAmGleichenTag(klausuren, start)) {
                 if (!validierung.mind90MinZwischenUrlauben(student, start, ende)) {
-                    log.eintragen("Student mit ID " + studentID.toString() + " hat Urlaub zu nicht erlaubter Zeit angegeben.");
+                    log.eintragen(student.getGithubHandle(), "Buchungsversuch von zweitem Urlaub am selben Tag, ohne Bedingungen einzuhalten.", "ERROR", LocalDateTime.now());
                     return "Zwischen zwei Urlauben am selben Tag müssen mindestens 90 Minuten liegen" +
                             "und die beiden Urlaubsblöcke müssen am Anfang und Ende des Tages liegen.";
                 }
@@ -103,24 +90,25 @@ public class BuchungsService {
 
         if (!validierung.klausurAmGleichenTag(klausuren, start)) {
             if (!validierung.blockEntwederGanzerTagOderMax150Min(start, ende)) {
-                log.eintragen("Student mit ID " + studentID.toString() + " hat Urlaub mit nicht erlaubter Dauer angegeben.");
+                log.eintragen(student.getGithubHandle(), "Buchungsversuch von Urlaub mit längerer Dauer als 150 Minuten, aber nicht den ganzen Tag", "ERROR", LocalDateTime.now());
                 return "Der Urlaub muss entweder den ganzen Tag oder maximal 150 Minuten dauern.";
             }
         }
 
         if (!validierung.hatAusreichendRestUrlaub(student, start, ende)) {
-            log.eintragen("Student mit ID " + studentID.toString() + " hat nicht genug Resturlaub.");
+            log.eintragen(student.getGithubHandle(), "Buchungsversuch von Urlaub, dessen Dauer den verbleibenden Resturlaub übersteigt.", "ERROR", LocalDateTime.now());
             return  "Ihr Resturlaub reicht nicht aus.";
         }
         student.urlaubNehmen(start, ende);
-        log.eintragen("Student mit ID " + studentID.toString() + " hat Urlaub genommen von " + start + " bis " + ende + ".");
-        return "Die Eingabe ist ok.";
+        log.eintragen(student.getGithubHandle(), "Erfolgreiche Buchung von Urlaub am " + start.toLocalDate() + " von " + start.toLocalTime() + " bis " + ende.toLocalTime() + ".", "INFO", LocalDateTime.now());
+        return "";
     }
 
-    public void urlaubStornieren(Long studentID, LocalDateTime start, LocalDateTime ende) throws IOException {
+    public String urlaubStornieren(Long studentID, LocalDateTime start, LocalDateTime ende) throws IOException {
         Student student = studentRepository.studentMitId(studentID);
         student.urlaubEntfernen(start, ende);
-        log.eintragen("Student mit ID " + studentID.toString() + " hat Urlaub storniert von " + start + " bis " + ende + ".");
+        log.eintragen(student.getGithubHandle(), "Erfolgreiche Stornierung von Urlaub am " + start.toLocalDate() + " von " + start.toLocalTime() + " bis " + ende.toLocalTime() + ".", "INFO", LocalDateTime.now());
+        return "";
     }
 
 

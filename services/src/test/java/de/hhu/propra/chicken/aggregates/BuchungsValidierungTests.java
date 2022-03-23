@@ -1,12 +1,10 @@
 package de.hhu.propra.chicken.aggregates;
 
-import de.hhu.propra.chicken.util.KlausurReferenz;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
