@@ -13,7 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @EnableAutoConfiguration(exclude = JdbcRepositoriesAutoConfiguration.class)
 @ActiveProfiles("test")
-class InfrastructureApplicationTests {
+class ChickenApplicationTests {
 
     @MockBean
     DBKlausurRepo klausurRepo;
