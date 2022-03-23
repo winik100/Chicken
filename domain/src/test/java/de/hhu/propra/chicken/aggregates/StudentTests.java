@@ -1,6 +1,5 @@
 package de.hhu.propra.chicken.aggregates;
 
-import de.hhu.propra.chicken.util.KlausurReferenz;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
