@@ -34,14 +34,18 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests(a -> a
-                        .antMatchers("/", "/error", "/css/**", "/img/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                //.exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-                .csrf(c -> c.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-                .logout(l -> l.logoutSuccessUrl("/").permitAll())
-                .oauth2Login();
+        HttpSecurity security = http.authorizeRequests(a -> a
+                .antMatchers("/css/*", "/js/*", "/error", "/stats").permitAll()
+                .anyRequest().authenticated()
+        );
+        security
+                .logout()
+                .clearAuthentication(true)
+                .deleteCookies()
+                .invalidateHttpSession(true)
+                .permitAll()
+                .and()
+                .oauth2Login().userInfoEndpoint().userService(createUserService());
     }
 
     @Bean
