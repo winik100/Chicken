@@ -41,4 +41,12 @@ public class KlausurRepoImpl implements KlausurRepository {
         }
         return klausuren;
     }
+
+    @Override
+    public Set<Klausur> alle() {
+        Iterable<KlausurEntity> alleKlausuren = repo.findAll();
+        HashSet<Klausur> klausurSet = new HashSet<>();
+        alleKlausuren.forEach(k -> klausurSet.add(new Klausur(k.getId(), k.getLsfId(), k.getName(), k.getStart(), k.getEnde(), k.getTyp())));
+        return klausurSet;
+    }
 }

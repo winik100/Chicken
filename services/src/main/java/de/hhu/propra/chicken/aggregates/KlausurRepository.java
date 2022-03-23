@@ -1,9 +1,5 @@
 package de.hhu.propra.chicken.aggregates;
 
-import de.hhu.propra.chicken.aggregates.Klausur;
-import de.hhu.propra.chicken.aggregates.LsfId;
-import de.hhu.propra.chicken.util.KlausurReferenz;
-
 import java.util.Set;
 
 public interface KlausurRepository {
@@ -12,4 +8,6 @@ public interface KlausurRepository {
     void save(Klausur klausur);
 
     Set<Klausur> klausurenMitReferenzen(Set<Long> referenzen);
+
+    Set<Klausur> alle();
 }
