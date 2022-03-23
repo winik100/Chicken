@@ -23,7 +23,8 @@ public class KlausurServiceTest {
     @DisplayName("Wenn die Klausur schon eingetragen ist, wird sie nicht gespeichert.")
     void test1() throws IOException {
         KlausurRepository repo = mock(KlausurRepository.class);
-        KlausurService service = new KlausurService(repo);
+        LsfValidierung lsfValidierung = mock(LsfValidierung.class);
+        KlausurService service = new KlausurService(repo, lsfValidierung);
         when(repo.klausurMitLsfId(any())).thenReturn(PK_12_13);
 
         service.klausurHinzufuegen(PK_12_13);
@@ -35,8 +36,11 @@ public class KlausurServiceTest {
     @DisplayName("Wenn die Klausur noch nicht eingetragen ist, wird sie gespeichert.")
     void test2() throws IOException {
         KlausurRepository repo = mock(KlausurRepository.class);
-        KlausurService service = new KlausurService(repo);
+        LsfValidierung lsfValidierung = mock(LsfValidierung.class);
+        KlausurService service = new KlausurService(repo, lsfValidierung);
         when(repo.klausurMitLsfId(any())).thenReturn(null);
+        when(lsfValidierung.gueltigeLsfId(any())).thenReturn(true);
+
 
         service.klausurHinzufuegen(PK_12_13);
 
@@ -48,7 +52,8 @@ public class KlausurServiceTest {
     void test3() throws IOException {
 
         KlausurRepository repo = mock(KlausurRepository.class);
-        KlausurService service = new KlausurService(repo);
+        LsfValidierung lsfValidierung = mock(LsfValidierung.class);
+        KlausurService service = new KlausurService(repo, lsfValidierung);
 
         service.findeKlausur(234567L);
 

@@ -1,12 +1,8 @@
 package de.hhu.propra.chicken.aggregates;
 
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Set;
 
 
@@ -15,27 +11,15 @@ public class KlausurService {
     private final AuditLog log = new AuditLog("auditlog.txt");
 
     private final KlausurRepository repo;
+    private final LsfValidierung lsfValidierung;
 
-    public KlausurService(KlausurRepository repo){
+    public KlausurService(KlausurRepository repo, LsfValidierung lsfValidierung){
         this.repo = repo;
-    }
-
-    boolean gueltigeLsfId(Long lsfId, Document... document) throws IOException {
-        String lsfIdString = lsfId.toString();
-        Document doc;
-        if (document.length != 0){
-            doc = document[0];
-        } else {
-            doc = Jsoup.connect("https://lsf.hhu.de/qisserver/rds?state=verpublish&status=init&vmfile=no&publishid="
-                    + lsfIdString
-                    + "&moduleCall=webInfo&publishConfFile=webInfo&publishSubDir=veranstaltung").get();
-        }
-        String htmlDoc = doc.wholeText();
-        return htmlDoc.contains(lsfIdString);
+        this.lsfValidierung = lsfValidierung;
     }
 
     public void klausurHinzufuegen(Klausur klausur) throws IOException {
-        if (gueltigeLsfId(klausur.getLsfId())){
+        if (!lsfValidierung.gueltigeLsfId(klausur.getLsfId())){
             log.eintragen("Klausurregistrierung", "Registrierungsversuch einer Klausur mit ungültiger LSF-ID.", "ERROR", LocalDateTime.now());
             return;
         }

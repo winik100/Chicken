@@ -15,8 +15,13 @@ public class ChickenConfiguration {
     }
 
     @Bean
-    public KlausurService klausurServiceErstellen(KlausurRepository klausurRepo){
-        return new KlausurService(klausurRepo);
+    public KlausurService klausurServiceErstellen(KlausurRepository klausurRepo, LsfValidierung lsfValidierung){
+        return new KlausurService(klausurRepo, lsfValidierung);
+    }
+
+    @Bean
+    public LsfValidierung lsfValidierungErstellen(){
+        return new LsfValidierung();
     }
 
     @Bean
