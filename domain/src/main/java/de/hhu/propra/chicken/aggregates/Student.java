@@ -1,7 +1,9 @@
 package de.hhu.propra.chicken.aggregates;
 
 import de.hhu.propra.chicken.stereotype.AggregateRoot;
+import de.hhu.propra.chicken.util.AuditLog;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,6 +12,8 @@ import java.util.stream.Collectors;
 
 @AggregateRoot
 public class Student {
+
+    private final AuditLog log = new AuditLog("auditlog.txt");
 
     Long id;
     String githubHandle;
@@ -66,10 +70,11 @@ public class Student {
         return klausurAnmeldungen.stream().map(KlausurReferenz::klausur_id).collect(Collectors.toSet());
     }
 
-    public void urlaubNehmen(LocalDateTime start, LocalDateTime ende) {
+    public void urlaubNehmen(LocalDateTime start, LocalDateTime ende) throws IOException {
         Long minuten = Duration.between(start, ende).toMinutes();
         UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
         urlaube.add(urlaubsEintrag);
+        log.eintragen(githubHandle,"Urlaub am " + start.toLocalDate() + " von " + start.toLocalTime() + " bis " + ende.toLocalTime() + " eingetragen.", "INFO", LocalDateTime.now());
         restUrlaub -= minuten;
     }
 
@@ -153,7 +158,7 @@ public class Student {
         return start1.isBefore(ende2) && start2.isBefore(ende1);
     }
 
-    public void bestehendenUrlaubAnKlausurAnpassen (Klausur klausur) {
+    public void bestehendenUrlaubAnKlausurAnpassen (Klausur klausur) throws IOException {
         LocalDateTime freistellungsStart = klausur.startFreistellungBerechnen();
         LocalDateTime freistellungsEnde = klausur.endeFreistellungBerechnen();
 
@@ -168,7 +173,7 @@ public class Student {
     }
 
 
-    public void urlaubAnKlausurAnpassenUndNehmen(Set<Klausur> ueberschneidendeKlausuren, LocalDateTime geplanterStart, LocalDateTime geplantesEnde) {
+    public void urlaubAnKlausurAnpassenUndNehmen(Set<Klausur> ueberschneidendeKlausuren, LocalDateTime geplanterStart, LocalDateTime geplantesEnde) throws IOException {
         UrlaubsEintrag geplanterUrlaub = new UrlaubsEintrag(geplanterStart, geplantesEnde);
         Set<UrlaubsEintrag> angepassteUrlaubsBloecke = new HashSet<>();
         angepassteUrlaubsBloecke.add(geplanterUrlaub);

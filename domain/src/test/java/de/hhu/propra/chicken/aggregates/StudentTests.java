@@ -1,8 +1,11 @@
 package de.hhu.propra.chicken.aggregates;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -12,9 +15,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class StudentTests {
 
+    @AfterAll
+    static void logLoeschen(){
+        File file = new File("auditlog.txt");
+        file.delete();
+    }
+
+
     @Test
     @DisplayName("urlaubNehmen() reduziert den Resturlaub des Studenten korrekt")
-    void test_1() {
+    void test_1() throws IOException {
         Student student = new Student(10L, "ibimsgithub");
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 12, 15);
@@ -24,7 +34,7 @@ class StudentTests {
 
     @Test
     @DisplayName("urlaubEntfernen() erhöht den Resturlaub des Studenten korrekt")
-    void test_2() {
+    void test_2() throws IOException {
         Student student = new Student(10L, "ibimsgithub");
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 12, 30);
@@ -60,7 +70,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Student.urlaubNehmen() erzeugt einen neuen Urlaubseintrag in Student.urlaube")
-    void test_5() {
+    void test_5() throws IOException {
         Student student = new Student(10L, "ibimsgithub");
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
@@ -72,7 +82,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Student.urlaubEntfernen() entfernt einen bestehenden Urlaubseintrag in Student.urlaube")
-    void test_6() {
+    void test_6() throws IOException {
         Student student = new Student(10L, "ibimsgithub");
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
@@ -85,7 +95,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Student.hatUrlaubAm() erkennt bereits gebuchten Urlaub an einem gegebenen Tag")
-    void test_7() {
+    void test_7() throws IOException {
         Student student = new Student(10L, "ibimsgithub");
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
@@ -99,7 +109,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Geplanter Urlaub liegt komplett im bestehenden Urlaub")
-    void test_8() {
+    void test_8() throws IOException {
         LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
         LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 13, 0);
         LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 0);
@@ -114,7 +124,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Geplanter Urlaub ist identisch mit bestehendem Urlaub")
-    void test_9() {
+    void test_9() throws IOException {
 
         LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
         LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 13, 0);
@@ -130,7 +140,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Geplanter Urlaub beginnt innerhalb bestehenden Urlaubs und endet danach")
-    void test_10() {
+    void test_10L() throws IOException {
 
         LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
         LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 13, 0);
@@ -146,7 +156,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Geplanter Urlaub beginnt vor bestehendem Urlaub und endet innerhalb")
-    void test_11() {
+    void test_11() throws IOException {
 
         LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
         LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 13, 0);
@@ -162,7 +172,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Geplanter Urlaub liegt komplett vor bestehendem Urlaub")
-    void test_12() {
+    void test_12() throws IOException {
 
         LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
         LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 12, 0);
@@ -178,7 +188,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Geplanter Urlaub liegt komplett nach bestehendem Urlaub")
-    void test_13() {
+    void test_13() throws IOException {
 
         LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
         LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 12, 0);
@@ -193,8 +203,8 @@ class StudentTests {
     }
 
     @Test
-    @DisplayName("Geplanter Urlaub von 09:30 bis 11:30, bei Onlineklausur von 11:00 bis 12:00, wird zu Urlaub von 09:30 bis 10:30")
-    void test_14() {
+    @DisplayName("Geplanter Urlaub von 09:30 bis 11:30, bei Onlineklausur von 11:00 bis 12:00, wird zu Urlaub von 09:30 bis 10L:30")
+    void test_14() throws IOException {
 
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
@@ -209,7 +219,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Geplanter Urlaub von 11:00 bis 13:30, bei Onlineklausur von 11:00 bis 12:00, wird zu Urlaub von 12:00 bis 13:30")
-    void test_15() {
+    void test_15() throws IOException {
 
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
@@ -223,8 +233,8 @@ class StudentTests {
     }
 
     @Test
-    @DisplayName("Geplanter Urlaub von 10:00 bis 12:30, bei Onlineklausur von 11:00 bis 12:00, wird zu zwei Urlauben von 10:00 bis 10:30 und von 12:00 bis 12:30")
-    void test_16() {
+    @DisplayName("Geplanter Urlaub von 10L:00 bis 12:30, bei Onlineklausur von 11:00 bis 12:00, wird zu zwei Urlauben von 10L:00 bis 10L:30 und von 12:00 bis 12:30")
+    void test_16() throws IOException {
 
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
@@ -242,7 +252,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Geplanter Urlaub von 11:00 bis 12:00, bei Onlineklausur von 11:00 bis 12:00, wird nicht gebucht.")
-    void test_17() {
+    void test_17() throws IOException {
 
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
@@ -255,9 +265,9 @@ class StudentTests {
     }
 
     @Test
-    @DisplayName("Geplanter Urlaub von 9:30 bis 13:30, bei Onlineklausur von 10:15 bis 11:00 und einer Onlineklausur von" +
+    @DisplayName("Geplanter Urlaub von 9:30 bis 13:30, bei Onlineklausur von 10L:15 bis 11:00 und einer Onlineklausur von" +
             "12:00 bis 13:00, werden drei Urlaube gebucht (9:30-9:45, 11:00-11:30, 13:00-13:30).")
-    void test_18() {
+    void test_18() throws IOException {
 
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
@@ -274,8 +284,8 @@ class StudentTests {
     }
 
     @Test
-    @DisplayName("Eine Präsenzklausur von 10 bis 11 überschneidet sich mit ganztägigem Urlaub.")
-    void test_19() {
+    @DisplayName("Eine Präsenzklausur von 10L bis 11 überschneidet sich mit ganztägigem Urlaub.")
+    void test_19() throws IOException {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
         Student student = new Student(10L, "ibimsgithub");
@@ -287,7 +297,7 @@ class StudentTests {
     }
 
     @Test
-    @DisplayName("Eine Präsenzklausur von 10 bis 11 überschneidet sich nicht, da der Student keinen Urlaub genommen hat.")
+    @DisplayName("Eine Präsenzklausur von 10L bis 11 überschneidet sich nicht, da der Student keinen Urlaub genommen hat.")
     void test_20() {
         Student student = new Student(10L, "ibimsgithub");
 
@@ -297,8 +307,8 @@ class StudentTests {
     }
 
     @Test
-    @DisplayName("Eine Präsenzklausur von 10 bis 11 überschneidet sich nicht mit Urlaub von 13 bis 13:30.")
-    void test_21() {
+    @DisplayName("Eine Präsenzklausur von 10L bis 11 überschneidet sich nicht mit Urlaub von 13 bis 13:30.")
+    void test_21() throws IOException {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 13, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
         Student student = new Student(10L, "ibimsgithub");
@@ -311,7 +321,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Eine Onlineklausur von 12 bis 13 überschneidet sich mit Urlaub von 11 bis 12.")
-    void test_22() {
+    void test_22() throws IOException {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
         Student student = new Student(10L, "ibimsgithub");
@@ -324,7 +334,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Eine Onlineklausur von 12 bis 13 überschneidet sich mit Urlaub von 12 bis 13:30.")
-    void test_23() {
+    void test_23() throws IOException {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
         Student student = new Student(10L, "ibimsgithub");
@@ -337,7 +347,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Eine Onlineklausur von 12 bis 13 überschneidet sich mit Urlaub von 11 bis 12 und einem Urlaub von 12:30 bis 13:30.")
-    void test_24() {
+    void test_24() throws IOException {
         LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 0);
         LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 30);
@@ -353,7 +363,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Beim Anpassen an eine Onlineklausur von 12 bis 13 wird der ganztägige Urlaub in zwei Urlaube geteilt.")
-    void test_25() {
+    void test_25() throws IOException {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
         Student student = new Student(10L, "ibimsgithub");
@@ -369,7 +379,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Beim Anpassen an eine Onlineklausur von 12 bis 13 wird der Urlaub bis 12:30 auf 11:30 verkürtzt.")
-    void test_26() {
+    void test_26() throws IOException {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         Student student = new Student(10L, "ibimsgithub");
@@ -384,7 +394,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Beim Anpassen an eine Onlineklausur von 12:00 bis 13:00 wird der Urlaubsbeginn von 12:00 auf 13:00 geändert.")
-    void test_27() {
+    void test_27() throws IOException {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
         Student student = new Student(10L, "ibimsgithub");
@@ -399,7 +409,7 @@ class StudentTests {
 
     @Test
     @DisplayName("Beim Anpassen an eine Onlineklausur von 12:00 bis 13:00 wird der Urlaub von 12:00 bis 12:30 entfernt.")
-    void test_28() {
+    void test_28() throws IOException {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         Student student = new Student(10L, "ibimsgithub");
@@ -412,8 +422,8 @@ class StudentTests {
     }
 
     @Test
-    @DisplayName("Beim Anpassen an eine Onlineklausur von 12:00 bis 13:00 wird der Urlaub von 9:30 bis 10:00 nicht geändert.")
-    void test_29() {
+    @DisplayName("Beim Anpassen an eine Onlineklausur von 12:00 bis 13:00 wird der Urlaub von 9:30 bis 10L:00 nicht geändert.")
+    void test_29() throws IOException {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
         Student student = new Student(10L, "ibimsgithub");

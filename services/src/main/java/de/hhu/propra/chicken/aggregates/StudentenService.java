@@ -1,5 +1,7 @@
 package de.hhu.propra.chicken.aggregates;
 
+import de.hhu.propra.chicken.util.AuditLog;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 

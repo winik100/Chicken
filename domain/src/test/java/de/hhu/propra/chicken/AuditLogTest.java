@@ -1,5 +1,6 @@
-package de.hhu.propra.chicken.aggregates;
+package de.hhu.propra.chicken;
 
+import de.hhu.propra.chicken.util.AuditLog;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

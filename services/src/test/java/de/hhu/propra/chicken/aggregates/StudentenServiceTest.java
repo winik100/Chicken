@@ -1,8 +1,5 @@
 package de.hhu.propra.chicken.aggregates;
 
-import de.hhu.propra.chicken.aggregates.Student;
-import de.hhu.propra.chicken.aggregates.StudentRepository;
-import de.hhu.propra.chicken.aggregates.StudentenService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
