@@ -51,6 +51,13 @@ public class StudentController {
         return "index";
     }
 
+    @PostMapping("/klausurstornierung")
+    public String klausurstornierung(@AuthenticationPrincipal OAuth2User principal, @RequestParam("referenz") Klausur klausur) throws IOException {
+        Student student = studentenService.findeStudentMitHandle(principal.getAttribute("login"));
+        buchungsService.klausurStornieren(klausur, student);
+        return "redirect:/index";
+    }
+
     @GetMapping("/klausuranmeldung")
     public String klausuranmeldung(Model model) {
         Set<Klausur> klausuren = klausurService.alleKlausuren();

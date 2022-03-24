@@ -82,8 +82,8 @@
                 <td><span th:text="${k.startFreistellungBerechnen().toLocalTime()}"></span><span> - </span><span th:text="${k.endeFreistellungBerechnen().toLocalTime()}"></span></td>
                 <td>
                     <form method="post"
-                          action="/klausurstorno">
-                        <input type="hidden" name="referenz" value="dbab0725-03fc-4ec7-8a97-c631b92f7c75">
+                          action="/klausurstornierung">
+                        <input type="hidden" name="referenz" th:value="${k}">
                         <button class="btn btn-danger">Stornieren</button>
                     </form>
                 </td>

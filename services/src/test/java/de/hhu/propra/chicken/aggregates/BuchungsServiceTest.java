@@ -48,11 +48,30 @@ public class BuchungsServiceTest {
         Student student = mock(Student.class);
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
         buchungsService.klausurStornieren(PK_12_13, student);
 
         verify(student, times(1)).klausurAbmelden(PK_12_13);
+        verify(studentRepo, times(1)).save(student);
+    }
+
+    @Test
+    @DisplayName("Stornierung der Klausur später als am Vortag kann nicht durchgeführt werden.")
+    void test_2b() throws IOException {
+        KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        StudentRepository studentRepo = mock(StudentRepository.class);
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        Student student = mock(Student.class);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
+        when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(false);
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
+
+        buchungsService.klausurStornieren(PK_12_13, student);
+
+        verify(student, never()).klausurAbmelden(PK_12_13);
     }
 
     @Test
