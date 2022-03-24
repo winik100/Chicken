@@ -108,6 +108,7 @@ public class BuchungsServiceTest {
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(OK_12_13);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);
@@ -132,6 +133,7 @@ public class BuchungsServiceTest {
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
@@ -158,6 +160,7 @@ public class BuchungsServiceTest {
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
@@ -182,6 +185,7 @@ public class BuchungsServiceTest {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);

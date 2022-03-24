@@ -78,10 +78,11 @@ public class Student {
         restUrlaub -= minuten;
     }
 
-    public void urlaubEntfernen(LocalDateTime start, LocalDateTime ende) {
+    public void urlaubEntfernen(LocalDateTime start, LocalDateTime ende) throws IOException {
         Long minuten = Duration.between(start, ende).toMinutes();
         UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
         if (urlaube.remove(urlaubsEintrag)) {
+            log.info(githubHandle,"Urlaub am " + start.toLocalDate() + " von " + start.toLocalTime() + " bis " + ende.toLocalTime() + " entfernt.", LocalDateTime.now());
             restUrlaub += minuten;
         }
     }
@@ -218,7 +219,44 @@ public class Student {
 
         }
         for (UrlaubsEintrag u: angepassteUrlaubsBloecke){
-            urlaubNehmen(u.start(), u.ende());
+            if (ueberschneidungMitBestehendemUrlaub(u.start(), u.ende())) {
+                urlaubAnBestehendenUrlaubAnpassenUndNehmen(u.start(), u.ende());
+            } else  {
+                urlaubNehmen(u.start(), u.ende());
+            }
         }
+    }
+
+    public void urlaubAnBestehendenUrlaubAnpassenUndNehmen (LocalDateTime geplanterUlaubsStart, LocalDateTime geplantesUrlaubsEnde) throws IOException {
+        Set<UrlaubsEintrag> ueberschneidendeUrlaube = urlaube.stream()
+                .filter(u -> ueberschneidung(u.start(), u.ende(), geplanterUlaubsStart, geplantesUrlaubsEnde))
+                .collect(Collectors.toSet());
+
+        if (ueberschneidendeUrlaube.isEmpty()) {
+            urlaubNehmen(geplanterUlaubsStart, geplantesUrlaubsEnde);
+            return;
+        }
+
+        UrlaubsEintrag neuerUrlaub = new UrlaubsEintrag(geplanterUlaubsStart, geplantesUrlaubsEnde);
+        for (UrlaubsEintrag u : ueberschneidendeUrlaube) {
+            neuerUrlaub = urlaubeVerschmelzen(u, neuerUrlaub.start(), neuerUrlaub.ende());
+            urlaubEntfernen(u.start(), u.ende());
+            urlaubNehmen(neuerUrlaub.start(), neuerUrlaub.ende());
+        }
+    }
+
+    private UrlaubsEintrag urlaubeVerschmelzen(UrlaubsEintrag u, LocalDateTime geplanterUrlaubsStart, LocalDateTime geplantesUrlaubsEnde) {
+        if (u.start().isBefore(geplanterUrlaubsStart) && u.ende().isAfter(geplantesUrlaubsEnde)) { // u umfasst geplanterUrlaubsStart und geplantesUrlaubsEnde
+            return new UrlaubsEintrag(u.start(), u.ende());
+        } else if (u.start().isBefore(geplanterUrlaubsStart) && u.ende().isAfter(geplanterUrlaubsStart)
+                && u.ende().isBefore(geplantesUrlaubsEnde)) { // u überschneidung mit geplanterUrlaubsStart
+            return new UrlaubsEintrag(u.start(), geplantesUrlaubsEnde);
+        } else if (u.start().isAfter(geplanterUrlaubsStart) && u.start().isBefore(geplantesUrlaubsEnde)
+                && u.ende().isAfter(geplantesUrlaubsEnde)) { // u überschneidung mit geplantesUrlaubsEnde
+            return new UrlaubsEintrag(geplanterUrlaubsStart, u.ende());
+        }
+        // keine Überschneidung nicht möglich, da auf ueberschneidendeUrlaube aufgerufen
+        // u komplett zwischen geplanterUrlaubsStart und geplantesUrlaubsEnde
+        return  new UrlaubsEintrag(geplanterUrlaubsStart, geplantesUrlaubsEnde);
     }
 }

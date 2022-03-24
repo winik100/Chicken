@@ -56,6 +56,12 @@ public class BuchungsService {
         Set<Long> ids = student.getKlausurAnmeldungen();
         Set<Klausur> klausuren = klausurRepository.klausurenMitReferenzen(ids);
 
+        if (!validierung.liegtImPraktikumsZeitraum(start, ende)) {
+            log.error(student.getGithubHandle(), "Buchungsversuch von Urlaub außerhalb der Praktikumszeit.", LocalDateTime.now());
+            return "Der gewünschte Urlaub liegt ausserhalb der Praktikumszeit. Gültig sind Mo. - Fr. im Zeitraum vom " + validierung.startTag + " bis "
+                    + validierung.endTag + " zwischen " + validierung.startZeit + " und " + validierung.endZeit + ".";
+        }
+
         if (!validierung.dauerIstVielfachesVon15(start, ende)) {
             log.error(student.getGithubHandle(), "Buchungsversuch von Urlaub mit ungültiger Dauer.", LocalDateTime.now());
             return "Die Urlaubsdauer muss ein Vielfaches von 15 sein.";
@@ -71,13 +77,16 @@ public class BuchungsService {
             if (!ueberschneidendeKlausuren.isEmpty()) {
                 // Urlaubszeit an Klausuren anpassen
                 student.urlaubAnKlausurAnpassenUndNehmen(ueberschneidendeKlausuren, start, ende);
+                studentRepository.save(student);
+                return "";
             }
         }
 
         if (student.hatUrlaubAm(start.toLocalDate())) {
             if (student.ueberschneidungMitBestehendemUrlaub(start, ende)) {
-                log.error(student.getGithubHandle(), "Buchungsversuch von Urlaub mit Überschneidung.", LocalDateTime.now());
-                return "Bestehender Urlaub muss erst storniert werden.";
+                student.urlaubAnBestehendenUrlaubAnpassenUndNehmen(start, ende);
+                studentRepository.save(student);
+                return "";
             }
             if (!validierung.klausurAmGleichenTag(klausuren, start)) {
                 if (!validierung.mind90MinZwischenUrlauben(student, start, ende)) {
@@ -100,6 +109,7 @@ public class BuchungsService {
             return  "Ihr Resturlaub reicht nicht aus.";
         }
         student.urlaubNehmen(start, ende);
+        studentRepository.save(student);
         return "";
     }
 

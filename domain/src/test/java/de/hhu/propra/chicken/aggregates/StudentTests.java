@@ -284,6 +284,25 @@ class StudentTests {
     }
 
     @Test
+    @DisplayName("Geplanter Urlaub von 9:30 bis 13:30, bei Onlineklausur von 12 bis 13 und bestehendem Urlaub vor " +
+            "der Klausur von 9:30 bis 11:30, wird eingetragen von 13 bis 13:30.")
+    void test_18b() throws IOException {
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.klausurAnmelden(OK_12_13);
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 13, 30);
+
+        student.urlaubAnKlausurAnpassenUndNehmen(Set.of(OK_12_13), startUrlaub2 , endeUrlaub2);
+
+        assertThat(student.getUrlaube().size()).isEqualTo(2);
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub1, endeUrlaub1));
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(OK_12_13.endeFreistellungBerechnen(), endeUrlaub2));
+    }
+
+    @Test
     @DisplayName("Eine Präsenzklausur von 10L bis 11 überschneidet sich mit ganztägigem Urlaub.")
     void test_19() throws IOException {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
@@ -432,6 +451,107 @@ class StudentTests {
         student.bestehendenUrlaubAnKlausurAnpassen(OK_12_13);
 
         assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub, endeUrlaub));
+        assertThat(student.getUrlaube().size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("Hat der Student noch keinen Urlaub, kann der geplante Urlaub unverändert genommen werden.")
+    void test_30() throws IOException {
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
+        Student student = new Student(10L, "ibimsgithub");
+
+        student.urlaubAnBestehendenUrlaubAnpassenUndNehmen(startUrlaub, endeUrlaub);
+
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub, endeUrlaub));
+        assertThat(student.getUrlaube().size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("Hat der Student keinen Urlaub, der sich mit dem geplanten Urlaub überschneidet, kann dieser " +
+            "unverändert genommen werden.")
+    void test_31() throws IOException {
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 10, 0);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 0);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 11, 0);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 0);
+
+        student.urlaubAnBestehendenUrlaubAnpassenUndNehmen(startUrlaub2, endeUrlaub2);
+
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub2, endeUrlaub2));
+        assertThat(student.getUrlaube().size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("Beginnt der geplante Urlaub innerhalb bestehenden Urlaubs, wird die Startzeit auf die Startzeit " +
+            "des bestehenden Urlaubs gesetzt.")
+    void test_32() throws IOException {
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 10, 0);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 0);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 10, 30);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 0);
+
+        student.urlaubAnBestehendenUrlaubAnpassenUndNehmen(startUrlaub2, endeUrlaub2);
+
+        student.getUrlaube().forEach(System.out::println);
+
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub1, endeUrlaub2));
+        assertThat(student.getUrlaube().size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("Endet der geplante Urlaub innerhalb bestehenden Urlaubs, wird die Endzeit auf die Endzeit " +
+            "des bestehenden Urlaubs gesetzt.")
+    void test_33() throws IOException {
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 10, 0);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 0);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 10, 30);
+
+        student.urlaubAnBestehendenUrlaubAnpassenUndNehmen(startUrlaub2, endeUrlaub2);
+
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub2, endeUrlaub1));
+        assertThat(student.getUrlaube().size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("Umfasst der geplante Urlaub bestehenden Urlaub komplett, wird der geplante Urlaub gebucht " +
+            "und der bestehende entfernt.")
+    void test_34() throws IOException {
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 10, 0);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 0);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 11, 30);
+
+        student.urlaubAnBestehendenUrlaubAnpassenUndNehmen(startUrlaub2, endeUrlaub2);
+
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub2, endeUrlaub2));
+        assertThat(student.getUrlaube()).doesNotContain(new UrlaubsEintrag(startUrlaub1, endeUrlaub1));
+        assertThat(student.getUrlaube().size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("Liegt der geplante Urlaub komplett innerhalb bestehenden Urlaubs, wird er nicht eingetragen.")
+    void test_35() throws IOException {
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 11, 30);
+        Student student = new Student(10L, "ibimsgithub");
+        student.urlaubNehmen(startUrlaub1, endeUrlaub1);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 10, 0);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 11, 0);
+
+        student.urlaubAnBestehendenUrlaubAnpassenUndNehmen(startUrlaub2, endeUrlaub2);
+
+        assertThat(student.getUrlaube()).contains(new UrlaubsEintrag(startUrlaub1, endeUrlaub1));
+        assertThat(student.getUrlaube()).doesNotContain(new UrlaubsEintrag(startUrlaub2, endeUrlaub2));
         assertThat(student.getUrlaube().size()).isEqualTo(1);
     }
 }
