@@ -23,7 +23,7 @@
 
 
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="lsfId" placeholder=" " name="lsfid" value="">
+            <input type="number" class="form-control" id="lsfId" placeholder=" " name="lsfid" value="">
             <label for="lsfId" class="form-label">ID der Veranstaltung im LSF</label>
 
             <div class="error-msg" th:unless="${error?.isEmpty()}" th:text="${error}"></div>
@@ -40,14 +40,14 @@
         </div>
 
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="tag"
+            <input type="date" class="form-control" id="tag"
                    placeholder=" " name="datum" value="">
             <label for="tag" class="form-label">Datum der Klausur (dd.mm.yyyy)</label>
 
         </div>
 
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="von" placeholder=" " name="von" value="">
+            <input type="time" class="form-control" id="von" placeholder=" " name="von" value="">
             <label for="von">Klausurbeginn (hh:mm)</label>
             <div class="form-text">Runden Sie die Startzeit auf die nächste vorgegebene Zeit ab. Falls die Klausur vor 08:30 Uhr beginnt, tragen Sie bitte 08:30 Uhr ein.
             </div>
@@ -55,7 +55,7 @@
         </div>
 
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="bis" placeholder=" " name="bis" value="">
+            <input type="time" class="form-control" id="bis" placeholder=" " name="bis" value="">
             <label for="bis" class="form-label">Klausurende (hh:mm)</label>
             <div class="form-text">Runden Sie die Zeit auf die nächste vorgegebene Zeit auf. Falls die Klausur nach 13:30 Uhr endet, tragen Sie bitte 13:30 Uhr ein.
             </div>
