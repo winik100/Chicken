@@ -56,6 +56,11 @@ public class BuchungsService {
         Set<Long> ids = student.getKlausurAnmeldungen();
         Set<Klausur> klausuren = klausurRepository.klausurenMitReferenzen(ids);
 
+        if(!validierung.buchungLiegtNachZeitpunkt(start, LocalDateTime.now())) {
+            log.error(student.getGithubHandle(), "Buchungsversuch von Urlaub in der Vergangenheit.", LocalDateTime.now());
+            return "Der gewünschte Urlaub darf nicht in der Vergangenheit liegen!";
+        }
+
         if (!validierung.liegtImPraktikumsZeitraum(start, ende)) {
             log.error(student.getGithubHandle(), "Buchungsversuch von Urlaub außerhalb der Praktikumszeit.", LocalDateTime.now());
             return "Der gewünschte Urlaub liegt ausserhalb der Praktikumszeit. Gültig sind Mo. - Fr. im Zeitraum vom " + validierung.startTag + " bis "

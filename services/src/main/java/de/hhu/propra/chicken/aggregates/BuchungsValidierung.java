@@ -46,6 +46,15 @@ public class BuchungsValidierung {
         return (start.getMinute() % 15) == 0;
     }
 
+    boolean buchungLiegtNachZeitpunkt(LocalDateTime startPunkt, LocalDateTime zeitpunkt) {
+        if(startPunkt.isEqual(zeitpunkt)) {
+            return false;
+        }
+        return startPunkt.isAfter(zeitpunkt);
+    }
+
+
+
     boolean klausurAmGleichenTag(Set<Klausur> klausurAnmeldungen, LocalDateTime start) {
         LocalDate datum = start.toLocalDate();
         Set<LocalDate> klausurDaten =

@@ -553,4 +553,52 @@ public class BuchungsValidierungTests {
 
         assertThat(b).isTrue();
     }
+
+    @Test
+    @DisplayName("Buchung ab 12:00 liegt nach dem Zeitpunkt 10:00 am selben Tag")
+    void test_41() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime buchungsStart = LocalDateTime.of(2022, 3, 23, 12, 0);
+        LocalDateTime zeitpunkt = LocalDateTime.of(2022, 3, 23, 10, 0);
+
+        boolean b = buchungsValidierung.buchungLiegtNachZeitpunkt(buchungsStart, zeitpunkt);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Buchung ab 10:00 ist nicht nach Zeitpunkt 12:00 am selben Tag")
+    void test_42() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime buchungsStart = LocalDateTime.of(2022, 3, 23, 10, 0);
+        LocalDateTime zeitpunkt = LocalDateTime.of(2022, 3, 23, 12, 0);
+
+        boolean b = buchungsValidierung.buchungLiegtNachZeitpunkt(buchungsStart, zeitpunkt);
+
+        assertThat(b).isFalse();
+    }
+
+    @Test
+    @DisplayName("Buchung ab 10:00 ist nicht nach Zeitpunkt 10:00 am selben Tag")
+    void test_43() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime buchungsStart = LocalDateTime.of(2022, 3, 23, 10, 0);
+        LocalDateTime zeitpunkt = LocalDateTime.of(2022, 3, 23, 10, 0);
+
+        boolean b = buchungsValidierung.buchungLiegtNachZeitpunkt(buchungsStart, zeitpunkt);
+
+        assertThat(b).isFalse();
+    }
+
+    @Test
+    @DisplayName("Buchung ab 10:01 ist nach Zeitpunkt 10:00 am selben Tag")
+    void test_44() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime buchungsStart = LocalDateTime.of(2022, 3, 23, 10, 1);
+        LocalDateTime zeitpunkt = LocalDateTime.of(2022, 3, 23, 10, 0);
+
+        boolean b = buchungsValidierung.buchungLiegtNachZeitpunkt(buchungsStart, zeitpunkt);
+
+        assertThat(b).isTrue();
+    }
 }

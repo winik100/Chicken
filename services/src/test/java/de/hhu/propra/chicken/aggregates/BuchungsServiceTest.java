@@ -113,6 +113,7 @@ public class BuchungsServiceTest {
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);
         when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
@@ -139,6 +140,7 @@ public class BuchungsServiceTest {
         when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
         when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(true);
         when(buchungsValidierung.mind90MinZwischenUrlauben(any(), any(), any())).thenReturn(true);
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
         LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
@@ -165,6 +167,7 @@ public class BuchungsServiceTest {
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
         when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(true);
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
 
@@ -185,6 +188,7 @@ public class BuchungsServiceTest {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
         when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
