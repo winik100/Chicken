@@ -34,15 +34,28 @@ public class AuditLogTest {
     }
 
     @Test
-    @DisplayName("Das Ereignis wird korrekt formatiert in die Testlog-Datei geschrieben.")
+    @DisplayName("Das Info-Ereignis wird korrekt formatiert in die Testlog-Datei geschrieben.")
     void test_1() throws IOException {
         String pfad = "testlog.txt";
         AuditLog testLog = new AuditLog(pfad);
 
-        testLog.eintragen("testUser", "testEreignis", "INFO", LocalDateTime.of(2022,3,10, 10,0));
+        testLog.info("testUser", "testEreignis", LocalDateTime.of(2022,3,10, 10,0));
 
         Scanner scanner = new Scanner(Path.of(pfad));
         String logLine = scanner.nextLine();
         assertThat(logLine).isEqualTo("10.03.2022 10:00: <<testUser>> INFO: testEreignis");
+    }
+
+    @Test
+    @DisplayName("Das Error-Ereignis wird korrekt formatiert in die Testlog-Datei geschrieben.")
+    void test_2() throws IOException {
+        String pfad = "testlog.txt";
+        AuditLog testLog = new AuditLog(pfad);
+
+        testLog.error("testUser", "testEreignis", LocalDateTime.of(2022,3,10, 10,0));
+
+        Scanner scanner = new Scanner(Path.of(pfad));
+        String logLine = scanner.nextLine();
+        assertThat(logLine).isEqualTo("10.03.2022 10:00: <<testUser>> ERROR: testEreignis");
     }
 }

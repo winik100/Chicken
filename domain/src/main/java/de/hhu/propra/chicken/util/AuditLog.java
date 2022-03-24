@@ -19,11 +19,21 @@ public class AuditLog {
         this.pfad = pfad;
     }
 
-    public void eintragen(String wer, String ereignis, String ereignisTyp, LocalDateTime zeitpunkt) throws IOException {
+    private void eintragen(String wer, String ereignis, String ereignisTyp, LocalDateTime zeitpunkt) throws IOException {
         DateTimeFormatter zeitFormatierer = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         String formatiertesEreignis = zeitpunkt.format(zeitFormatierer) + ": " + "<<" + wer + ">>" + " " + ereignisTyp + ": " + ereignis + "\n";
         FileOutputStream fileOutputStream = new FileOutputStream(pfad, true);
         fileOutputStream.write(formatiertesEreignis.getBytes());
         fileOutputStream.close();
+    }
+
+    public void info(String wer, String ereignis, LocalDateTime zeitpunkt) throws IOException {
+        String ereignisTyp = "INFO";
+        eintragen(wer, ereignis, ereignisTyp, zeitpunkt);
+    }
+
+    public void error(String wer, String ereignis, LocalDateTime zeitpunkt) throws IOException {
+        String ereignisTyp = "ERROR";
+        eintragen(wer, ereignis, ereignisTyp, zeitpunkt);
     }
 }

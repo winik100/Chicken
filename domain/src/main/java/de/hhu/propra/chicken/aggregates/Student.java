@@ -74,7 +74,7 @@ public class Student {
         Long minuten = Duration.between(start, ende).toMinutes();
         UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(start, ende);
         urlaube.add(urlaubsEintrag);
-        log.eintragen(githubHandle,"Urlaub am " + start.toLocalDate() + " von " + start.toLocalTime() + " bis " + ende.toLocalTime() + " eingetragen.", "INFO", LocalDateTime.now());
+        log.info(githubHandle,"Urlaub am " + start.toLocalDate() + " von " + start.toLocalTime() + " bis " + ende.toLocalTime() + " eingetragen.", LocalDateTime.now());
         restUrlaub -= minuten;
     }
 

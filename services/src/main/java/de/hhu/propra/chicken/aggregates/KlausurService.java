@@ -24,21 +24,21 @@ public class KlausurService {
 
     public String klausurHinzufuegen(Klausur klausur) throws IOException {
         if (!buchungsValidierung.liegtImPraktikumsZeitraum(klausur.startFreistellungBerechnen(), klausur.endeFreistellungBerechnen())){
-            log.eintragen("Klausurregistrierung", "Registrierungsversuch einer Klausur außerhalb des Praktikumszeitraums", "ERROR", LocalDateTime.now());
+            log.error("Klausurregistrierung", "Registrierungsversuch einer Klausur außerhalb des Praktikumszeitraums", LocalDateTime.now());
             return "Die Klausur liegt ausserhalb der Praktikumszeit. Gültig sind Mo. - Fr. im Zeitraum vom " + buchungsValidierung.startTag + " bis "
                     + buchungsValidierung.endTag + " zwischen " + buchungsValidierung.startZeit + " und " + buchungsValidierung.endZeit + ".";
         }
         if (!lsfValidierung.gueltigeLsfId(klausur.getLsfId())){
-            log.eintragen("Klausurregistrierung", "Registrierungsversuch einer Klausur mit ungültiger LSF-ID.", "ERROR", LocalDateTime.now());
+            log.error("Klausurregistrierung", "Registrierungsversuch einer Klausur mit ungültiger LSF-ID.", LocalDateTime.now());
             return "Es gibt keine Veranstaltung mit der angegebenen LSF-ID.";
         }
         Klausur klausurAusDB = repo.klausurMitLsfId(klausur.getLsfId());
         if (klausurAusDB == null) {
-            log.eintragen("Klausurregistrierung", "Klausur mit LsfId " + klausur.getLsfId() + " registriert.", "INFO", LocalDateTime.now());
+            log.info("Klausurregistrierung", "Klausur mit LsfId " + klausur.getLsfId() + " registriert.", LocalDateTime.now());
             repo.save(klausur);
         }
         else {
-            log.eintragen("Klausurregistrierung", "Klausur mit LsfId " + klausur.getLsfId() + " existiert bereits.", "ERROR", LocalDateTime.now());
+            log.error("Klausurregistrierung", "Klausur mit LsfId " + klausur.getLsfId() + " existiert bereits.", LocalDateTime.now());
         }
         return "";
     }

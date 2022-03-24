@@ -19,7 +19,7 @@ public class StudentenService {
         Student studentAusDB = repo.studentMitGitHubHandle(student.getGithubHandle());
         if (studentAusDB == null) {
             repo.save(student);
-            log.eintragen("Nutzerregistrierung", "Neuen Studenten für <" + student.getGithubHandle() + "> registriert.","INFO", LocalDateTime.now());
+            log.info("Nutzerregistrierung", "Neuen Studenten für <" + student.getGithubHandle() + "> registriert.", LocalDateTime.now());
         }
     }
 
