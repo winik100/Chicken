@@ -45,7 +45,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .invalidateHttpSession(true)
                 .permitAll()
                 .and()
-                .oauth2Login().userInfoEndpoint().userService(createUserService());
+                .oauth2Login().defaultSuccessUrl("/", true)
+                .userInfoEndpoint().userService(createUserService());
     }
 
     @Bean
