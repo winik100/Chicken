@@ -30,9 +30,8 @@ public class BuchungsServiceTest {
         StudentRepository studentRepo = mock(StudentRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         Student student = mock(Student.class);
-        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
-        when(buchungsValidierung.gueltigeLsfId(any())).thenReturn(true);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
         buchungsService.klausurBuchen(PK_12_13, student);
@@ -47,9 +46,8 @@ public class BuchungsServiceTest {
         StudentRepository studentRepo = mock(StudentRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         Student student = mock(Student.class);
-        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
-        when(buchungsValidierung.gueltigeLsfId(any())).thenReturn(true);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
         buchungsService.klausurStornieren(PK_12_13, student);
@@ -63,7 +61,7 @@ public class BuchungsServiceTest {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = mock(Student.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
-        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
@@ -106,11 +104,10 @@ public class BuchungsServiceTest {
     void test_7() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = mock(Student.class);
-        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(OK_12_13);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
-        when(buchungsValidierung.gueltigeLsfId(any())).thenReturn(true);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);
@@ -132,7 +129,7 @@ public class BuchungsServiceTest {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = mock(Student.class);
         when(student.hatUrlaubAm(any())).thenReturn(true);
-        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
@@ -158,7 +155,7 @@ public class BuchungsServiceTest {
     void test_9() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = mock(Student.class);
-        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
@@ -180,12 +177,11 @@ public class BuchungsServiceTest {
     void test_10() throws IOException{
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = mock(Student.class);
-        when(studentRepo.studentMitId(anyLong())).thenReturn(student);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
-        when(buchungsValidierung.gueltigeLsfId(any())).thenReturn(true);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);
@@ -205,7 +201,7 @@ public class BuchungsServiceTest {
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         Student student = mock(Student.class);
-        when(studentRepo.studentMitId(any())).thenReturn(student);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
@@ -222,7 +218,7 @@ public class BuchungsServiceTest {
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         Student student = mock(Student.class);
         when(student.ueberschneidungKlausurMitBestehendemUrlaub(any())).thenReturn(true);
-        when(studentRepo.studentMitId(any())).thenReturn(student);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 

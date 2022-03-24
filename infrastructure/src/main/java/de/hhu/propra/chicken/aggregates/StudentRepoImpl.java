@@ -30,7 +30,7 @@ public class StudentRepoImpl implements StudentRepository {
 
     @Override
     public void save(Student student) {
-        StudentEntity studentEntity = new StudentEntity(null, student.getGithubHandle(), student.getResturlaubInMin(),
+        StudentEntity studentEntity = new StudentEntity(student.getId(), student.getGithubHandle(), student.getResturlaubInMin(),
                 student.getKlausurAnmeldungen().stream().map(KlausurReferenz::new).collect(Collectors.toSet()),
                 student.getUrlaube().stream().map(x -> new UrlaubsEintragEntity(x.start(), x.ende())).collect(Collectors.toSet()));
         studentRepo.save(studentEntity);

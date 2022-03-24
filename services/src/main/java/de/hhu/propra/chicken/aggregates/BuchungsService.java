@@ -1,6 +1,8 @@
 package de.hhu.propra.chicken.aggregates;
 
 
+import de.hhu.propra.chicken.util.AuditLog;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -39,13 +41,14 @@ public class BuchungsService {
             student.bestehendenUrlaubAnKlausurAnpassen(klausur);
         }
         student.klausurAnmelden(klausur);
-        log.eintragen(student.getGithubHandle(), "Erfolgreiche Anmeldung der Klausur mit LSF-ID " + klausur + ".", "INFO", LocalDateTime.now());
+        studentRepository.save(student);
+        log.eintragen(student.getGithubHandle(), "Erfolgreiche Anmeldung der Klausur mit LSF-ID " + klausur.getLsfId() + ".", "INFO", LocalDateTime.now());
         return "";
     }
 
     public String klausurStornieren(Klausur klausur, Student student) throws IOException {
         student.klausurAbmelden(klausur);
-        log.eintragen(student.getGithubHandle(), "Erfolgreiche Stornierung der Klausur mit LSF-ID " + klausur + ".", "INFO", LocalDateTime.now());
+        log.eintragen(student.getGithubHandle(), "Erfolgreiche Stornierung der Klausur mit LSF-ID " + klausur.getLsfId() + ".", "INFO", LocalDateTime.now());
         return "";
     }
 
@@ -97,7 +100,6 @@ public class BuchungsService {
             return  "Ihr Resturlaub reicht nicht aus.";
         }
         student.urlaubNehmen(start, ende);
-        log.eintragen(student.getGithubHandle(), "Erfolgreiche Buchung von Urlaub am " + start.toLocalDate() + " von " + start.toLocalTime() + " bis " + ende.toLocalTime() + ".", "INFO", LocalDateTime.now());
         return "";
     }
 

@@ -6,10 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -67,12 +64,13 @@ public class StudentController {
     }
 
     @PostMapping("/klausurregistrierung")
-    public String klausurregistrierungDurchfuehren(@RequestParam("veranstaltung") String name,
-                                                  @RequestParam("lsfid") Long lsfId,
-                                                  @RequestParam(value = "vor_ort", required = false) String praesenz,
-                                                  @RequestParam("datum") String datum,
-                                                  @RequestParam("von") String von,
-                                                  @RequestParam("bis") String bis) throws IOException {
+    public String klausurregistrierungDurchfuehren(Model model,
+                                                   @RequestParam("veranstaltung") String name,
+                                                   @RequestParam("lsfid") Long lsfId,
+                                                   @RequestParam(value = "vor_ort", required = false) String praesenz,
+                                                   @RequestParam("datum") String datum,
+                                                   @RequestParam("von") String von,
+                                                   @RequestParam("bis") String bis) throws IOException {
         DateTimeFormatter zeitFormatierer = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDateTime start = LocalDateTime.parse(datum + " " + von, zeitFormatierer);
         LocalDateTime ende = LocalDateTime.parse(datum + " " + bis, zeitFormatierer);
@@ -82,13 +80,19 @@ public class StudentController {
         else {
             praesenz = "online";
         }
-        klausurService.klausurHinzufuegen(new Klausur(lsfId, name, start, ende, praesenz));
-        return "redirect:/klausuranmeldung";
+        String error = klausurService.klausurHinzufuegen(new Klausur(lsfId, name, start, ende, praesenz));
+        model.addAttribute("error", error);
+        if (error.isEmpty()){
+            return "redirect:/klausuranmeldung";
+        }
+        return "klausurregistrierung";
     }
 
-//    @PostMapping("/klausuranmeldung")
-//    public String klausurAnmeldungDurchfuehren(@RequestParam("klausur")String lsfId, @ModelAttribute("student")Student student) throws IOException {
-//        buchungsService.klausurBuchen(Long.valueOf(lsfId), student.getId());
-//        return "redirect:/klausuranmeldung";
-//    }
+    @PostMapping("/klausuranmeldung")
+    public String klausurAnmeldungDurchfuehren(@RequestParam("klausur")String lsfId, @AuthenticationPrincipal OAuth2User principal) throws IOException {
+        Student student = studentenService.findeStudentMitHandle(principal.getAttribute("login"));
+        Klausur klausur = klausurService.findeKlausur(Long.valueOf(lsfId));
+        buchungsService.klausurBuchen(klausur, student);
+        return "redirect:/klausuranmeldung";
+    }
 }

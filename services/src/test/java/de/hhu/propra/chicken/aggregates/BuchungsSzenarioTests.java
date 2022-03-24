@@ -6,10 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Collections;
 import java.util.Set;
 
 
@@ -36,7 +33,7 @@ public class BuchungsSzenarioTests {
     void test_1() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student michaela = mock(Student.class);
-        when(studentRepo.studentMitId(anyLong())).thenReturn(michaela);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(michaela);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
@@ -57,7 +54,7 @@ public class BuchungsSzenarioTests {
     void test_2() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student gustav = mock(Student.class);
-        when(studentRepo.studentMitId(anyLong())).thenReturn(gustav);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(gustav);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
@@ -80,7 +77,7 @@ public class BuchungsSzenarioTests {
     void test_3() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student otto = mock(Student.class);
-        when(studentRepo.studentMitId(anyLong())).thenReturn(otto);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(otto);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
@@ -108,7 +105,7 @@ public class BuchungsSzenarioTests {
     void test_4() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student petra = mock(Student.class);
-        when(studentRepo.studentMitId(anyLong())).thenReturn(petra);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(petra);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
@@ -137,7 +134,7 @@ public class BuchungsSzenarioTests {
     void test_5() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student fritz = mock(Student.class);
-        when(studentRepo.studentMitId(anyLong())).thenReturn(fritz);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(fritz);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
