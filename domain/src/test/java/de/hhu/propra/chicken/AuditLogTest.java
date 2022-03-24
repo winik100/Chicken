@@ -19,7 +19,7 @@ public class AuditLogTest {
     void testLogLeeren() throws IOException {
         FileOutputStream fileOutputStream = null;
         try {
-            fileOutputStream = new FileOutputStream("src/test/resources/testlog.txt", false);
+            fileOutputStream = new FileOutputStream("testlog.txt", false);
         } catch (FileNotFoundException ignored) {}
         if (fileOutputStream != null) {
             fileOutputStream.write("".getBytes());
@@ -29,14 +29,14 @@ public class AuditLogTest {
 
     @AfterAll
     static void logLoeschen(){
-        File file = new File("src/test/resources/testlog.txt");
+        File file = new File("testlog.txt");
         file.delete();
     }
 
     @Test
     @DisplayName("Das Ereignis wird korrekt formatiert in die Testlog-Datei geschrieben.")
     void test_1() throws IOException {
-        String pfad = "src/test/resources/testlog.txt";
+        String pfad = "testlog.txt";
         AuditLog testLog = new AuditLog(pfad);
 
         testLog.eintragen("testUser", "testEreignis", "INFO", LocalDateTime.of(2022,3,10, 10,0));
