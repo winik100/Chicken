@@ -47,7 +47,7 @@ public class BuchungsService {
     }
 
     public String klausurStornieren(Klausur klausur, Student student) throws IOException {
-        if(!validierung.buchungLiegtNachZeitpunkt(klausur.startFreistellungBerechnen(),LocalDateTime.now().minusDays(1))) {
+        if(!validierung.buchungLiegtNachZeitpunkt(klausur.startFreistellungBerechnen(),LocalDateTime.now().plusDays(1))) {
             log.error(student.getGithubHandle(), "Verspäteter Stornierungsversuch der Klausur mit LSF-ID " + klausur.getLsfId() + ".", LocalDateTime.now());
             return "Klausur kann nur bis zum Vortag storniert werden";
         }

@@ -52,10 +52,14 @@ public class StudentController {
     }
 
     @PostMapping("/klausurstornierung")
-    public String klausurstornierung(@AuthenticationPrincipal OAuth2User principal, @RequestParam("referenz") Klausur klausur) throws IOException {
+    public String klausurstornierung(Model model,
+                                     @AuthenticationPrincipal OAuth2User principal,
+                                     @RequestParam("lsfId") String lsfId) throws IOException {
         Student student = studentenService.findeStudentMitHandle(principal.getAttribute("login"));
-        buchungsService.klausurStornieren(klausur, student);
-        return "redirect:/index";
+        Klausur klausur = klausurService.findeKlausur(Long.valueOf(lsfId));
+        String klausurstornoerror = buchungsService.klausurStornieren(klausur, student);
+        model.addAttribute("klausurstornoerror", klausurstornoerror);
+        return "index";
     }
 
     @GetMapping("/klausuranmeldung")
@@ -78,7 +82,7 @@ public class StudentController {
                                                    @RequestParam("datum") String datum,
                                                    @RequestParam("von") String von,
                                                    @RequestParam("bis") String bis) throws IOException {
-        DateTimeFormatter zeitFormatierer = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        DateTimeFormatter zeitFormatierer = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime start = LocalDateTime.parse(datum + " " + von, zeitFormatierer);
         LocalDateTime ende = LocalDateTime.parse(datum + " " + bis, zeitFormatierer);
         if ("true".equals(praesenz)) {
@@ -100,6 +104,6 @@ public class StudentController {
         Student student = studentenService.findeStudentMitHandle(principal.getAttribute("login"));
         Klausur klausur = klausurService.findeKlausur(Long.valueOf(lsfId));
         buchungsService.klausurBuchen(klausur, student);
-        return "redirect:/klausuranmeldung";
+        return "redirect:/";
     }
 }

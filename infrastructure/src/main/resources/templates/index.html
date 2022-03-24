@@ -65,6 +65,11 @@
 
     <div>
         <p>Sie sind für folgende Klausuren angemeldet:</p>
+        <div class="error-msg">
+            <p th:unless="${klausurstornoerror?.isEmpty()}" th:text="${klausurstornoerror}">
+                ERRORRRRR
+            </p>
+        </div>
         <table name="angemeldete_klausuren" class="table mb-5">
             <thead>
             <tr>
@@ -82,8 +87,8 @@
                 <td><span th:text="${k.startFreistellungBerechnen().toLocalTime()}"></span><span> - </span><span th:text="${k.endeFreistellungBerechnen().toLocalTime()}"></span></td>
                 <td>
                     <form method="post"
-                          action="/klausurstornierung">
-                        <input type="hidden" name="referenz" th:value="${k}">
+                          th:action="@{/klausurstornierung}">
+                        <input type="hidden" name="lsfId" th:value="${k.getLsfId()}">
                         <button class="btn btn-danger">Stornieren</button>
                     </form>
                 </td>
