@@ -17,10 +17,6 @@ import static org.mockito.Mockito.*;
 
 public class BuchungsSzenarioTests {
 
-
-
-
-
     @AfterAll
     static void logLoeschen(){
         File file = new File("auditlog.txt");
@@ -36,6 +32,7 @@ public class BuchungsSzenarioTests {
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(michaela);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
@@ -57,6 +54,7 @@ public class BuchungsSzenarioTests {
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(gustav);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
@@ -80,6 +78,7 @@ public class BuchungsSzenarioTests {
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(otto);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
@@ -108,6 +107,7 @@ public class BuchungsSzenarioTests {
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(petra);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
