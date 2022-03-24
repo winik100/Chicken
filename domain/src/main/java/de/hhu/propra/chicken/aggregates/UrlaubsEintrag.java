@@ -3,5 +3,5 @@ package de.hhu.propra.chicken.aggregates;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-public record UrlaubsEintrag(LocalDateTime start, LocalDateTime ende) {
+record UrlaubsEintrag(LocalDateTime start, LocalDateTime ende) {
 }
