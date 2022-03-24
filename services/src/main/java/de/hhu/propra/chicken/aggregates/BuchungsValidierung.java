@@ -3,10 +3,7 @@ package de.hhu.propra.chicken.aggregates;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,32 +11,30 @@ import java.util.stream.Collectors;
 
 public class BuchungsValidierung {
 
-    private final LocalTime startZeit;
-    private final LocalTime endZeit;
-    private final LocalDate startTag;
-    private final LocalDate endTag;
+    final LocalTime startZeit;
+    final LocalTime endZeit;
+    final LocalDate startTag;
+    final LocalDate endTag;
 
 
-    public BuchungsValidierung(LocalTime startZeit, LocalTime endZeit,
-                               LocalDate startTag, LocalDate endTag) {
-        this.startZeit = startZeit;
-        this.endZeit = endZeit;
-        this.startTag = startTag;
-        this.endTag = endTag;
+    public BuchungsValidierung(String startZeit, String endZeit,
+                               String startTag, String endTag) {
+        this.startZeit = LocalTime.parse(startZeit);
+        this.endZeit = LocalTime.parse(endZeit);
+        this.startTag = LocalDate.parse(startTag);
+        this.endTag = LocalDate.parse(endTag);
     }
 
-    boolean gueltigeLsfId(Long lsfId, Document... document) throws IOException {
-        String lsfIdString = lsfId.toString();
-        Document doc;
-        if (document.length != 0){
-            doc = document[0];
-        } else {
-            doc = Jsoup.connect("https://lsf.hhu.de/qisserver/rds?state=verpublish&status=init&vmfile=no&publishid="
-                    + lsfIdString
-                    + "&moduleCall=webInfo&publishConfFile=webInfo&publishSubDir=veranstaltung").get();
+    boolean liegtImPraktikumsZeitraum(LocalDateTime start, LocalDateTime ende){
+        DayOfWeek dayOfWeek = start.getDayOfWeek();
+        if (dayOfWeek.equals(DayOfWeek.SATURDAY) || dayOfWeek.equals(DayOfWeek.SUNDAY)){
+            return false;
+        } else if (start.toLocalDate().isBefore(startTag)){
+            return false;
+        } else if (ende.toLocalDate().isAfter(endTag)){
+            return false;
         }
-        String htmlDoc = doc.wholeText();
-        return htmlDoc.contains(lsfIdString);
+        return !(start.toLocalTime().isBefore(startZeit) || ende.toLocalTime().isAfter(endZeit));
     }
 
     boolean dauerIstVielfachesVon15(LocalDateTime start, LocalDateTime ende) {

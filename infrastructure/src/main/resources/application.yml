@@ -3,10 +3,10 @@ rollen:
   tutor:
 
 praktikumsdauer:
-  startZeit:
-  endZeit:
-  startTag:
-  endTag:
+  startZeit: '09:30'
+  endZeit: '13:30'
+  startTag: '2022-03-07'
+  endTag: '2022-03-25'
 
 spring:
   flyway:

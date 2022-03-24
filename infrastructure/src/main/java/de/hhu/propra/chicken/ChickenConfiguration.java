@@ -7,34 +7,18 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Configuration
 public class ChickenConfiguration {
-
-    @Value("${praktikumsdauer.startZeit:LocalTime.of(9, 30)}")
-    private static LocalTime STARTZEIT;
-
-    @Value("${praktikumsdauer.endZeit:LocalTime.of(13, 30)}")
-    private static LocalTime ENDZEIT;
-
-    @Value("${praktikumsdauer.startTag:LocalDate.of(2022, 3, 7)}")
-    private static LocalDate STARTTAG;
-
-    @Value("${praktikumsdauer.endTag:LocalDate.of(2022, 3, 25)}")
-    private static LocalDate ENDTAG;
-
-
-
     @Bean
     public StudentenService studentenServiceErstellen(StudentRepository studentRepo){
         return new StudentenService(studentRepo);
     }
 
     @Bean
-    public KlausurService klausurServiceErstellen(KlausurRepository klausurRepo, LsfValidierung lsfValidierung){
-        return new KlausurService(klausurRepo, lsfValidierung);
+    public KlausurService klausurServiceErstellen(KlausurRepository klausurRepo, LsfValidierung lsfValidierung, BuchungsValidierung buchungsValidierung){
+        return new KlausurService(klausurRepo, lsfValidierung, buchungsValidierung);
     }
 
     @Bean
@@ -44,11 +28,14 @@ public class ChickenConfiguration {
 
     @Bean
     public BuchungsService buchungsServiceErstellen(StudentRepository studentRepo, KlausurRepository klausurRepo, BuchungsValidierung buchungsValidierung) throws IOException {
-        return new BuchungsService(studentRepo,klausurRepo, buchungsValidierung);
+        return new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
     }
 
     @Bean
-    public BuchungsValidierung buchungsValidierungErstellen(){
-        return new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+    public BuchungsValidierung buchungsValidierungErstellen(@Value("${praktikumsdauer.startZeit}") String startZeit,
+                                                            @Value("${praktikumsdauer.endZeit}") String endZeit,
+                                                            @Value("${praktikumsdauer.startTag}") String startTag,
+                                                            @Value("${praktikumsdauer.endTag}") String endTag){
+        return new BuchungsValidierung(startZeit, endZeit, startTag, endTag);
     }
 }

@@ -24,8 +24,11 @@ public class KlausurServiceTest {
     void test1() throws IOException {
         KlausurRepository repo = mock(KlausurRepository.class);
         LsfValidierung lsfValidierung = mock(LsfValidierung.class);
-        KlausurService service = new KlausurService(repo, lsfValidierung);
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        KlausurService service = new KlausurService(repo, lsfValidierung, buchungsValidierung);
         when(repo.klausurMitLsfId(any())).thenReturn(PK_12_13);
+        when(lsfValidierung.gueltigeLsfId(any())).thenReturn(true);
+        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
 
         service.klausurHinzufuegen(PK_12_13);
 
@@ -37,9 +40,11 @@ public class KlausurServiceTest {
     void test2() throws IOException {
         KlausurRepository repo = mock(KlausurRepository.class);
         LsfValidierung lsfValidierung = mock(LsfValidierung.class);
-        KlausurService service = new KlausurService(repo, lsfValidierung);
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        KlausurService service = new KlausurService(repo, lsfValidierung, buchungsValidierung);
         when(repo.klausurMitLsfId(any())).thenReturn(null);
         when(lsfValidierung.gueltigeLsfId(any())).thenReturn(true);
+        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
 
 
         service.klausurHinzufuegen(PK_12_13);
@@ -48,12 +53,13 @@ public class KlausurServiceTest {
     }
 
     @Test
-    @DisplayName("findeKlausur ruft klausurMitId aus Repo auf")
-    void test3() throws IOException {
+    @DisplayName("findeKlausur ruft klausurMitLsfId aus Repo auf")
+    void test3(){
 
         KlausurRepository repo = mock(KlausurRepository.class);
         LsfValidierung lsfValidierung = mock(LsfValidierung.class);
-        KlausurService service = new KlausurService(repo, lsfValidierung);
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        KlausurService service = new KlausurService(repo, lsfValidierung, buchungsValidierung);
 
         service.findeKlausur(234567L);
 

@@ -17,9 +17,6 @@ public class Klausur {
     LocalDateTime ende;
     KlausurTyp typ = KlausurTyp.ONLINE;
 
-    private final static LocalTime PRAKTIKUMSSTART = LocalTime.of(9, 30);
-    private final static LocalTime ENDE = LocalTime.of(13, 30);
-
 
 
     public Klausur(Long lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
@@ -72,13 +69,6 @@ public class Klausur {
         return freistellungsEnde;
     }
 
-
-
-    Long dauer() {
-        return Duration.between(start, ende).toMinutes();
-    }
-
-    //TODO: Long returnen, um LsfId zu kapseln
     public Long getLsfId() {
         return lsfId.getId();
     }

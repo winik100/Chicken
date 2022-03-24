@@ -1,13 +1,9 @@
 package de.hhu.propra.chicken.aggregates;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -20,10 +16,10 @@ import static org.mockito.Mockito.mock;
 
 public class BuchungsValidierungTests {
 
-    private final static LocalTime STARTZEIT = LocalTime.of(9, 30);
-    private final static LocalTime ENDZEIT = LocalTime.of(13, 30);;
-    private final static LocalDate STARTTAG = LocalDate.of(2022, 3, 7);
-    private final static LocalDate ENDTAG = LocalDate.of(2022, 3, 25);
+    private final static String STARTZEIT = "09:30";
+    private final static String ENDZEIT = "13:30";
+    private final static String STARTTAG = "2022-03-07";
+    private final static String ENDTAG = "2022-03-25";
     
     @Test
     @DisplayName("dauerIstVielFachesVon15 gibt bei Dauer von 60 min true zurück")
@@ -135,7 +131,7 @@ public class BuchungsValidierungTests {
 
     @Test
     @DisplayName("Ist schon ein Urlaub in der Mitte des Tages gebucht, schlägt die zweite Buchung fehl")
-    void test_10() {
+    void test_10() throws IOException {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
         LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
         LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
@@ -151,7 +147,7 @@ public class BuchungsValidierungTests {
 
     @Test
     @DisplayName("Ist schon ein Urlaub am Anfang des Tages gebucht, kann kein zweiter Urlaub mit 60 Minuten Abstand gebucht werden")
-    void test_11() {
+    void test_11() throws IOException {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
         LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
@@ -167,7 +163,7 @@ public class BuchungsValidierungTests {
 
     @Test
     @DisplayName("Ist schon ein Urlaub am Ende des Tages gebucht, kann kein zweiter Urlaub mit 60 Minuten Abstand gebucht werden")
-    void test_12() {
+    void test_12() throws IOException {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
         LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
@@ -184,7 +180,7 @@ public class BuchungsValidierungTests {
     @Test
     @DisplayName("Ist schon ein Urlaub am Anfang des Tages gebucht, kann kein zweiter Urlaub mit 90 Minuten " +
             "Abstand aber nicht am Ende des Tages gebucht werden")
-    void test_13() {
+    void test_13() throws IOException {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
         LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
@@ -201,7 +197,7 @@ public class BuchungsValidierungTests {
     @Test
     @DisplayName("Ist schon ein Urlaub am Ende des Tages gebucht, kann kein zweiter Urlaub mit 90 Minuten " +
             "Abstand aber nicht am Anfang des Tages gebucht werden")
-    void test_14() {
+    void test_14() throws IOException {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
         LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
@@ -218,7 +214,7 @@ public class BuchungsValidierungTests {
     @Test
     @DisplayName("Ist schon ein Urlaub am Anfang des Tages gebucht, kann ein zweiter Urlaub am Ende des Tages mit" +
             "90 Minuten Abstand gebucht werden")
-    void test_15() {
+    void test_15() throws IOException {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
         LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
@@ -235,7 +231,7 @@ public class BuchungsValidierungTests {
     @Test
     @DisplayName("Ist schon ein Urlaub am Ende des Tages gebucht, kann ein zweiter Urlaub am Anfang des Tages mit" +
             "90 Minuten Abstand gebucht werden")
-    void test_16() {
+    void test_16() throws IOException {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
         LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
@@ -376,30 +372,8 @@ public class BuchungsValidierungTests {
     }
 
     @Test
-    @DisplayName("Bei existierender Veranstaltung wird die VeranstaltungsID auf der geparsten Seite gefunden.")
-    void test_26() throws IOException {
-        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
-        InputStream resourceAsStream = BuchungsValidierungTests.class.getResourceAsStream("/valideVeranstaltung.html");
-        Document parsedDoc = Jsoup.parse(resourceAsStream, StandardCharsets.UTF_8.name(), "");
-        boolean b = buchungsValidierung.gueltigeLsfId(219960L, parsedDoc);
-
-        assertThat(b).isTrue();
-    }
-
-    @Test
-    @DisplayName("Bei nicht existierender Veranstaltung wird die VeranstaltungsID nicht auf der geparsten Seite gefunden.")
-    void test_27() throws IOException {
-        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
-        InputStream resourceAsStream = BuchungsValidierungTests.class.getResourceAsStream("/invalideVeranstaltung.html");
-        Document parsedDoc = Jsoup.parse(resourceAsStream, StandardCharsets.UTF_8.name(), "");
-        boolean b = buchungsValidierung.gueltigeLsfId(519960L, parsedDoc);
-
-        assertThat(b).isFalse();
-    }
-
-    @Test
     @DisplayName("Student mit 240 Minuten Resturlaub hat ausreichend Resturlaub für 30 Minuten Urlaub")
-    void test_28() {
+    void test_26() {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 0);
@@ -412,7 +386,7 @@ public class BuchungsValidierungTests {
 
     @Test
     @DisplayName("Student mit 240 Minuten Resturlaub hat ausreichend Resturlaub für 240 Minuten Urlaub")
-    void test_29() {
+    void test_27() {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
@@ -425,7 +399,7 @@ public class BuchungsValidierungTests {
 
     @Test
     @DisplayName("Student mit 240 Minuten Resturlaub hat nicht ausreichend Resturlaub für 270 Minuten Urlaub")
-    void test_30() {
+    void test_28() {
         BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 14, 0);
@@ -434,5 +408,149 @@ public class BuchungsValidierungTests {
         boolean b = buchungsValidierung.hatAusreichendRestUrlaub(student, startUrlaub, endeUrlaub);
 
         assertThat(b).isFalse();
+    }
+
+    @Test
+    @DisplayName("Samstage liegen nicht im Praktikumszeitraum.")
+    void test_29(){
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 12, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 12, 10, 30);
+
+        boolean b = buchungsValidierung.liegtImPraktikumsZeitraum(startUrlaub, endeUrlaub);
+
+        assertThat(b).isFalse();
+    }
+
+    @Test
+    @DisplayName("Sonntage liegen nicht im Praktikumszeitraum.")
+    void test_30(){
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 13, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 13, 10, 30);
+
+        boolean b = buchungsValidierung.liegtImPraktikumsZeitraum(startUrlaub, endeUrlaub);
+
+        assertThat(b).isFalse();
+    }
+
+    @Test
+    @DisplayName("Wochentage (z.B. Montag) liegen im Praktikumszeitraum, wenn sie zwischen Start- und Enddatum liegen.")
+    void test_31(){
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 14, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 14, 10, 30);
+
+        boolean b = buchungsValidierung.liegtImPraktikumsZeitraum(startUrlaub, endeUrlaub);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Wochentage (z.B. Dienstag) liegen nicht im Praktikumszeitraum, wenn sie vor dem Startdatum liegen.")
+    void test_32(){
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 1, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 1, 10, 30);
+
+        boolean b = buchungsValidierung.liegtImPraktikumsZeitraum(startUrlaub, endeUrlaub);
+
+        assertThat(b).isFalse();
+    }
+
+    @Test
+    @DisplayName("Wochentage (z.B. Mittwoch) liegen nicht im Praktikumszeitraum, wenn sie nach dem Enddatum liegen.")
+    void test_33(){
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 30, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 30, 10, 30);
+
+        boolean b = buchungsValidierung.liegtImPraktikumsZeitraum(startUrlaub, endeUrlaub);
+
+        assertThat(b).isFalse();
+    }
+
+    @Test
+    @DisplayName("Das Startdatum (7.03.2022) liegt im Praktikumszeitraum.")
+    void test_34(){
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 7, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 7, 10, 30);
+
+        boolean b = buchungsValidierung.liegtImPraktikumsZeitraum(startUrlaub, endeUrlaub);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Das Enddatum (25.03.2022) liegt im Praktikumszeitraum.")
+    void test_35(){
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 25, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 25, 10, 30);
+
+        boolean b = buchungsValidierung.liegtImPraktikumsZeitraum(startUrlaub, endeUrlaub);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Urlaub an einem gültigen Tag zwischen Startzeit und Endzeit liegt im Praktikumszeitraum.")
+    void test_36(){
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 23, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 23, 10, 30);
+
+        boolean b = buchungsValidierung.liegtImPraktikumsZeitraum(startUrlaub, endeUrlaub);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Urlaub an einem gültigen Tag aber mit Beginn vor dem Startzeitpunkt liegt nicht im Praktikumszeitraum.")
+    void test_37(){
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 23, 8, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 23, 10, 30);
+
+        boolean b = buchungsValidierung.liegtImPraktikumsZeitraum(startUrlaub, endeUrlaub);
+
+        assertThat(b).isFalse();
+    }
+
+    @Test
+    @DisplayName("Urlaub an einem gültigen Tag aber mit Ende nach dem Endzeitpunkt liegt nicht im Praktikumszeitraum.")
+    void test_38(){
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 23, 12, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 23, 14, 30);
+
+        boolean b = buchungsValidierung.liegtImPraktikumsZeitraum(startUrlaub, endeUrlaub);
+
+        assertThat(b).isFalse();
+    }
+
+    @Test
+    @DisplayName("Urlaub an einem gültigen Tag mit Beginn genau zum Startzeitpunkt liegt im Praktikumszeitraum.")
+    void test_39(){
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 23, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 23, 10, 30);
+
+        boolean b = buchungsValidierung.liegtImPraktikumsZeitraum(startUrlaub, endeUrlaub);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Urlaub an einem gültigen Tag mit Ende genau zum Endzeitpunkt liegt im Praktikumszeitraum.")
+    void test_40(){
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 23, 12, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 23, 13, 30);
+
+        boolean b = buchungsValidierung.liegtImPraktikumsZeitraum(startUrlaub, endeUrlaub);
+
+        assertThat(b).isTrue();
     }
 }
