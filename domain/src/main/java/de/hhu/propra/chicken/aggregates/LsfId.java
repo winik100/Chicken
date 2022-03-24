@@ -6,11 +6,7 @@ class LsfId {
 
     Long id;
 
-
-
-
-
-    public LsfId(Long id) {
+    LsfId(Long id) {
         this.id = id;
     }
 

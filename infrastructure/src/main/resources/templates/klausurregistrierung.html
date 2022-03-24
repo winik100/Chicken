@@ -26,6 +26,7 @@
             <input type="text" class="form-control" id="lsfId" placeholder=" " name="lsfid" value="">
             <label for="lsfId" class="form-label">ID der Veranstaltung im LSF</label>
 
+            <div class="error-msg" th:unless="${error?.isEmpty()}" th:text="${error}"></div>
             <div class="form-text">Sie finden die LSF Veranstaltungs-ID im <a
                     href="https://lsf.hhu.de/qisserver/rds?state=wtree&search=1&category=veranstaltung.browse&navigationPosition=lectures%2Clectureindex&breadcrumb=lectureindex&topitem=lectures&subitem=lectureindex"
                     target="_blank">LSF</a>.
