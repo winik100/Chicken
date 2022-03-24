@@ -25,6 +25,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.postgresql:postgresql:42.3.3'
+    testImplementation 'com.tngtech.archunit:archunit-junit5:0.23.1'
     implementation project(':services')
     implementation project(':domain')
 }
