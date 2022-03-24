@@ -37,6 +37,11 @@ public class BuchungsValidierung {
         return !(start.toLocalTime().isBefore(startZeit) || ende.toLocalTime().isAfter(endZeit));
     }
 
+    boolean dauerMindestens15Min(LocalDateTime start, LocalDateTime ende){
+        long dauer = Duration.between(start, ende).toMinutes();
+        return dauer >= 15L;
+    }
+
     boolean dauerIstVielfachesVon15(LocalDateTime start, LocalDateTime ende) {
         long dauer = Duration.between(start, ende).toMinutes();
         return (dauer % 15) == 0;

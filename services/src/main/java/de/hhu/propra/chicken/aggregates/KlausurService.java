@@ -43,7 +43,7 @@ public class KlausurService {
         return "";
     }
 
-    public Klausur findeKlausur(Long lsfId) {
+    public Klausur findeKlausurMitLsfId(Long lsfId) {
         Klausur klausur = repo.klausurMitLsfId(lsfId);
         return klausur;
     }

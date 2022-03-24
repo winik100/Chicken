@@ -44,27 +44,19 @@ public class Klausur {
 
     public LocalDateTime startFreistellungBerechnen() {
         LocalDateTime freistellungsBeginn = start;
-        LocalTime praktikumsBeginn = LocalTime.of(9, 30);
         if(typ.equals(KlausurTyp.PRAESENZ)) {
             freistellungsBeginn = freistellungsBeginn.minusHours(2L);
         }
         else {
             freistellungsBeginn = freistellungsBeginn.minusMinutes(30L);
         }
-        if(freistellungsBeginn.isBefore(LocalDateTime.of(start.toLocalDate(), praktikumsBeginn))) {
-            freistellungsBeginn = LocalDateTime.of(start.toLocalDate(), praktikumsBeginn);
-        }
         return freistellungsBeginn;
     }
 
     public LocalDateTime endeFreistellungBerechnen() {
         LocalDateTime freistellungsEnde = ende;
-        LocalTime praktikumsEnde = LocalTime.of(13, 30);
         if(typ.equals(KlausurTyp.PRAESENZ)) {
             freistellungsEnde = freistellungsEnde.plusHours(2L);
-        }
-        if(freistellungsEnde.isAfter(LocalDateTime.of(ende.toLocalDate(), praktikumsEnde))) {
-            freistellungsEnde = LocalDateTime.of(ende.toLocalDate(), praktikumsEnde);
         }
         return freistellungsEnde;
     }

@@ -61,9 +61,8 @@ public class KlausurServiceTest {
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         KlausurService service = new KlausurService(repo, lsfValidierung, buchungsValidierung);
 
-        service.findeKlausur(234567L);
+        service.findeKlausurMitLsfId(234567L);
 
         verify(repo, times(1)).klausurMitLsfId(234567L);
     }
-
 }

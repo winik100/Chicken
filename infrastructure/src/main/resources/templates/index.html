@@ -58,6 +58,7 @@
             <td></td>
             <td></td>
             <td><strong th:text="${resturlaub}"></strong></td>
+            <td></td>
         </tr>
         </tfoot>
     </table>
@@ -66,7 +67,7 @@
     <div>
         <p>Sie sind für folgende Klausuren angemeldet:</p>
         <div class="error-msg">
-            <p th:unless="${klausurstornoerror?.isEmpty()}" th:text="${klausurstornoerror}">
+            <p th:text="${error}">
                 ERRORRRRR
             </p>
         </div>
@@ -98,7 +99,7 @@
     </div>
 
     <div class="text-center pt-5">
-        <a href="/urlaubanmeldung">
+        <a href="/urlaubsbuchung">
             <button class="btn bg-blue mx-5 text-white p-3">Urlaub anmelden</button>
         </a>
         <a href="/klausuranmeldung">
@@ -132,6 +133,6 @@
             allowTimes: endTime
         });
     </script>
-
+</div>
 </body>
 </html>

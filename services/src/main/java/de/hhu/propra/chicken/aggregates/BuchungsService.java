@@ -49,7 +49,7 @@ public class BuchungsService {
     public String klausurStornieren(Klausur klausur, Student student) throws IOException {
         if(!validierung.buchungLiegtNachZeitpunkt(klausur.startFreistellungBerechnen(),LocalDateTime.now().plusDays(1))) {
             log.error(student.getGithubHandle(), "Verspäteter Stornierungsversuch der Klausur mit LSF-ID " + klausur.getLsfId() + ".", LocalDateTime.now());
-            return "Klausur kann nur bis zum Vortag storniert werden";
+            return "Klausur kann nur bis zum Vortag storniert werden.";
         }
         student.klausurAbmelden(klausur);
         studentRepository.save(student);
@@ -72,10 +72,16 @@ public class BuchungsService {
                     + validierung.endTag + " zwischen " + validierung.startZeit + " und " + validierung.endZeit + ".";
         }
 
+        if (!validierung.dauerMindestens15Min(start, ende)) {
+            log.error(student.getGithubHandle(), "Buchungsversuch von Urlaub kürzer als 15 Minuten.", LocalDateTime.now());
+            return "Die Urlaubsdauer muss mindestens 15 Minuten betragen.";
+        }
+
         if (!validierung.dauerIstVielfachesVon15(start, ende)) {
             log.error(student.getGithubHandle(), "Buchungsversuch von Urlaub mit ungültiger Dauer.", LocalDateTime.now());
             return "Die Urlaubsdauer muss ein Vielfaches von 15 sein.";
         }
+
         if (!validierung.startZeitIstVielfachesVon15(start)) {
             log.error(student.getGithubHandle(), "Buchungsversuch von Urlaub mit ungültiger Startzeit.", LocalDateTime.now());
             return "Die Startzeit muss ein Vielfaches von 15 sein.";

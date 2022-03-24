@@ -38,6 +38,7 @@ public class BuchungsSzenarioTests {
         when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
         when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(true);
         when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
         LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 9, 30);
         LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 13, 30);
@@ -61,6 +62,7 @@ public class BuchungsSzenarioTests {
         when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
         when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(true);
         when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
         LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 8, 13, 30);
@@ -87,6 +89,7 @@ public class BuchungsSzenarioTests {
         when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);
         when(buchungsValidierung.ueberschneidungMitKlausur(any(), any(), any())).thenReturn(Set.of());
         when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(OK_11_12);
         LocalDateTime ersterUrlaubsStart = LocalDateTime.of(2022, 3, 8, 10, 0);
@@ -118,6 +121,7 @@ public class BuchungsSzenarioTests {
         when(buchungsValidierung.mind90MinZwischenUrlauben(any(), any(), any())).thenReturn(false);
         when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(true);
         when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
         LocalDateTime ersterUrlaubsStart = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime erstesUrlaubsEnde = LocalDateTime.of(2022, 3, 8, 10, 30);

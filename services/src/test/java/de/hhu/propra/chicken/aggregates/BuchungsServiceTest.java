@@ -133,6 +133,7 @@ public class BuchungsServiceTest {
         when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);
         when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
         when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
@@ -160,6 +161,7 @@ public class BuchungsServiceTest {
         when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(true);
         when(buchungsValidierung.mind90MinZwischenUrlauben(any(), any(), any())).thenReturn(true);
         when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
         LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
@@ -187,6 +189,7 @@ public class BuchungsServiceTest {
         when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
         when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(true);
         when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
 
@@ -212,6 +215,7 @@ public class BuchungsServiceTest {
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
         when(buchungsValidierung.ueberschneidungMitKlausur(any(), any(), any())).thenReturn(Set.of(OK_11_12));
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
@@ -254,4 +258,26 @@ public class BuchungsServiceTest {
         verify(student, times(1)).bestehendenUrlaubAnKlausurAnpassen(PK_12_13);
         verify(student, times(1)).klausurAnmelden(PK_12_13);
     }
+
+    @Test
+    @DisplayName("urlaubBuchen mit zu kurzer Dauer (<15 Minuten) ruft nicht urlaubNehmen auf.")
+    void test_13() throws IOException {
+        StudentRepository studentRepo = mock(StudentRepository.class);
+        Student student = mock(Student.class);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
+        KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
+        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 10, 10);
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
+
+        String result = buchungsService.urlaubBuchen(student, startUrlaub, endeUrlaub);
+
+        verify(student, never()).urlaubNehmen(startUrlaub, endeUrlaub);
+        assertThat(result).isEqualTo("Die Urlaubsdauer muss mindestens 15 Minuten betragen.");
+    }
+
+
 }

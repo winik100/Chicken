@@ -601,4 +601,41 @@ public class BuchungsValidierungTests {
 
         assertThat(b).isTrue();
     }
+
+    @Test
+    @DisplayName("Dauer von 0 Minuten ist weniger als 15 :o")
+    void test_45() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime start = LocalDateTime.of(2022, 3, 23, 10, 0);
+        LocalDateTime ende = LocalDateTime.of(2022, 3, 23, 10, 0);
+
+        boolean b = buchungsValidierung.dauerMindestens15Min(start,ende);
+
+        assertThat(b).isFalse();
+    }
+
+    @Test
+    @DisplayName("Dauer von 30 Minuten ist mehr als 15 :o")
+    void test_46() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime start = LocalDateTime.of(2022, 3, 23, 10, 0);
+        LocalDateTime ende = LocalDateTime.of(2022, 3, 23, 10, 30);
+
+        boolean b = buchungsValidierung.dauerMindestens15Min(start,ende);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Dauer von 15 Minuten ist >=15 :o")
+    void test_47() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        LocalDateTime start = LocalDateTime.of(2022, 3, 23, 10, 0);
+        LocalDateTime ende = LocalDateTime.of(2022, 3, 23, 10, 15);
+
+        boolean b = buchungsValidierung.dauerMindestens15Min(start,ende);
+
+        assertThat(b).isTrue();
+    }
+
 }
