@@ -12,7 +12,6 @@ import java.util.Set;
 
 import static de.hhu.propra.chicken.util.KlausurTemplates.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 public class BuchungsSzenarioTests {

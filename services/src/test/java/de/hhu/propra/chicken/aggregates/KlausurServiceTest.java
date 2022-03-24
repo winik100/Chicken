@@ -44,7 +44,7 @@ public class KlausurServiceTest {
         KlausurService service = new KlausurService(repo, lsfValidierung, buchungsValidierung);
         when(repo.klausurMitLsfId(any())).thenReturn(null);
         when(lsfValidierung.gueltigeLsfId(any())).thenReturn(true);
-        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
+        when(buchungsValidierung.klausurLiegtImPraktikumsZeitraum(any())).thenReturn(true);
 
 
         service.klausurHinzufuegen(PK_12_13);

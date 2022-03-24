@@ -23,7 +23,7 @@ public class KlausurService {
     }
 
     public String klausurHinzufuegen(Klausur klausur) throws IOException {
-        if (!buchungsValidierung.liegtImPraktikumsZeitraum(klausur.startFreistellungBerechnen(), klausur.endeFreistellungBerechnen())){
+        if (!buchungsValidierung.klausurLiegtImPraktikumsZeitraum(klausur)){
             log.error("Klausurregistrierung", "Registrierungsversuch einer Klausur außerhalb des Praktikumszeitraums", LocalDateTime.now());
             return "Die Klausur liegt ausserhalb der Praktikumszeit. Gültig sind Mo. - Fr. im Zeitraum vom " + buchungsValidierung.startTag + " bis "
                     + buchungsValidierung.endTag + " zwischen " + buchungsValidierung.startZeit + " und " + buchungsValidierung.endZeit + ".";

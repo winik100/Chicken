@@ -4,9 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Set;
 
 
@@ -636,6 +634,51 @@ public class BuchungsValidierungTests {
         boolean b = buchungsValidierung.dauerMindestens15Min(start,ende);
 
         assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Liegt die Freistellungszeit einer Klausur komplett im Praktikumszeitraum gibt klausurLiegtImPraktikumsZeitraum() true zurück.")
+    void test_48() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+
+        boolean b = buchungsValidierung.klausurLiegtImPraktikumsZeitraum(OK_11_12);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Liegt der Freistellungsbeginn einer Klausur vor Beginn der Praktikumszeit und " +
+            "das Freistellungsende im Praktikumszeitraum, gibt klausurLiegtImPraktikumsZeitraum() true zurück.")
+    void test_49() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+
+        boolean b = buchungsValidierung.klausurLiegtImPraktikumsZeitraum(PK_10_11);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Liegt der Freistellungsbeginn einer Klausur im Praktikumszeitraum und " +
+            "das Freistellungsende nach Ende der Praktikumszeit, gibt klausurLiegtImPraktikumsZeitraum() true zurück.")
+    void test_50() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+
+        boolean b = buchungsValidierung.klausurLiegtImPraktikumsZeitraum(PK_12_13);
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("Liegt die Freistellungszeit einer Klausur komplett außerhalb der Praktikumszeit, gibt klausurLiegtImPraktikumsZeitraum() false zurück.")
+    void test_51() {
+        BuchungsValidierung buchungsValidierung = new BuchungsValidierung(STARTZEIT, ENDZEIT, STARTTAG, ENDTAG);
+        Klausur klausur = new Klausur(2L, 222222L, "Mathe",
+                LocalDateTime.of(2022, 3, 8, 14, 0),
+                LocalDateTime.of(2022, 3, 8, 15, 0), "online");
+
+        boolean b = buchungsValidierung.klausurLiegtImPraktikumsZeitraum(klausur);
+
+        assertThat(b).isFalse();
     }
 
 }

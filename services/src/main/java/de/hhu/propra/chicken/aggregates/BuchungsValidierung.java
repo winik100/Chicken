@@ -37,6 +37,18 @@ public class BuchungsValidierung {
         return !(start.toLocalTime().isBefore(startZeit) || ende.toLocalTime().isAfter(endZeit));
     }
 
+    boolean klausurLiegtImPraktikumsZeitraum(Klausur klausur){
+        LocalDateTime startFreistellung = klausur.startFreistellungBerechnen();
+        LocalDateTime endeFreistellung = klausur.endeFreistellungBerechnen();
+        if (startFreistellung.toLocalTime().isBefore(startZeit) && endeFreistellung.toLocalTime().isAfter(startZeit)) {
+            startFreistellung = LocalDateTime.of(startFreistellung.toLocalDate(), startZeit);
+        }
+        if (startFreistellung.toLocalTime().isBefore(endZeit) && endeFreistellung.toLocalTime().isAfter(endZeit)){
+            endeFreistellung = LocalDateTime.of(startFreistellung.toLocalDate(), endZeit);
+        }
+        return liegtImPraktikumsZeitraum(startFreistellung, endeFreistellung);
+    }
+
     boolean dauerMindestens15Min(LocalDateTime start, LocalDateTime ende){
         long dauer = Duration.between(start, ende).toMinutes();
         return dauer >= 15L;

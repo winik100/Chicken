@@ -51,15 +51,14 @@ public class StudentController {
     }
 
     @PostMapping("/klausurstornierung")
-    public RedirectView klausurstornierung(Model model,
-                                           @AuthenticationPrincipal OAuth2User principal,
+    public RedirectView klausurstornierung(@AuthenticationPrincipal OAuth2User principal,
                                            @RequestParam("lsfId") String lsfId,
                                            RedirectAttributes redirectAttributes) throws IOException {
         Student student = studentenService.findeStudentMitHandle(principal.getAttribute("login"));
         Klausur klausur = klausurService.findeKlausurMitLsfId(Long.valueOf(lsfId));
-        String klausurstornoerror = buchungsService.klausurStornieren(klausur, student);
+        String error = buchungsService.klausurStornieren(klausur, student);
         RedirectView redirectView = new RedirectView("/", true);
-        redirectAttributes.addFlashAttribute("error", klausurstornoerror);
+        redirectAttributes.addFlashAttribute("klausurstornoerror", error);
         return redirectView;
     }
 
@@ -93,7 +92,7 @@ public class StudentController {
             praesenz = "online";
         }
         String error = klausurService.klausurHinzufuegen(new Klausur(lsfId, name, start, ende, praesenz));
-        model.addAttribute("error", error);
+        model.addAttribute("klausurregistrierungsserror", error);
         if (error.isEmpty()){
             return "redirect:/klausuranmeldung";
         }
@@ -124,10 +123,26 @@ public class StudentController {
         LocalDateTime start = LocalDateTime.parse(datum + " " + von, zeitFormatierer);
         LocalDateTime ende = LocalDateTime.parse(datum + " " + bis, zeitFormatierer);
         String error = buchungsService.urlaubBuchen(student, start, ende);
-        model.addAttribute("error", error);
+        model.addAttribute("urlaubbuchungserror", error);
         if (error.isEmpty()){
             return "redirect:/";
         }
         return "/urlaubsbuchung";
+    }
+
+    @PostMapping("/urlaubsstornierung")
+    public RedirectView urlaubsstornierung(@AuthenticationPrincipal OAuth2User principal,
+                                           @RequestParam("datum")String datum,
+                                           @RequestParam("von")String von,
+                                           @RequestParam("bis")String bis,
+                                           RedirectAttributes redirectAttributes) throws IOException {
+        Student student = studentenService.findeStudentMitHandle(principal.getAttribute("login"));
+        DateTimeFormatter zeitFormatierer = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime start = LocalDateTime.parse(datum + " " + von, zeitFormatierer);
+        LocalDateTime ende = LocalDateTime.parse(datum + " " + bis, zeitFormatierer);
+        String urlaubsstornoerror = buchungsService.urlaubStornieren(student, start, ende);
+        RedirectView redirectView = new RedirectView("/", true);
+        redirectAttributes.addFlashAttribute("urlaubsstornoerror", urlaubsstornoerror);
+        return redirectView;
     }
 }

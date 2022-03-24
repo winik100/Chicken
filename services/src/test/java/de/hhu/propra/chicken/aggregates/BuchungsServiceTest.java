@@ -12,7 +12,6 @@ import java.util.Set;
 
 import static de.hhu.propra.chicken.util.KlausurTemplates.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 public class BuchungsServiceTest {
@@ -75,12 +74,13 @@ public class BuchungsServiceTest {
     }
 
     @Test
-    @DisplayName("BuchungsService.urlaubStornieren() ruft Student.urlaubEntfernen() korrekt auf")
+    @DisplayName("BuchungsService.urlaubStornieren() ruft Student.urlaubEntfernen() korrekt auf.")
     void test_4() throws IOException {
         StudentRepository studentRepo = mock(StudentRepository.class);
         Student student = mock(Student.class);
         BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
         KlausurRepository klausurRepo = mock(KlausurRepository.class);
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
@@ -89,6 +89,25 @@ public class BuchungsServiceTest {
         buchungsService.urlaubStornieren(student, start, ende);
 
         verify(student, times(1)).urlaubEntfernen(start, ende);
+    }
+
+    @Test
+    @DisplayName("BuchungsService.urlaubStornieren() ruft Student.urlaubEntfernen() nicht auf, falls weniger als ein Tag bis Urlaubsbeginn verbleibt.")
+    void test_4b() throws IOException {
+        StudentRepository studentRepo = mock(StudentRepository.class);
+        Student student = mock(Student.class);
+        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(false);
+        KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
+        LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
+
+        String result = buchungsService.urlaubStornieren(student, start, ende);
+
+        verify(student, never()).urlaubEntfernen(start, ende);
+        assertThat(result).isEqualTo("Urlaub kann nur bis zum Vortag storniert werden.");
     }
 
     @Test

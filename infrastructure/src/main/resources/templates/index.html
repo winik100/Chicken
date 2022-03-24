@@ -15,6 +15,11 @@
     <h1>Übersicht: Freistellungen</h1>
 
     <h2>Urlaubszeiten</h2>
+    <div class="error-msg">
+        <p th:text="${urlaubsstornoerror}">
+            ERRORRRRR
+        </p>
+    </div>
     <table id="urlaub_table" class="table mb-5">
         <thead>
         <tr>
@@ -32,12 +37,12 @@
             <td th:text="${u.ende().toLocalTime()}">bis</td>
             <td th:text="${u.dauerInMin()}">Zeit (min)</td>
             <td>
-                <form name="storno_21.03.2022_10:00_11:00"
-                      method="post" action="/urlaubstorno">
-                    <input type="hidden" name="datum" value="21.03.2022">
-                    <input type="hidden" name="von" value="10:00">
-                    <input type="hidden" name="bis" value="11:00">
-                    <button name="stornobtn_21.03.2022_10:00_11:00"
+                <form name="urlaubsstornierung"
+                      method="post" th:action="@{/urlaubsstornierung}">
+                    <input type="hidden" name="datum" th:value="${u.start().toLocalDate()}">
+                    <input type="hidden" name="von" th:value="${u.start().toLocalTime()}">
+                    <input type="hidden" name="bis" th:value="${u.ende().toLocalTime()}">
+                    <button name="stornierungsbutton"
                             class="btn btn-danger">Stornieren
                     </button>
                 </form>
@@ -63,14 +68,13 @@
         </tfoot>
     </table>
     <h2 id="klausur">Klausuren</h2>
-
+    <div class="error-msg">
+        <p th:text="${klausurstornoerror}">
+            ERRORRRRR
+        </p>
+    </div>
     <div>
         <p>Sie sind für folgende Klausuren angemeldet:</p>
-        <div class="error-msg">
-            <p th:text="${error}">
-                ERRORRRRR
-            </p>
-        </div>
         <table name="angemeldete_klausuren" class="table mb-5">
             <thead>
             <tr>

@@ -130,7 +130,12 @@ public class BuchungsService {
     }
 
     public String urlaubStornieren(Student student, LocalDateTime start, LocalDateTime ende) throws IOException {
+        if (!validierung.buchungLiegtNachZeitpunkt(start, LocalDateTime.now().plusDays(1))){
+            log.error(student.getGithubHandle(), "Verspäteter Stornierungsversuch des Urlaubs am " + start.toLocalDate() + " von " + start.toLocalTime() + " bis " + ende.toLocalTime() + ".", LocalDateTime.now());
+            return "Urlaub kann nur bis zum Vortag storniert werden.";
+        }
         student.urlaubEntfernen(start, ende);
+        studentRepository.save(student);
         log.info(student.getGithubHandle(), "Erfolgreiche Stornierung von Urlaub am " + start.toLocalDate() + " von " + start.toLocalTime() + " bis " + ende.toLocalTime() + ".", LocalDateTime.now());
         return "";
     }

@@ -14,7 +14,7 @@
 <div class="container">
     <h1>Urlaub anmelden</h1>
     <div class="formular mt-3">
-        <div class="error-msg" th:unless="${error?.isEmpty()}" th:text="${error}"></div>
+        <div class="error-msg" th:text="${urlaubbuchungserror}"></div>
         <form name="urlaub_anmelden" class="mt-3" method="post" th:action="@{/urlaubsbuchung}">
             <div class="form-floating mb-3">
                 <input type="date" class="form-control" id="datum"
