@@ -40,6 +40,11 @@ public class BuchungsService {
     }
 
     public String klausurBuchen(Klausur klausur, Student student) throws IOException {
+        if (!validierung.buchungLiegtNachZeitpunkt(klausur.getStart(), LocalDateTime.now())) {
+            log.error(student.getGithubHandle(), "Buchungsversuch von Klausur in der Vergangenheit.",
+                    LocalDateTime.now());
+            return "Die gewählte Klausur liegt in der Vergangenheit.";
+        }
         if (student.ueberschneidungKlausurMitBestehendemUrlaub(klausur)) {
             student.bestehendenUrlaubAnKlausurAnpassen(klausur);
         }
@@ -71,7 +76,7 @@ public class BuchungsService {
         if (!validierung.buchungLiegtNachZeitpunkt(start, LocalDateTime.now())) {
             log.error(student.getGithubHandle(), "Buchungsversuch von Urlaub in der Vergangenheit.",
                     LocalDateTime.now());
-            return "Der gewünschte Urlaub darf nicht in der Vergangenheit liegen!";
+            return "Der gewünschte Urlaub darf nicht in der Vergangenheit liegen.";
         }
 
         if (!validierung.liegtImPraktikumsZeitraum(start, ende)) {

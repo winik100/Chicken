@@ -2,6 +2,8 @@ package de.hhu.propra.chicken.aggregates;
 
 import de.hhu.propra.chicken.stereotypes.AggregateRoot;
 import de.hhu.propra.chicken.util.AuditLog;
+import de.hhu.propra.chicken.util.KlausurReferenz;
+import de.hhu.propra.chicken.util.UrlaubsEintragDTO;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -38,12 +40,13 @@ public class Student {
         this.klausurAnmeldungen = new HashSet<>();
     }
 
-    public Student(Long id, String githubHandle, Long restUrlaub, Set<UrlaubsEintrag> urlaube,
-                   Set<KlausurReferenz> klausurAnmeldungen) {
+    public Student(Long id, String githubHandle, Long restUrlaub, Set<UrlaubsEintragDTO> urlaube, Set<KlausurReferenz> klausurAnmeldungen) {
         this.id = id;
         this.githubHandle = githubHandle;
         this.restUrlaub = restUrlaub;
-        this.urlaube = urlaube;
+        this.urlaube = urlaube.stream()
+                .map(x -> new UrlaubsEintrag(x.start(), x.ende()))
+                .collect(Collectors.toSet());
         this.klausurAnmeldungen = klausurAnmeldungen;
     }
 
@@ -61,6 +64,12 @@ public class Student {
 
     public Set<UrlaubsEintrag> getUrlaube() {
         return urlaube;
+    }
+
+    public Set<UrlaubsEintragDTO> getUrlaubeAlsDTOs() {
+        return urlaube.stream()
+                .map(x -> new UrlaubsEintragDTO(x.start(), x.ende()))
+                .collect(Collectors.toSet());
     }
 
     public Set<Long> getKlausurAnmeldungen() {

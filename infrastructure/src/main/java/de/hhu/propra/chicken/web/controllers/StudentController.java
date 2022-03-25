@@ -40,7 +40,7 @@ public class StudentController {
         if (student != null) {
             Set<Klausur> klausurenAusDB = klausurService.findeKlausurenMitIds(student.getKlausurAnmeldungen());
             model.addAttribute("klausuren", klausurenAusDB);
-            model.addAttribute("urlaube", student.getUrlaube());
+            model.addAttribute("urlaube", student.getUrlaubeAlsDTOs());
             model.addAttribute("urlaubssumme", student.summeBisherigenUrlaubs());
             model.addAttribute("resturlaub", student.getResturlaubInMin());
         } else {
@@ -95,7 +95,7 @@ public class StudentController {
             praesenz = "online";
         }
         String error = klausurService.klausurHinzufuegen(new Klausur(lsfId, name, start, ende, praesenz));
-        model.addAttribute("klausurregistrierungsserror", error);
+        model.addAttribute("klausurregistrierungserror", error);
         if (error.isEmpty()) {
             return "redirect:/klausuranmeldung";
         }
@@ -103,12 +103,19 @@ public class StudentController {
     }
 
     @PostMapping("/klausuranmeldung")
-    public String klausurAnmeldungDurchfuehren(@RequestParam("klausur")String lsfId,
+    public String klausurAnmeldungDurchfuehren(Model model,
+                                               @RequestParam("klausur")String lsfId,
                                                @AuthenticationPrincipal OAuth2User principal) throws IOException {
         Student student = studentService.findeStudentMitHandle(principal.getAttribute("login"));
         Klausur klausur = klausurService.findeKlausurMitLsfId(Long.valueOf(lsfId));
-        buchungsService.klausurBuchen(klausur, student);
-        return "redirect:/";
+        String error = buchungsService.klausurBuchen(klausur, student);
+        model.addAttribute("klausuranmeldungserror", error);
+        if (error.isEmpty()) {
+            return "redirect:/";
+        }
+        Set<Klausur> klausuren = klausurService.alleKlausuren();
+        model.addAttribute("klausuren", klausuren);
+        return "klausuranmeldung";
     }
 
     @GetMapping("/urlaubsbuchung")

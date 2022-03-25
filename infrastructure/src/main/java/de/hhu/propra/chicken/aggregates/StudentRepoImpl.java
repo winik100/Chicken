@@ -1,5 +1,7 @@
 package de.hhu.propra.chicken.aggregates;
 
+import de.hhu.propra.chicken.util.KlausurReferenz;
+import de.hhu.propra.chicken.util.UrlaubsEintragDTO;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
@@ -34,8 +36,11 @@ public class StudentRepoImpl implements StudentRepository {
         StudentEntity studentEntity = new StudentEntity(student.getId(),
                 student.getGithubHandle(),
                 student.getResturlaubInMin(),
-                student.getKlausurAnmeldungen().stream().map(KlausurReferenz::new).collect(Collectors.toSet()),
-                student.getUrlaube().stream().map(x -> new UrlaubsEintragEntity(x.start(), x.ende()))
+                student.getKlausurAnmeldungen().stream()
+                        .map(KlausurReferenz::new)
+                        .collect(Collectors.toSet()),
+                student.getUrlaubeAlsDTOs().stream()
+                        .map(x -> new UrlaubsEintragEntity(x.start(), x.ende()))
                         .collect(Collectors.toSet()));
         studentRepo.save(studentEntity);
     }
@@ -48,13 +53,13 @@ public class StudentRepoImpl implements StudentRepository {
             return null;
         }
         Set<UrlaubsEintragEntity> urlaubsEintragEntities = student.urlaubsEintraege();
-        Set<UrlaubsEintrag> urlaubsEintraege = urlaubsEintragEntities.stream()
-                .map(x -> new UrlaubsEintrag(x.start(), x.ende()))
+        Set<UrlaubsEintragDTO> urlaubsEintragDTOs = urlaubsEintragEntities.stream()
+                .map(x -> new UrlaubsEintragDTO(x.start(), x.ende()))
                 .collect(Collectors.toSet());
         Set<KlausurEntity> klausurEntities = klausurRepo.findAllByStudentId(student.id());
         Set<KlausurReferenz> ids = klausurEntities.stream()
                 .map(x -> new KlausurReferenz(x.getId()))
                 .collect(Collectors.toSet());
-        return new Student(student.id(), student.githubHandle(), student.restUrlaub(), urlaubsEintraege, ids);
+        return new Student(student.id(), student.githubHandle(), student.restUrlaub(), urlaubsEintragDTOs, ids);
     }
 }

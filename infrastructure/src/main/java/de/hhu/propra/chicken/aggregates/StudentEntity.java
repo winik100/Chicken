@@ -1,5 +1,6 @@
 package de.hhu.propra.chicken.aggregates;
 
+import de.hhu.propra.chicken.util.KlausurReferenz;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.MappedCollection;

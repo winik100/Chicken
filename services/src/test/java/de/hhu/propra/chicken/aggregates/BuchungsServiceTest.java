@@ -31,6 +31,7 @@ public class BuchungsServiceTest {
     void test_1() throws IOException {
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
         String error = buchungsService.klausurBuchen(PK_12_13, student);
@@ -248,6 +249,7 @@ public class BuchungsServiceTest {
     void test_12() throws IOException {
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
         String error = buchungsService.klausurBuchen(PK_12_13, student);
@@ -264,6 +266,7 @@ public class BuchungsServiceTest {
         when(student.ueberschneidungKlausurMitBestehendemUrlaub(any())).thenReturn(true);
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
         String error = buchungsService.klausurBuchen(PK_12_13, student);
