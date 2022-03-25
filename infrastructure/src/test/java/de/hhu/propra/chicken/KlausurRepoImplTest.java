@@ -22,17 +22,18 @@ public class KlausurRepoImplTest {
     @Autowired
     DBKlausurRepo repo;
 
-
     @Test
-    @DisplayName("klausurRepo kann in Datenbank einfügen und aus ihr lesen")
-    void test_1(){
+    @DisplayName("klausurRepo kann in die Datenbank einfügen und aus ihr lesen.")
+    void test_1() {
         KlausurRepoImpl klausurRepo = new KlausurRepoImpl(repo);
         //id ist null, da autogeneriert
         klausurRepo.save(new Klausur(null, 111111L, "test",
                 LocalDateTime.of(2022,3,8,11,0),
                 LocalDateTime.of(2022,3,8,12,0),
                 "praesenz"));
+
         Klausur result = klausurRepo.klausurMitLsfId(111111L);
+
         assertThat(result.getId()).isEqualTo(3L);
         assertThat(result.getName()).isEqualTo("test");
         assertThat(result.getStart()).isEqualTo(LocalDateTime.of(2022,3,8,11,0));

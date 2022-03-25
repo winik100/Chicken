@@ -11,16 +11,15 @@
     <link href="/css/site.css"
           rel="stylesheet">
 </head>
+
 <body>
 <div class="container">
     <h1>Übersicht: Freistellungen</h1>
 
     <h2>Urlaubszeiten</h2>
-    <div class="error-msg">
-        <p th:text="${urlaubsstornoerror}">
-            ERRORRRRR
-        </p>
-    </div>
+
+    <div class="error-msg" th:text="${urlaubsstornoerror}"></div>
+
     <table id="urlaub_table" class="table mb-5">
         <thead>
         <tr>
@@ -31,6 +30,7 @@
             <th></th>
         </tr>
         </thead>
+
         <tbody>
         <tr th:each="u : ${urlaube}">
             <td th:text="${u.start().toLocalDate()}">Datum</td>
@@ -49,8 +49,8 @@
                 </form>
             </td>
         </tr>
-
         </tbody>
+
         <tfoot>
         <tr>
             <td><strong>Summe</strong></td>
@@ -68,12 +68,12 @@
         </tr>
         </tfoot>
     </table>
+
+
     <h2 id="klausur">Klausuren</h2>
-    <div class="error-msg">
-        <p th:text="${klausurstornoerror}">
-            ERRORRRRR
-        </p>
-    </div>
+
+    <div class="error-msg" th:text="${klausurstornoerror}"></div>
+
     <div>
         <p>Sie sind für folgende Klausuren angemeldet:</p>
         <table name="angemeldete_klausuren" class="table mb-5">
@@ -85,12 +85,17 @@
                 <th>Freistellungszeitraum</th>
             </tr>
             </thead>
+
             <tbody>
             <tr th:each="k : ${klausuren}">
                 <td th:text="${k.getName()}"></td>
                 <td th:text="${k.getStart().toLocalDate()}"></td>
-                <td><span th:text="${k.getStart().toLocalTime()}"></span><span> - </span><span th:text="${k.getEnde().toLocalTime()}"></span></td>
-                <td><span th:text="${k.startFreistellungBerechnen().toLocalTime()}"></span><span> - </span><span th:text="${k.endeFreistellungBerechnen().toLocalTime()}"></span></td>
+                <td><span th:text="${k.getStart().toLocalTime()}"></span>
+                    <span> - </span>
+                    <span th:text="${k.getEnde().toLocalTime()}"></span></td>
+                <td><span th:text="${k.startFreistellungBerechnen().toLocalTime()}"></span>
+                    <span> - </span>
+                    <span th:text="${k.endeFreistellungBerechnen().toLocalTime()}"></span></td>
                 <td>
                     <form method="post"
                           th:action="@{/klausurstornierung}">

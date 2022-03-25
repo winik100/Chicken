@@ -1,13 +1,9 @@
 package de.hhu.propra.chicken.aggregates;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import java.io.IOException;
 import java.time.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 
 public class BuchungsValidierung {
 
@@ -15,7 +11,6 @@ public class BuchungsValidierung {
     final LocalTime endZeit;
     final LocalDate startTag;
     final LocalDate endTag;
-
 
     public BuchungsValidierung(String startZeit, String endZeit,
                                String startTag, String endTag) {
@@ -25,31 +20,42 @@ public class BuchungsValidierung {
         this.endTag = LocalDate.parse(endTag);
     }
 
-    boolean liegtImPraktikumsZeitraum(LocalDateTime start, LocalDateTime ende){
+    boolean buchungLiegtNachZeitpunkt(LocalDateTime startPunkt, LocalDateTime zeitpunkt) {
+        if (startPunkt.isEqual(zeitpunkt)) {
+            return false;
+        }
+        return startPunkt.isAfter(zeitpunkt);
+    }
+
+    boolean liegtImPraktikumsZeitraum(LocalDateTime start, LocalDateTime ende) {
         DayOfWeek dayOfWeek = start.getDayOfWeek();
-        if (dayOfWeek.equals(DayOfWeek.SATURDAY) || dayOfWeek.equals(DayOfWeek.SUNDAY)){
+        if (dayOfWeek.equals(DayOfWeek.SATURDAY) || dayOfWeek.equals(DayOfWeek.SUNDAY)) {
             return false;
-        } else if (start.toLocalDate().isBefore(startTag)){
+        } else if (start.toLocalDate().isBefore(startTag)) {
             return false;
-        } else if (ende.toLocalDate().isAfter(endTag)){
+        } else if (ende.toLocalDate().isAfter(endTag)) {
             return false;
         }
         return !(start.toLocalTime().isBefore(startZeit) || ende.toLocalTime().isAfter(endZeit));
     }
 
-    boolean klausurLiegtImPraktikumsZeitraum(Klausur klausur){
+    boolean klausurLiegtImPraktikumsZeitraum(Klausur klausur) {
         LocalDateTime startFreistellung = klausur.startFreistellungBerechnen();
         LocalDateTime endeFreistellung = klausur.endeFreistellungBerechnen();
+
         if (startFreistellung.toLocalTime().isBefore(startZeit) && endeFreistellung.toLocalTime().isAfter(startZeit)) {
+            // Start der Praktikumszeit liegt innerhalb Freistellungszeit
             startFreistellung = LocalDateTime.of(startFreistellung.toLocalDate(), startZeit);
         }
-        if (startFreistellung.toLocalTime().isBefore(endZeit) && endeFreistellung.toLocalTime().isAfter(endZeit)){
+        if (startFreistellung.toLocalTime().isBefore(endZeit) && endeFreistellung.toLocalTime().isAfter(endZeit)) {
+            // Ende der Praktikumszeit liegt innerhalb Freistellungszeit
             endeFreistellung = LocalDateTime.of(startFreistellung.toLocalDate(), endZeit);
         }
+
         return liegtImPraktikumsZeitraum(startFreistellung, endeFreistellung);
     }
 
-    boolean dauerMindestens15Min(LocalDateTime start, LocalDateTime ende){
+    boolean dauerMindestens15Min(LocalDateTime start, LocalDateTime ende) {
         long dauer = Duration.between(start, ende).toMinutes();
         return dauer >= 15L;
     }
@@ -63,19 +69,13 @@ public class BuchungsValidierung {
         return (start.getMinute() % 15) == 0;
     }
 
-    boolean buchungLiegtNachZeitpunkt(LocalDateTime startPunkt, LocalDateTime zeitpunkt) {
-        if(startPunkt.isEqual(zeitpunkt)) {
-            return false;
-        }
-        return startPunkt.isAfter(zeitpunkt);
-    }
-
-
-
     boolean klausurAmGleichenTag(Set<Klausur> klausurAnmeldungen, LocalDateTime start) {
         LocalDate datum = start.toLocalDate();
         Set<LocalDate> klausurDaten =
-                klausurAnmeldungen.stream().map(Klausur::getStart).map(LocalDateTime::toLocalDate).collect(Collectors.toSet());
+                klausurAnmeldungen.stream()
+                        .map(Klausur::getStart)
+                        .map(LocalDateTime::toLocalDate)
+                        .collect(Collectors.toSet());
         return klausurDaten.contains(datum);
     }
 
@@ -84,7 +84,9 @@ public class BuchungsValidierung {
         return (dauer == 240 || dauer <= 150);
     }
 
-    boolean mind90MinZwischenUrlauben(Student student, LocalDateTime startZweiterUrlaub, LocalDateTime endeZweiterUrlaub) {
+    boolean mind90MinZwischenUrlauben(Student student,
+                                      LocalDateTime startZweiterUrlaub,
+                                      LocalDateTime endeZweiterUrlaub) {
         LocalDate tag = startZweiterUrlaub.toLocalDate();
         LocalDateTime startErsterUrlaub = student.startDesUrlaubsAm(tag);
         LocalDateTime endeErsterUrlaub = student.endeDesUrlaubsAm(tag);
@@ -108,28 +110,32 @@ public class BuchungsValidierung {
         return zeit.equals(LocalDateTime.of(tag, startZeit));
     }
 
-    Set<Klausur> ueberschneidungMitKlausur(Set<Klausur> klausuren, LocalDateTime urlaubsStart, LocalDateTime urlaubsEnde) {
+    Set<Klausur> ueberschneidungMitKlausur(Set<Klausur> klausuren,
+                                           LocalDateTime urlaubsStart,
+                                           LocalDateTime urlaubsEnde) {
         Set<Klausur> klausurenMitUeberschneidung = new HashSet<>();
-        Set<Klausur> klausurenAnDemTag = klausuren.stream().filter(x -> x.getStart().toLocalDate().equals(urlaubsStart.toLocalDate())).collect(Collectors.toSet());
-        for(Klausur k : klausurenAnDemTag) {
+        Set<Klausur> klausurenAnDemTag = klausuren.stream()
+                .filter(x -> x.getStart().toLocalDate().equals(urlaubsStart.toLocalDate()))
+                .collect(Collectors.toSet());
+
+        for (Klausur k : klausurenAnDemTag) {
             LocalDateTime startFreistellung = k.startFreistellungBerechnen();
             LocalDateTime endeFreistellung = k.endeFreistellungBerechnen();
             if (startFreistellung.isAfter(urlaubsStart.minusMinutes(1)) && startFreistellung.isBefore((urlaubsEnde))) {
                 klausurenMitUeberschneidung.add(k);
             }
-            if (endeFreistellung.isAfter(urlaubsStart) && endeFreistellung.minusMinutes(1).isBefore(urlaubsEnde)){
+            if (endeFreistellung.isAfter(urlaubsStart) && endeFreistellung.minusMinutes(1).isBefore(urlaubsEnde)) {
                 klausurenMitUeberschneidung.add(k);
             }
-            if (startFreistellung.isBefore(urlaubsStart) && endeFreistellung.isAfter(urlaubsEnde)){
+            if (startFreistellung.isBefore(urlaubsStart) && endeFreistellung.isAfter(urlaubsEnde)) {
                 klausurenMitUeberschneidung.add(k);
             }
         }
         return klausurenMitUeberschneidung;
     }
 
-    boolean hatAusreichendRestUrlaub (Student student, LocalDateTime start, LocalDateTime ende) {
+    boolean hatAusreichendRestUrlaub(Student student, LocalDateTime start, LocalDateTime ende) {
         long dauer = Duration.between(start, ende).toMinutes();
         return dauer <= student.getResturlaubInMin();
     }
-
 }

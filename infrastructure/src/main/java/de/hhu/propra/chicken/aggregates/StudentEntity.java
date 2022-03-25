@@ -7,7 +7,6 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Set;
 
-//TODO: feldernamen an spring data anpassen (evtl. @MappedCollection)
 @Table("student")
 public record StudentEntity(@Id Long id,
                             @Column("github_handle")String githubHandle,

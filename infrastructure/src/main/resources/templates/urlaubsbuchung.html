@@ -14,25 +14,29 @@
 <body>
 <div class="container">
     <h1>Urlaub anmelden</h1>
+
     <div class="formular mt-3">
+
         <div class="error-msg" th:text="${urlaubbuchungserror}"></div>
+
         <form name="urlaub_anmelden" class="mt-3" method="post" th:action="@{/urlaubsbuchung}">
             <div class="form-floating mb-3">
                 <input type="date" class="form-control" id="datum"
                        placeholder=" " name="datum" value="">
                 <label for="datum" class="form-label">Datum (dd.mm.yyyy)</label>
             </div>
+
             <div class="form-floating mb-3">
                 <input type="time" class="form-control" id="von" placeholder=" " name="von" value="">
                 <label for="von">Start (hh:mm)</label>
-                <div class="form-text">Tragen Sie hier die Uhrzeit ein, wann Sie Ihren Urlaub beginnen wollen.</a>
-                </div>
-
+                <div class="form-text">Tragen Sie hier die Uhrzeit ein, wann Sie Ihren Urlaub beginnen wollen.</div>
             </div>
+
             <div class="form-floating mb-3">
                 <input type="time" class="form-control" id="bis" placeholder=" " name="bis" value="">
                 <label for="bis" class="form-label">Ende (hh:mm)</label>
             </div>
+
             <button name="urlaubsanmeldung_abschicken" class="btn btn-primary" type="submit">Eintragen</button>
         </form>
     </div>

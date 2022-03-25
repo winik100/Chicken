@@ -1,10 +1,8 @@
 package de.hhu.propra.chicken.aggregates;
 
-import de.hhu.propra.chicken.stereotype.AggregateRoot;
+import de.hhu.propra.chicken.stereotypes.AggregateRoot;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Objects;
 
 @AggregateRoot
@@ -16,8 +14,6 @@ public class Klausur {
     LocalDateTime start;
     LocalDateTime ende;
     KlausurTyp typ = KlausurTyp.ONLINE;
-
-
 
     public Klausur(Long lsfId, String name, LocalDateTime start, LocalDateTime ende, String typ) {
         this.lsfId = new LsfId(lsfId);
@@ -40,14 +36,38 @@ public class Klausur {
         }
     }
 
+    public Long getId() {
+        return id;
+    }
 
+    public Long getLsfId() {
+        return lsfId.getId();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public LocalDateTime getStart() {
+        return start;
+    }
+
+    public LocalDateTime getEnde() {
+        return ende;
+    }
+
+    public String getTyp() {
+        if(typ.equals(KlausurTyp.ONLINE)) {
+            return "online";
+        }
+        return "praesenz";
+    }
 
     public LocalDateTime startFreistellungBerechnen() {
         LocalDateTime freistellungsBeginn = start;
-        if(typ.equals(KlausurTyp.PRAESENZ)) {
+        if (typ.equals(KlausurTyp.PRAESENZ)) {
             freistellungsBeginn = freistellungsBeginn.minusHours(2L);
-        }
-        else {
+        } else {
             freistellungsBeginn = freistellungsBeginn.minusMinutes(30L);
         }
         return freistellungsBeginn;
@@ -55,18 +75,10 @@ public class Klausur {
 
     public LocalDateTime endeFreistellungBerechnen() {
         LocalDateTime freistellungsEnde = ende;
-        if(typ.equals(KlausurTyp.PRAESENZ)) {
+        if (typ.equals(KlausurTyp.PRAESENZ)) {
             freistellungsEnde = freistellungsEnde.plusHours(2L);
         }
         return freistellungsEnde;
-    }
-
-    public Long getLsfId() {
-        return lsfId.getId();
-    }
-
-    public LocalDateTime getStart() {
-        return start;
     }
 
     @Override
@@ -80,25 +92,6 @@ public class Klausur {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public LocalDateTime getEnde() {
-        return ende;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getTyp() {
-        if(typ.equals(KlausurTyp.ONLINE)) {
-            return "online";
-        }
-        return "praesenz";
     }
 }
 

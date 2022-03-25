@@ -5,13 +5,13 @@ import de.hhu.propra.chicken.util.AuditLog;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-public class StudentenService {
+public class StudentService {
 
     private final AuditLog log = new AuditLog("auditlog.txt");
 
-    final private StudentRepository repo;
+    private final StudentRepository repo;
 
-    public StudentenService(StudentRepository repo) {
+    public StudentService(StudentRepository repo) {
         this.repo = repo;
     }
 
@@ -19,7 +19,8 @@ public class StudentenService {
         Student studentAusDB = repo.studentMitGitHubHandle(student.getGithubHandle());
         if (studentAusDB == null) {
             repo.save(student);
-            log.info("Nutzerregistrierung", "Neuen Studenten für <" + student.getGithubHandle() + "> registriert.", LocalDateTime.now());
+            log.info("Nutzerregistrierung", "Neuen Studenten für <" + student.getGithubHandle()
+                    + "> registriert.", LocalDateTime.now());
         }
     }
 

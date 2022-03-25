@@ -10,6 +10,10 @@ class LsfId {
         this.id = id;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -21,9 +25,5 @@ class LsfId {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public Long getId() {
-        return id;
     }
 }

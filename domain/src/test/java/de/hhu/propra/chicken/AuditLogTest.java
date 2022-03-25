@@ -6,7 +6,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Scanner;
@@ -28,7 +31,7 @@ public class AuditLogTest {
     }
 
     @AfterAll
-    static void logLoeschen(){
+    static void logLoeschen() {
         File file = new File("testlog.txt");
         file.delete();
     }
@@ -39,7 +42,8 @@ public class AuditLogTest {
         String pfad = "testlog.txt";
         AuditLog testLog = new AuditLog(pfad);
 
-        testLog.info("testUser", "testEreignis", LocalDateTime.of(2022,3,10, 10,0));
+        testLog.info("testUser", "testEreignis",
+                LocalDateTime.of(2022,3,10, 10,0));
 
         Scanner scanner = new Scanner(Path.of(pfad));
         String logLine = scanner.nextLine();
@@ -52,7 +56,8 @@ public class AuditLogTest {
         String pfad = "testlog.txt";
         AuditLog testLog = new AuditLog(pfad);
 
-        testLog.error("testUser", "testEreignis", LocalDateTime.of(2022,3,10, 10,0));
+        testLog.error("testUser", "testEreignis",
+                LocalDateTime.of(2022,3,10, 10,0));
 
         Scanner scanner = new Scanner(Path.of(pfad));
         String logLine = scanner.nextLine();

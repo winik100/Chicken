@@ -1,7 +1,6 @@
 package de.hhu.propra.chicken.web.controllers;
 
-import de.hhu.propra.chicken.annotations.AdminAndTutorOnly;
-import org.springframework.security.access.annotation.Secured;
+import de.hhu.propra.chicken.stereotypes.AdminAndTutorOnly;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

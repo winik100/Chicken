@@ -1,15 +1,9 @@
 package de.hhu.propra.chicken.util;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class AuditLog {
 
@@ -19,9 +13,11 @@ public class AuditLog {
         this.pfad = pfad;
     }
 
-    private void eintragen(String wer, String ereignis, String ereignisTyp, LocalDateTime zeitpunkt) throws IOException {
+    private void eintragen(String wer, String ereignis, String ereignisTyp, LocalDateTime zeitpunkt)
+            throws IOException {
         DateTimeFormatter zeitFormatierer = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        String formatiertesEreignis = zeitpunkt.format(zeitFormatierer) + ": " + "<<" + wer + ">>" + " " + ereignisTyp + ": " + ereignis + "\n";
+        String formatiertesEreignis = zeitpunkt.format(zeitFormatierer) + ": " + "<<" + wer + ">>" + " " + ereignisTyp
+                + ": " + ereignis + "\n";
         FileOutputStream fileOutputStream = new FileOutputStream(pfad, true);
         fileOutputStream.write(formatiertesEreignis.getBytes());
         fileOutputStream.close();

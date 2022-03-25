@@ -10,8 +10,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class UrlaubsEintragTest {
 
     @Test
-    @DisplayName("dauerInMin() bei Urlaub von 12:00 bis 13:00 beträgt 60 Minuten.")
-    void test_1(){
+    @DisplayName("Die Dauer eines Urlaubs von 12 bis 13 beträgt 60 Minuten.")
+    void test_1() {
         LocalDateTime urlaubsStart = LocalDateTime.of(2022, 3, 12, 12, 0);
         LocalDateTime urlaubsEnde = LocalDateTime.of(2022, 3, 12, 13, 0);
         UrlaubsEintrag urlaubsEintrag = new UrlaubsEintrag(urlaubsStart, urlaubsEnde);

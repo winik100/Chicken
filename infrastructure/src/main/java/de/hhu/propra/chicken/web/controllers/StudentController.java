@@ -6,7 +6,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -21,18 +23,20 @@ import java.util.Set;
 public class StudentController {
 
     private final BuchungsService buchungsService;
-    private final StudentenService studentenService;
+    private final StudentService studentService;
     private final KlausurService klausurService;
 
-    public StudentController(BuchungsService buchungsService, StudentenService studentenService, KlausurService klausurService) {
+    public StudentController(BuchungsService buchungsService,
+                             StudentService studentService,
+                             KlausurService klausurService) {
         this.buchungsService = buchungsService;
-        this.studentenService = studentenService;
+        this.studentService = studentService;
         this.klausurService = klausurService;
     }
 
     @GetMapping("/")
     public String index(@AuthenticationPrincipal OAuth2User principal, Model model) throws IOException {
-        Student student = studentenService.findeStudentMitHandle(principal.getAttribute("login"));
+        Student student = studentService.findeStudentMitHandle(principal.getAttribute("login"));
         if (student != null) {
             Set<Klausur> klausurenAusDB = klausurService.findeKlausurenMitIds(student.getKlausurAnmeldungen());
             model.addAttribute("klausuren", klausurenAusDB);
@@ -41,7 +45,7 @@ public class StudentController {
             model.addAttribute("resturlaub", student.getResturlaubInMin());
         } else {
             student = new Student(principal.getAttribute("login"));
-            studentenService.studentHinzufuegen(student);
+            studentService.studentHinzufuegen(student);
             model.addAttribute("klausuren", Collections.emptySet());
             model.addAttribute("urlaube", Collections.emptySet());
             model.addAttribute("urlaubssumme", 0L);
@@ -54,7 +58,7 @@ public class StudentController {
     public RedirectView klausurstornierung(@AuthenticationPrincipal OAuth2User principal,
                                            @RequestParam("lsfId") String lsfId,
                                            RedirectAttributes redirectAttributes) throws IOException {
-        Student student = studentenService.findeStudentMitHandle(principal.getAttribute("login"));
+        Student student = studentService.findeStudentMitHandle(principal.getAttribute("login"));
         Klausur klausur = klausurService.findeKlausurMitLsfId(Long.valueOf(lsfId));
         String error = buchungsService.klausurStornieren(klausur, student);
         RedirectView redirectView = new RedirectView("/", true);
@@ -87,21 +91,21 @@ public class StudentController {
         LocalDateTime ende = LocalDateTime.parse(datum + " " + bis, zeitFormatierer);
         if ("true".equals(praesenz)) {
             praesenz = "praesenz";
-        }
-        else {
+        } else {
             praesenz = "online";
         }
         String error = klausurService.klausurHinzufuegen(new Klausur(lsfId, name, start, ende, praesenz));
         model.addAttribute("klausurregistrierungsserror", error);
-        if (error.isEmpty()){
+        if (error.isEmpty()) {
             return "redirect:/klausuranmeldung";
         }
         return "klausurregistrierung";
     }
 
     @PostMapping("/klausuranmeldung")
-    public String klausurAnmeldungDurchfuehren(@RequestParam("klausur")String lsfId, @AuthenticationPrincipal OAuth2User principal) throws IOException {
-        Student student = studentenService.findeStudentMitHandle(principal.getAttribute("login"));
+    public String klausurAnmeldungDurchfuehren(@RequestParam("klausur")String lsfId,
+                                               @AuthenticationPrincipal OAuth2User principal) throws IOException {
+        Student student = studentService.findeStudentMitHandle(principal.getAttribute("login"));
         Klausur klausur = klausurService.findeKlausurMitLsfId(Long.valueOf(lsfId));
         buchungsService.klausurBuchen(klausur, student);
         return "redirect:/";
@@ -118,13 +122,13 @@ public class StudentController {
                                              @RequestParam("datum")String datum,
                                              @RequestParam("von")String von,
                                              @RequestParam("bis")String bis) throws IOException {
-        Student student = studentenService.findeStudentMitHandle(principal.getAttribute("login"));
+        Student student = studentService.findeStudentMitHandle(principal.getAttribute("login"));
         DateTimeFormatter zeitFormatierer = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime start = LocalDateTime.parse(datum + " " + von, zeitFormatierer);
         LocalDateTime ende = LocalDateTime.parse(datum + " " + bis, zeitFormatierer);
         String error = buchungsService.urlaubBuchen(student, start, ende);
         model.addAttribute("urlaubbuchungserror", error);
-        if (error.isEmpty()){
+        if (error.isEmpty()) {
             return "redirect:/";
         }
         return "/urlaubsbuchung";
@@ -136,7 +140,7 @@ public class StudentController {
                                            @RequestParam("von")String von,
                                            @RequestParam("bis")String bis,
                                            RedirectAttributes redirectAttributes) throws IOException {
-        Student student = studentenService.findeStudentMitHandle(principal.getAttribute("login"));
+        Student student = studentService.findeStudentMitHandle(principal.getAttribute("login"));
         DateTimeFormatter zeitFormatierer = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime start = LocalDateTime.parse(datum + " " + von, zeitFormatierer);
         LocalDateTime ende = LocalDateTime.parse(datum + " " + bis, zeitFormatierer);

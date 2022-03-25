@@ -9,294 +9,284 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-
 import static de.hhu.propra.chicken.util.KlausurTemplates.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class BuchungsServiceTest {
 
+    private final Student student = mock(Student.class);
+    private final StudentRepository studentRepo = mock(StudentRepository.class);
+    private final KlausurRepository klausurRepo = mock(KlausurRepository.class);
+    private final BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+
     @AfterAll
-    static void logLoeschen(){
+    static void logLoeschen() {
         File file = new File("auditlog.txt");
         file.delete();
     }
 
     @Test
-    @DisplayName("Buchungsservice.klausurBuchen fügt Klausuranmeldung zu Student hinzu")
+    @DisplayName("Das Buchen einer Klausur fügt dem Studenten eine Klausuranmeldung hinzu.")
     void test_1() throws IOException {
-        KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        StudentRepository studentRepo = mock(StudentRepository.class);
-        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
-        Student student = mock(Student.class);
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
-        buchungsService.klausurBuchen(PK_12_13, student);
+        String error = buchungsService.klausurBuchen(PK_12_13, student);
 
         verify(student, times(1)).klausurAnmelden(PK_12_13);
+        verify(studentRepo, times(1)).save(student);
+        assertThat(error).isEqualTo("");
     }
 
     @Test
-    @DisplayName("Buchungsservice.klausurStornieren entfernt Klausuranmeldung von Student")
+    @DisplayName("Das Stornieren einer Klausur entfernt die Klausuranmeldung des Studenten.")
     void test_2() throws IOException {
-        KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        StudentRepository studentRepo = mock(StudentRepository.class);
-        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
-        Student student = mock(Student.class);
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
         when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
-        buchungsService.klausurStornieren(PK_12_13, student);
+        String error = buchungsService.klausurStornieren(PK_12_13, student);
 
         verify(student, times(1)).klausurAbmelden(PK_12_13);
         verify(studentRepo, times(1)).save(student);
+        assertThat(error).isEqualTo("");
     }
 
     @Test
-    @DisplayName("Stornierung der Klausur später als am Vortag kann nicht durchgeführt werden.")
-    void test_2b() throws IOException {
-        KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        StudentRepository studentRepo = mock(StudentRepository.class);
-        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
-        Student student = mock(Student.class);
+    @DisplayName("Die Stornierung einer Klausur weniger als einen Tag vor Freistellungsbeginn kann nicht " +
+            "durchgeführt werden.")
+    void test_3() throws IOException {
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
         when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(false);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
-        buchungsService.klausurStornieren(PK_12_13, student);
+        String error = buchungsService.klausurStornieren(PK_12_13, student);
 
         verify(student, never()).klausurAbmelden(PK_12_13);
+        assertThat(error).isEqualTo("Klausur kann nur bis zum Vortag storniert werden.");
     }
 
     @Test
-    @DisplayName("BuchungsService.urlaubStornieren() ruft Student.urlaubEntfernen() korrekt auf.")
+    @DisplayName("Die Stornierung eines Urlaubs entfernt den entsprechenden Urlaubseintrag des Studenten.")
     void test_4() throws IOException {
-        StudentRepository studentRepo = mock(StudentRepository.class);
-        Student student = mock(Student.class);
-        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
-        KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
-        buchungsService.urlaubStornieren(student, start, ende);
+        String error = buchungsService.urlaubStornieren(student, start, ende);
 
         verify(student, times(1)).urlaubEntfernen(start, ende);
+        verify(studentRepo, times(1)).save(student);
+        assertThat(error).isEqualTo("");
     }
 
     @Test
-    @DisplayName("BuchungsService.urlaubStornieren() ruft Student.urlaubEntfernen() nicht auf, falls weniger als ein Tag bis Urlaubsbeginn verbleibt.")
-    void test_4b() throws IOException {
-        StudentRepository studentRepo = mock(StudentRepository.class);
-        Student student = mock(Student.class);
-        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+    @DisplayName("Die Stornierung eines Urlaubs weniger als einen Tag vor Urlaubsbeginn kann nicht " +
+            "durchgeführt werden.")
+    void test_5() throws IOException {
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(false);
-        KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
         LocalDateTime start = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime ende = LocalDateTime.of(2022, 3, 8, 13, 0);
-        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
-        String result = buchungsService.urlaubStornieren(student, start, ende);
+        String error = buchungsService.urlaubStornieren(student, start, ende);
 
         verify(student, never()).urlaubEntfernen(start, ende);
-        assertThat(result).isEqualTo("Urlaub kann nur bis zum Vortag storniert werden.");
+        assertThat(error).isEqualTo("Urlaub kann nur bis zum Vortag storniert werden.");
     }
 
     @Test
-    @DisplayName("Urlaub beginnt vor Freistellungszeitraum und endet innerhalb -> Urlaubsende wird auf Freistellungsbeginn gesetzt")
-    void test_5(){
+    @DisplayName("Beginnt der geplante Urlaub vor Freistellungszeitraum und endet innerhalb, wird das Urlaubsende " +
+            "auf Freistellungsbeginn gesetzt.")
+    void test_6() {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 12, 0);
         LocalDateTime startFreistellung = OK_1130_1230.startFreistellungBerechnen();
         LocalDateTime endeFreistellung = OK_1130_1230.endeFreistellungBerechnen();
 
-        LocalDateTime neuesEnde = BuchungsService.neuesUrlaubsEndeBerechnen(startUrlaub, endeUrlaub, startFreistellung, endeFreistellung);
+        LocalDateTime neuesUrlaubsEnde = BuchungsService.neuesUrlaubsEndeBerechnen(startUrlaub, endeUrlaub, startFreistellung, endeFreistellung);
 
-        assertThat(neuesEnde).isEqualTo(startFreistellung);
+        assertThat(neuesUrlaubsEnde).isEqualTo(startFreistellung);
     }
 
     @Test
-    @DisplayName("Urlaub beginnt im Freistellungszeitraum und endet nachher -> Urlaubsstart wird auf Freistellungsende gesetzt")
-    void test_6(){
+    @DisplayName("Beginnt der geplante Urlaub im Freistellungszeitraum und endet danach, wird der Urlaubsstart " +
+            "auf Freistellungsende gesetzt.")
+    void test_7() {
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 0);
         LocalDateTime startFreistellung = OK_1130_1230.startFreistellungBerechnen();
         LocalDateTime endeFreistellung = OK_1130_1230.endeFreistellungBerechnen();
 
-        LocalDateTime neuerAnfang = BuchungsService.neuenUrlaubsStartBerechnen(startUrlaub, endeUrlaub, startFreistellung, endeFreistellung);
+        LocalDateTime neuerUrlaubsStart = BuchungsService.neuenUrlaubsStartBerechnen(startUrlaub, endeUrlaub, startFreistellung, endeFreistellung);
 
-        assertThat(neuerAnfang).isEqualTo(endeFreistellung);
+        assertThat(neuerUrlaubsStart).isEqualTo(endeFreistellung);
     }
 
     @Test
-    @DisplayName("Wenn keine Konflikte mit Freistellungszeiträumen exisitieren, wird einfach student.urlaubNehmen mit " +
-            "unverändertem Start- und Endzeitpunkt aufgerufen")
-    void test_7() throws IOException {
-        StudentRepository studentRepo = mock(StudentRepository.class);
-        Student student = mock(Student.class);
+    @DisplayName("Wenn keine Konflikte mit Freistellungszeiträumen exisitieren, wird der geplante Urlaub " +
+            "unverändert genommen.")
+    void test_8() throws IOException {
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
-        KlausurRepository klausurRepo = mock(KlausurRepository.class);
+        
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(OK_12_13);
-        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
         when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);
         when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
-        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
-        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
+
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
+
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
-        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
-
-        buchungsService.urlaubBuchen(student, startUrlaub, endeUrlaub);
+        String error = buchungsService.urlaubBuchen(student, startUrlaub, endeUrlaub);
 
         verify(student, times(1)).urlaubNehmen(startUrlaub, endeUrlaub);
+        verify(studentRepo, times(1)).save(student);
+        assertThat(error).isEqualTo("");
     }
 
     @Test
-    @DisplayName("Keine Klausur am gleichen Tag, bereits gebuchter Urlaub, aber 90 Min dazwischen " +
-            "-> student.urlaubNehmen() mit unveränderten Argumenten")
-    void test_8() throws IOException {
-        StudentRepository studentRepo = mock(StudentRepository.class);
-        Student student = mock(Student.class);
-        when(student.hatUrlaubAm(any())).thenReturn(true);
-        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
-        KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
-        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
-        when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
-        when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
-        when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
-        when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(true);
-        when(buchungsValidierung.mind90MinZwischenUrlauben(any(), any(), any())).thenReturn(true);
-        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
-        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
-        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
-        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
-        LocalDateTime startErsterUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
-        LocalDateTime endeErsterUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
-        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
-
-        buchungsService.urlaubBuchen(student, startErsterUrlaub, endeErsterUrlaub);
-        buchungsService.urlaubBuchen(student, startUrlaub, endeUrlaub);
-
-        verify(student, times(1)).urlaubNehmen(startUrlaub, endeUrlaub);
-    }
-
-    @Test
-    @DisplayName("Keine Klausur am gleichen Tag, kein bereits gebuchter Urlaub, weniger als 150 Min Urlaub " +
-            "-> student.urlaubNehmen() mit unveränderten Argumenten")
+    @DisplayName("Der Student hat keine Klausur am gleichen Tag, aber bereits gebuchten Urlaub. Liegen 90 Minuten " +
+            "zwischen dem bestehendem und dem geplanten Urlaub, wird dieser unverändert genommen.")
     void test_9() throws IOException {
-        StudentRepository studentRepo = mock(StudentRepository.class);
-        Student student = mock(Student.class);
+        when(student.hatUrlaubAm(any())).thenReturn(true);
+        
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
-        KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
         when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
-        when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
+        when(buchungsValidierung.mind90MinZwischenUrlauben(any(), any(), any())).thenReturn(true);
         when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(true);
-        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
-        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
-        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
-        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+        when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
+
+        LocalDateTime startUrlaub1 = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub1 = LocalDateTime.of(2022, 3, 8, 10, 0);
+        LocalDateTime startUrlaub2 = LocalDateTime.of(2022, 3, 8, 12, 30);
+        LocalDateTime endeUrlaub2 = LocalDateTime.of(2022, 3, 8, 13, 30);
 
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
+        buchungsService.urlaubBuchen(student, startUrlaub1, endeUrlaub1);
 
-        buchungsService.urlaubBuchen(student, startUrlaub, endeUrlaub);
+        String error = buchungsService.urlaubBuchen(student, startUrlaub2, endeUrlaub2);
 
-        verify(student, times(1)).urlaubNehmen(startUrlaub, endeUrlaub);
+        verify(student, times(1)).urlaubNehmen(startUrlaub2, endeUrlaub2);
+        verify(studentRepo, times(2)).save(student);
+        assertThat(error).isEqualTo("");
     }
 
     @Test
-    @DisplayName("Geplanter Urlaub von 09:30 bis 11:30, bei Onlineklausur von 11:00 bis 12:00, wird zu Urlaub von 09:30 bis 10:30")
-    void test_10() throws IOException{
-        StudentRepository studentRepo = mock(StudentRepository.class);
-        Student student = mock(Student.class);
+    @DisplayName("Der Student hat keine Klausur am gleichen Tag und keinen bereits gebuchten Urlaub. Ist die Dauer " +
+            "des geplanten Urlaubs weniger als 150 Minuten, wird dieser unverändert genommen.")
+    void test_10() throws IOException {
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
-        KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
-        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
-        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
+        
         when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
         when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
+        when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
+        when(buchungsValidierung.blockEntwederGanzerTagOderMax150Min(any(), any())).thenReturn(true);
+        when(buchungsValidierung.hatAusreichendRestUrlaub(any(), any(), any())).thenReturn(true);
+
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
+
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 12, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 13, 30);
+
+        String error = buchungsService.urlaubBuchen(student, startUrlaub, endeUrlaub);
+
+        verify(student, times(1)).urlaubNehmen(startUrlaub, endeUrlaub);
+        verify(studentRepo, times(1)).save(student);
+        assertThat(error).isEqualTo("");
+    }
+
+    @Test
+    @DisplayName("Hat der Student eine Onlineklausur von 11 bis 12, wird geplanter Urlaub von 09:30 bis 11:30 " +
+            "stattdessen von 09:30 bis 10:30 genommen.")
+    void test_11() throws IOException{
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
+
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
+        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
         when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
         when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
         when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);
-        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
         when(buchungsValidierung.ueberschneidungMitKlausur(any(), any(), any())).thenReturn(Set.of(OK_11_12));
+
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
-        buchungsService.urlaubBuchen(student, startUrlaub, endeUrlaub);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 9, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 0);
 
-        verify(student, times(1)).urlaubAnKlausurAnpassenUndNehmen(Set.of(OK_11_12), startUrlaub, endeUrlaub);
+        String error = buchungsService.urlaubBuchen(student, startUrlaub, endeUrlaub);
+
+        verify(student, times(1))
+                .urlaubAnKlausurAnpassenUndNehmen(Set.of(OK_11_12), startUrlaub, endeUrlaub);
+        verify(studentRepo, times(1)).save(student);
+        assertThat(error).isEqualTo("");
     }
 
-
     @Test
-    @DisplayName("KlausurBuchen ohne Überschneidung ruft einfach student.klausurAnmelden() auf")
-    void test_11() throws IOException {
-        StudentRepository studentRepo = mock(StudentRepository.class);
-        KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
-        Student student = mock(Student.class);
+    @DisplayName("Der Student kann eine Klausur anmelden, wenn sie sich mit keiner bereits angemeldeten überschneidet.")
+    void test_12() throws IOException {
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
-        buchungsService.klausurBuchen(PK_12_13, student);
+        String error = buchungsService.klausurBuchen(PK_12_13, student);
 
         verify(student, times(1)).klausurAnmelden(PK_12_13);
+        verify(studentRepo, times(1)).save(student);
+        assertThat(error).isEqualTo("");
     }
 
     @Test
-    @DisplayName("KlausurBuchen mit Überschneidung ruft student.bestehendenUrlaubAnKlausurAnpassen und danach klausurAnmelden auf")
-    void test_12() throws IOException {
-        StudentRepository studentRepo = mock(StudentRepository.class);
-        KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
-        Student student = mock(Student.class);
+    @DisplayName("Meldet sich der Student für eine Klausur an, die sich mit besthendem Urlaub überschneidet, wird " +
+            "dieser so angepasst, dass es keine Überschneidung mehr gibt, und die Klausur wird angemeldet.")
+    void test_13() throws IOException {
         when(student.ueberschneidungKlausurMitBestehendemUrlaub(any())).thenReturn(true);
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
         when(klausurRepo.klausurMitLsfId(any())).thenReturn(PK_12_13);
         BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
-        buchungsService.klausurBuchen(PK_12_13, student);
+        String error = buchungsService.klausurBuchen(PK_12_13, student);
 
         verify(student, times(1)).bestehendenUrlaubAnKlausurAnpassen(PK_12_13);
         verify(student, times(1)).klausurAnmelden(PK_12_13);
+        verify(studentRepo, times(1)).save(student);
+        assertThat(error).isEqualTo("");
     }
 
     @Test
-    @DisplayName("urlaubBuchen mit zu kurzer Dauer (<15 Minuten) ruft nicht urlaubNehmen auf.")
-    void test_13() throws IOException {
-        StudentRepository studentRepo = mock(StudentRepository.class);
-        Student student = mock(Student.class);
+    @DisplayName("Ist die Dauer des geplanten Urlaubs kürzer als 15 Minuten, wird dieser nicht genommen.")
+    void test_14() throws IOException {
         when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
-        KlausurRepository klausurRepo = mock(KlausurRepository.class);
-        BuchungsValidierung buchungsValidierung = mock(BuchungsValidierung.class);
         when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
         when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
         LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 0);
         LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 10, 10);
-        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
 
-        String result = buchungsService.urlaubBuchen(student, startUrlaub, endeUrlaub);
+        String error = buchungsService.urlaubBuchen(student, startUrlaub, endeUrlaub);
 
         verify(student, never()).urlaubNehmen(startUrlaub, endeUrlaub);
-        assertThat(result).isEqualTo("Die Urlaubsdauer muss mindestens 15 Minuten betragen.");
+        assertThat(error).isEqualTo("Die Urlaubsdauer muss mindestens 15 Minuten betragen.");
     }
-
-
 }

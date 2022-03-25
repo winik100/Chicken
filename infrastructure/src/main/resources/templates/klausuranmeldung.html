@@ -11,6 +11,7 @@
     <link href="/css/site.css"
           rel="stylesheet">
 </head>
+
 <body>
 <div class="container">
     <h1>Anmeldung zu einer Klausur</h1>
@@ -28,14 +29,6 @@
                         + ${k.getStart().toLocalTime()} + ' - ' + ${k.getEnde().toLocalTime()} + ')'"
                         th:value="${k.getLsfId()}">
                 </option>
-<!--                <option value="dbab0725-03fc-4ec7-8a97-c631b92f7c75"-->
-<!--                >Rechnerarchitektur (25.03.2022, 08:30 - 11:30 Uhr)</option>-->
-<!--                <option value="ac2e7d68-5ace-4da6-9496-cce043cb7960"-->
-<!--                >Mtaching (24.03.2022, 07:30 - 11:30 Uhr)</option>-->
-<!--                <option value="2e1dc46d-7dd4-46f2-ac31-3baec41b0592"-->
-<!--                >Blubb (24.03.2022, 09:00 - 10:30 Uhr)</option>-->
-<!--                <option value="cb630af7-e861-47da-85a5-2c65f5194681"-->
-<!--                >Remote (08.03.2022, 10:00 - 10:15 Uhr)</option>-->
             </select>
             <p class="p-3"><strong>
                 Sie bestätigen hiermit, dass Sie für die oben ausgewählte
@@ -58,7 +51,6 @@
 <script src="/js/jquery-3.6.0.min.js"></script>
 <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="/js/jquery.datetimepicker.full.min.js"></script>
-
 
 </body>
 </html>

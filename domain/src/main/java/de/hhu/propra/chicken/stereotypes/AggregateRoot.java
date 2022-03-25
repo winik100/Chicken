@@ -1,4 +1,4 @@
-package de.hhu.propra.chicken.stereotype;
+package de.hhu.propra.chicken.stereotypes;
 
 import java.lang.annotation.*;
 
