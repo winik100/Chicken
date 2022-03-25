@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,5 +40,37 @@ public class KlausurRepoImplTest {
         assertThat(result.getStart()).isEqualTo(LocalDateTime.of(2022,3,8,11,0));
         assertThat(result.getEnde()).isEqualTo(LocalDateTime.of(2022,3,8,12,0));
         assertThat(result.getTyp()).isEqualTo("praesenz");
+    }
+
+    @Test
+    @DisplayName("klausurRepoImpl.alle() holt alle Klausuren aus der Datenbank.")
+    void test_2() {
+        KlausurRepoImpl klausurRepo = new KlausurRepoImpl(repo);
+        Klausur klausur1 = new Klausur(1L, 999999L,"iwas fuer info",
+                LocalDateTime.of(2022, 3, 8, 10, 0),
+                LocalDateTime.of(2022, 3, 8, 11, 0), "praesenz");
+        Klausur klausur2 = new Klausur(2L, 888888L,"iwas anderes fuer info",
+                LocalDateTime.of(2022, 3, 8, 11, 0),
+                LocalDateTime.of(2022, 3, 8, 12, 0), "praesenz");
+        Set<Klausur> klausurSet = Set.of(klausur1, klausur2);
+
+        Set<Klausur> klausuren = klausurRepo.alle();
+
+        assertThat(klausuren).isEqualTo(klausurSet);
+    }
+
+    @Test
+    @DisplayName("klausurRepoImpl.klausurenMitReferenzen() holt Klausuren mit gegebenen Referenzen aus der Datenbank.")
+    void test_3() {
+        KlausurRepoImpl klausurRepo = new KlausurRepoImpl(repo);
+        Klausur klausur1 = new Klausur(1L, 999999L,"iwas fuer info",
+                LocalDateTime.of(2022, 3, 8, 10, 0),
+                LocalDateTime.of(2022, 3, 8, 11, 0), "praesenz");
+        Set<Klausur> klausurSet = Set.of(klausur1);
+        Set<Long> referenzen = Set.of(1L);
+
+        Set<Klausur> klausuren = klausurRepo.klausurenMitReferenzen(referenzen);
+
+        assertThat(klausuren).isEqualTo(klausurSet);
     }
 }
