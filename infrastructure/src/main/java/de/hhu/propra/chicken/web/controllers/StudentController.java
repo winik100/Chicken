@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.Set;
 
 @Controller
-@Secured({"ROLE_USER", "ROLE_TUTOR", "ROLE_ADMIN"})
+@Secured({"ROLE_STUDENT", "ROLE_TUTOR", "ROLE_ADMIN"})
 public class StudentController {
 
     private final BuchungsService buchungsService;
@@ -81,8 +81,8 @@ public class StudentController {
     @PostMapping("/klausurregistrierung")
     public String klausurregistrierungDurchfuehren(Model model,
                                                    @RequestParam("veranstaltung") String name,
-                                                   @RequestParam("lsfid") Long lsfId,
-                                                   @RequestParam(value = "vor_ort", required = false) String praesenz,
+                                                   @RequestParam("lsfid") String lsfId,
+                                                   @RequestParam(name = "vor_ort", required = false) String praesenz,
                                                    @RequestParam("datum") String datum,
                                                    @RequestParam("von") String von,
                                                    @RequestParam("bis") String bis) throws IOException {
@@ -94,7 +94,7 @@ public class StudentController {
         } else {
             praesenz = "online";
         }
-        String error = klausurService.klausurHinzufuegen(new Klausur(lsfId, name, start, ende, praesenz));
+        String error = klausurService.klausurHinzufuegen(new Klausur(Long.valueOf(lsfId), name, start, ende, praesenz));
         model.addAttribute("klausurregistrierungserror", error);
         if (error.isEmpty()) {
             return "redirect:/klausuranmeldung";

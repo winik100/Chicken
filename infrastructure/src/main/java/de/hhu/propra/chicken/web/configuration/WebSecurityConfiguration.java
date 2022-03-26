@@ -3,7 +3,6 @@ package de.hhu.propra.chicken.web.configuration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -14,8 +13,6 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -58,10 +55,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             var attributes = oauth2User.getAttributes(); //keep existing attributes
 
             var authorities = new HashSet<GrantedAuthority>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
 
             String login = attributes.get("login").toString();
-            System.out.printf("USER LOGIN: %s%n", login);
+            System.out.printf("STUDENT LOGIN: %s%n", login);
 
             if (admins.contains(login)) {
                 System.out.printf("GRANTING ADMIN PRIVILEGES TO USER %s%n", login);
@@ -70,7 +67,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 System.out.printf("GRANTING TUTOR PRIVILEGES TO USER %s%n", login);
                 authorities.add(new SimpleGrantedAuthority("ROLE_TUTOR"));
             } else {
-                System.out.printf("DENYING ADDITIONAL PRIVILEGES TO USER %s%n", login);
+                System.out.printf("DENYING ADDITIONAL PRIVILEGES TO STUDENT %s%n", login);
             }
 
             return new DefaultOAuth2User(authorities, attributes, "login");

@@ -6,7 +6,7 @@ praktikumsdauer:
   startZeit: '09:30'
   endZeit: '13:30'
   startTag: '2022-03-07'
-  endTag: '2022-03-25'
+  endTag: '2022-04-01'
 
 spring:
   flyway:

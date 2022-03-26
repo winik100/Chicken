@@ -1,4 +1,4 @@
-package de.hhu.propra.chicken;
+package de.hhu.propra.chicken.aggregates;
 
 import de.hhu.propra.chicken.aggregates.DBKlausurRepo;
 import de.hhu.propra.chicken.aggregates.Klausur;
@@ -17,14 +17,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJdbcTest
 @ActiveProfiles("test")
-@Sql("classpath:init_test.sql")
+@Sql("classpath:init_klausurrepo_test.sql")
 public class KlausurRepoImplTest {
 
     @Autowired
     DBKlausurRepo repo;
 
     @Test
-    @DisplayName("klausurRepo kann in die Datenbank einfügen und aus ihr lesen.")
+    @DisplayName("klausurRepo kann Klausuren in die Datenbank einfügen und aus ihr lesen.")
     void test_1() {
         KlausurRepoImpl klausurRepo = new KlausurRepoImpl(repo);
         //id ist null, da autogeneriert

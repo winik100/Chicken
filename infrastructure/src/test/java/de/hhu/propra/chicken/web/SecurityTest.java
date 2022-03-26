@@ -59,16 +59,11 @@ public class SecurityTest {
         return new OAuth2AuthenticationToken(user, authorities, "whatever");
     }
 
-//    @Test
-//    void UnauthorizedWithoutLogin() throws Exception {
-//        mockMvc.perform(get("/")).andExpect(status().isUnauthorized());
-//    }
-
     @Test
-    @DisplayName("User kann auf Startseite zugreifen")
+    @DisplayName("Student kann auf Startseite zugreifen")
     void test_2() throws Exception {
-        OAuth2AuthenticationToken principal = buildPrincipal("user", "Max Mustermann");
-        when(studentService.findeStudentMitHandle(any())).thenReturn(new Student(1L, "blabla"));
+        OAuth2AuthenticationToken principal = buildPrincipal("student", "testhandle");
+        when(studentService.findeStudentMitHandle(any())).thenReturn(new Student(1L, "testhandle"));
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
@@ -80,9 +75,9 @@ public class SecurityTest {
     }
 
     @Test
-    @DisplayName("User kann nicht auf Tutorenseite zugreifen")
+    @DisplayName("Student kann nicht auf Tutorenseite zugreifen")
     void test_3() throws Exception {
-        OAuth2AuthenticationToken principal = buildPrincipal("user", "Max Mustermann");
+        OAuth2AuthenticationToken principal = buildPrincipal("student", "testhandle");
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
@@ -94,9 +89,9 @@ public class SecurityTest {
     }
 
     @Test
-    @DisplayName("User kann nicht auf Adminseite zugreifen")
+    @DisplayName("Student kann nicht auf Adminseite zugreifen")
     void test_4() throws Exception {
-        OAuth2AuthenticationToken principal = buildPrincipal("user", "Max Mustermann");
+        OAuth2AuthenticationToken principal = buildPrincipal("student", "testhandle");
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
@@ -110,8 +105,8 @@ public class SecurityTest {
     @Test
     @DisplayName("Tutor kann auf Startseite zugreifen")
     void test_5() throws Exception {
-        OAuth2AuthenticationToken principal = buildPrincipal("tutor", "Max Mustermann");
-        when(studentService.findeStudentMitHandle(any())).thenReturn(new Student(1L, "blabla"));
+        OAuth2AuthenticationToken principal = buildPrincipal("tutor", "testhandle");
+        when(studentService.findeStudentMitHandle(any())).thenReturn(new Student(1L, "testhandle"));
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
@@ -125,7 +120,7 @@ public class SecurityTest {
     @Test
     @DisplayName("Tutor kann auf Tutorseite zugreifen")
     void test_6() throws Exception {
-        OAuth2AuthenticationToken principal = buildPrincipal("tutor", "Max Mustermann");
+        OAuth2AuthenticationToken principal = buildPrincipal("tutor", "testhandle");
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
@@ -139,7 +134,7 @@ public class SecurityTest {
     @Test
     @DisplayName("Tutor kann nicht auf Adminseite zugreifen")
     void test_7() throws Exception {
-        OAuth2AuthenticationToken principal = buildPrincipal("tutor", "Max Mustermann");
+        OAuth2AuthenticationToken principal = buildPrincipal("tutor", "testhandle");
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
@@ -153,9 +148,9 @@ public class SecurityTest {
     @Test
     @DisplayName("Admin kann auf Startseite zugreifen")
     void test_8() throws Exception {
-        OAuth2AuthenticationToken principal = buildPrincipal("admin", "Max Mustermann");
+        OAuth2AuthenticationToken principal = buildPrincipal("admin", "testhandle");
         MockHttpSession session = new MockHttpSession();
-        when(studentService.findeStudentMitHandle(any())).thenReturn(new Student(1L, "blabla"));
+        when(studentService.findeStudentMitHandle(any())).thenReturn(new Student(1L, "testhandle"));
         session.setAttribute(
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                 new SecurityContextImpl(principal));
@@ -168,7 +163,7 @@ public class SecurityTest {
     @Test
     @DisplayName("Admin kann auf Tutorseite zugreifen")
     void test_9() throws Exception {
-        OAuth2AuthenticationToken principal = buildPrincipal("admin", "Max Mustermann");
+        OAuth2AuthenticationToken principal = buildPrincipal("admin", "testhandle");
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
@@ -182,7 +177,7 @@ public class SecurityTest {
     @Test
     @DisplayName("Admin kann auf Adminseite zugreifen")
     void test_10() throws Exception {
-        OAuth2AuthenticationToken principal = buildPrincipal("admin", "Max Mustermann");
+        OAuth2AuthenticationToken principal = buildPrincipal("admin", "testhandle");
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
