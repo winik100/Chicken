@@ -1,8 +1,5 @@
 package de.hhu.propra.chicken.aggregates;
 
-import de.hhu.propra.chicken.aggregates.DBKlausurRepo;
-import de.hhu.propra.chicken.aggregates.Klausur;
-import de.hhu.propra.chicken.aggregates.KlausurRepoImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

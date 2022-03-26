@@ -13,8 +13,8 @@ public interface DBKlausurRepo extends CrudRepository<KlausurEntity, Long> {
 
     Optional<KlausurEntity> findByLsfId(Long lsfId);
 
-    @Query("SELECT k.id, k.lsf_id, k.name, k.start, k.ende, k.typ FROM chicken.student_belegt_klausur AS conj\n" +
-            "JOIN chicken.klausur AS k ON conj.klausur_id = k.id\n" +
+    @Query("SELECT k.id, k.lsf_id, k.name, k.start, k.ende, k.typ FROM student_belegt_klausur AS conj\n" +
+            "JOIN klausur AS k ON conj.klausur_id = k.id\n" +
             "WHERE conj.id = :studentId")
     Set<KlausurEntity> findAllByStudentId(@Param("studentId")Long studentId);
 

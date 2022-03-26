@@ -74,7 +74,7 @@ public class Student {
 
     public Set<Long> getKlausurAnmeldungen() {
         return klausurAnmeldungen.stream()
-                .map(KlausurReferenz::klausur_id)
+                .map(KlausurReferenz::id)
                 .collect(Collectors.toSet());
     }
 
