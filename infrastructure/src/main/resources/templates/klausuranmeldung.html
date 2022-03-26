@@ -3,45 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>PP2 Urlaub Übersicht</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-<!--    <link rel="stylesheet" type="text/css"
-          th:href="@{/css/bootstrap.min.css}"
-          href="/css/bootstrap.min.css">
-    <link href="/css/jquery.datetimepicker.min.css"
-          rel="stylesheet">
-    <link href="/css/site.css"
-          rel="stylesheet">-->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/jquery.datetimepicker.min.css}" href="/css/jquery.datetimepicker.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css}" href="/css/site.css">
 </head>
 
 <body>
 <div class="container">
-    <ul class="breadcrumb">
-        <li><a href="/">Übersicht</a></li>
-    </ul>
+
+    <div class="row">
+        <a href="/">Übersicht</a>
+    </div>
+
     <h1>Anmeldung zu einer Klausur</h1>
 
     <div class="error-msg" th:text="${klausuranmeldungserror}"></div>
 
     <div class="formular mt-3">
-        <p class="alert"><strong>Wenn die Klausur in der Auswahl noch nicht vorhanden ist, dann können Sie
-            sie <a
-                    href="/klausurregistrierung">hier</a> anlegen.</strong></p>
+        <div class="form-text"><p class="alert"><strong>
+            Wenn die Klausur in der Auswahl noch nicht vorhanden ist, dann können Sie sie
+            <a href="/klausurregistrierung">hier</a> anlegen.</strong></p>
+        </div>
+
         <form name="klausur_anmelden" method="post" th:action="@{/klausuranmeldung}">
-            <select class="form-control" name="klausur" id="klausur-select">
-                <option disabled selected value="">Wählen Sie eine Klausur aus</option>
-                <option
-                        th:each="k : ${klausuren}"
-                        th:text="${k.getName()} + ' (' + ${k.getStart().toLocalDate()} + ', '
-                        + ${k.getStart().toLocalTime()} + ' - ' + ${k.getEnde().toLocalTime()} + ')'"
-                        th:value="${k.getLsfId()}">
-                </option>
-            </select>
-            <p class="p-3"><strong>
+            <div class="form-floating mb-3">
+                <select class="form-control w-50" name="klausur" id="klausur-select">
+                    <option disabled selected value="">Wählen Sie eine Klausur aus</option>
+                    <option
+                            th:each="k : ${klausuren}"
+                            th:text="${k.getName()} + ' (' + ${k.getStart().toLocalDate()} + ', '
+                            + ${k.getStart().toLocalTime()} + ' - ' + ${k.getEnde().toLocalTime()} + ')'"
+                            th:value="${k.getLsfId()}">
+                    </option>
+                </select>
+            </div>
+
+            <p class="p-3 w-75"><strong>
                 Sie bestätigen hiermit, dass Sie für die oben ausgewählte
                 Klausur angemeldet sind.
-            </strong>
-                <br> Bis zum Tag vor der Klausur können Sie Ihre Teilnahme selber hier stornieren. Sollten Sie sich
+                </strong> <br>
+                Bis zum Tag vor der Klausur können Sie Ihre Teilnahme selber hier stornieren. Sollten Sie sich
                 am Klausurtag entscheiden doch nicht mitzuschreiben, müssen Sie am Morgen der
                 zuständigen Tutor:in Bescheid geben und das zusätzlich
                 in einer Mail an <a href="mailto:propra@cs.hhu.de">propra@cs.hhu.de</a> mitteilen.
@@ -49,15 +50,15 @@
                 Ggf. überprüfen wir die Teilnahme an der Klausur über die entsprechenden Teilnehmerlisten
             </p>
 
-            <button name="klausuranmeldung_abschicken" type="submit" class="btn btn-primary mt-2">Eintragen</button>
+            <button name="klausuranmeldung_abschicken" type="submit" class="btn btn-secondary mt-2">Eintragen</button>
         </form>
     </div>
 
 </div>
 
-<!--<script src="/js/jquery-3.6.0.min.js"></script>
+<script src="/js/jquery-3.6.0.min.js"></script>
 <script src="/js/bootstrap.bundle.min.js"></script>
-<script src="/js/jquery.datetimepicker.full.min.js"></script>-->
+<script src="/js/jquery.datetimepicker.full.min.js"></script>
 
 </body>
 </html>

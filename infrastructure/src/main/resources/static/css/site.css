@@ -1,0 +1,24 @@
+.img-thumbnail {
+    max-width:50%;
+    border-width:0;
+}
+.btn-primary {
+    color:#000000;
+    background-color: #b7e1ef;
+    border-color: #a6d4e3
+}
+.btn-primary:hover {
+    color:#000000;
+    background-color: #a6d4e3;
+    border-color:#a6d4e3
+}
+.btn-secondary {
+    color:#000000;
+    background-color: #ffdca4;
+    border-color: #f8d193
+}
+.btn-secondary:hover {
+    color:#000000;
+    background-color: #f8d193;
+    border-color:#f8d193
+}

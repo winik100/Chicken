@@ -3,38 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>Neue Klausur eintragen</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-<!--    <link rel="stylesheet" type="text/css"
-          th:href="@{/css/bootstrap.min.css}"
-          href="/css/bootstrap.min.css">
-    <link href="/css/jquery.datetimepicker.min.css"
-          rel="stylesheet">-->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/jquery.datetimepicker.min.css}" href="/css/jquery.datetimepicker.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css}" href="/css/site.css">
 </head>
 <body>
 <div class="container">
-    <ul class="breadcrumb">
-        <li><a href="/">Übersicht</a> > </li>
-        <li><a href="/klausuranmeldung">Klausuranmeldung</a></li>
-    </ul>
+
+    <div class="row">
+        <div class="col-lg-1"><a href="/">Übersicht</a></div>
+        <div class="col-lg-1"><a href="/klausuranmeldung">Klausuranmeldung</a></div>
+    </div>
 
     <h1>Neue Klausur eintragen</h1>
 
     <div class="error-msg" th:text="${klausurregistrierungserror}"></div>
 
     <form name="klausurform" method="post" th:action="@{/klausurregistrierung}">
-
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="veranstaltung" placeholder=" " name="veranstaltung" value="">
+            <input type="text" class="form-control w-25" id="veranstaltung" placeholder=" " name="veranstaltung" value="">
             <label for="veranstaltung">Name der Veranstaltung</label>
         </div>
 
         <div class="form-floating mb-3">
-            <input type="number" class="form-control" id="lsfId" placeholder=" " name="lsfid" value="">
+            <input type="text" class="form-control w-25" id="lsfId" placeholder=" " name="lsfid" value="">
             <label for="lsfId" class="form-label">ID der Veranstaltung im LSF</label>
 
-            <div class="form-text">Sie finden die LSF Veranstaltungs-ID im <a
-                    href="https://lsf.hhu.de/qisserver/rds?state=wtree&search=1&category=veranstaltung.browse&navigationPosition=lectures%2Clectureindex&breadcrumb=lectureindex&topitem=lectures&subitem=lectureindex"
+            <div class="form-text">Sie finden die LSF Veranstaltungs-ID im
+                <a href="https://lsf.hhu.de/qisserver/rds?state=wtree&search=1&category=veranstaltung.browse&navigationPosition=lectures%2Clectureindex&breadcrumb=lectureindex&topitem=lectures&subitem=lectureindex"
                     target="_blank">LSF</a>.
             </div>
         </div>
@@ -48,13 +44,13 @@
         </div>
 
         <div class="form-floating mb-3">
-            <input type="date" class="form-control" id="tag"
+            <input type="text" class="form-control w-25" id="tag"
                    placeholder=" " name="datum" value="">
             <label for="tag" class="form-label">Datum der Klausur (dd.mm.yyyy)</label>
         </div>
 
         <div class="form-floating mb-3">
-            <input type="time" class="form-control" id="von" placeholder=" " name="von" value="">
+            <input type="text" class="form-control w-25" id="von" placeholder=" " name="von" value="">
             <label for="von">Klausurbeginn (hh:mm)</label>
             <div class="form-text">Runden Sie die Startzeit auf die nächste vorgegebene Zeit ab. Falls die Klausur vor
                 08:30 Uhr beginnt, tragen Sie bitte 08:30 Uhr ein.
@@ -62,23 +58,23 @@
         </div>
 
         <div class="form-floating mb-3">
-            <input type="time" class="form-control" id="bis" placeholder=" " name="bis" value="">
+            <input type="text" class="form-control w-25" id="bis" placeholder=" " name="bis" value="">
             <label for="bis" class="form-label">Klausurende (hh:mm)</label>
             <div class="form-text">Runden Sie die Zeit auf die nächste vorgegebene Zeit auf. Falls die Klausur nach
                 13:30 Uhr endet, tragen Sie bitte 13:30 Uhr ein.
             </div>
         </div>
 
-        <button name="submitbtn" class="btn btn-primary" type="submit">Eintragen</button>
+        <button name="submitbtn" class="btn btn-secondary" type="submit">Eintragen</button>
     </form>
 
 
-<!--    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/jquery-3.6.0.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
     <script src="/js/jquery.datetimepicker.full.min.js"></script>
     <script>
         jQuery('#tag').datetimepicker({
-            format: 'd.m.Y',
+            format: 'Y-m-d',
             timepicker: false,
             lang: 'de',
             weeks: true,
@@ -108,7 +104,7 @@
                 '13:00','13:30'
             ]
         });
-    </script>-->
+    </script>
 
 </div>
 </body>
