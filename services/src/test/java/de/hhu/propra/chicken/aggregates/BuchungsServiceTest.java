@@ -112,7 +112,23 @@ public class BuchungsServiceTest {
         LocalDateTime startFreistellung = OK_1130_1230.startFreistellungBerechnen();
         LocalDateTime endeFreistellung = OK_1130_1230.endeFreistellungBerechnen();
 
-        LocalDateTime neuesUrlaubsEnde = BuchungsService.neuesUrlaubsEndeBerechnen(startUrlaub, endeUrlaub, startFreistellung, endeFreistellung);
+        LocalDateTime neuesUrlaubsEnde = BuchungsService.neuesUrlaubsEndeBerechnen(startUrlaub, endeUrlaub,
+                startFreistellung, endeFreistellung);
+
+        assertThat(neuesUrlaubsEnde).isEqualTo(startFreistellung);
+    }
+
+    @Test
+    @DisplayName("Beginnt der geplante Urlaub vor Freistellungszeitraum und endet exakt zum Freistellungsbeginn, wird " +
+            "das Urlaubsende auf Freistellungsbeginn gesetzt.")
+    void test_6b() {
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 30);
+        LocalDateTime startFreistellung = OK_1130_1230.startFreistellungBerechnen();
+        LocalDateTime endeFreistellung = OK_1130_1230.endeFreistellungBerechnen();
+
+        LocalDateTime neuesUrlaubsEnde = BuchungsService.neuesUrlaubsEndeBerechnen(startUrlaub, endeUrlaub,
+                startFreistellung, endeFreistellung);
 
         assertThat(neuesUrlaubsEnde).isEqualTo(startFreistellung);
     }
@@ -291,5 +307,52 @@ public class BuchungsServiceTest {
 
         verify(student, never()).urlaubNehmen(startUrlaub, endeUrlaub);
         assertThat(error).isEqualTo("Die Urlaubsdauer muss mindestens 15 Minuten betragen.");
+    }
+
+    @Test
+    @DisplayName("Beginnt der geplante Urlaub genau zu Freistellungsbeginn und endet innerhalb der Freistellungszeit, " +
+            "wird er nicht genommen.")
+    void test_15() throws IOException {
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
+
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
+        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
+        when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
+        when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);
+        when(buchungsValidierung.ueberschneidungMitKlausur(any(), any(), any())).thenReturn(Set.of(OK_11_12));
+
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 30);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 10, 45);
+
+        String error = buchungsService.urlaubBuchen(student, startUrlaub, endeUrlaub);
+
+        verify(student, never()).urlaubNehmen(startUrlaub, endeUrlaub);
+        assertThat(error).isEqualTo("");
+    }
+
+    @Test
+    @DisplayName("Liegt der geplante Urlaub komplett innerhalb der Freistellungszeit, wird er nicht genommen.")
+    void test_16() throws IOException {
+        when(studentRepo.studentMitGitHubHandle(any())).thenReturn(student);
+
+        when(buchungsValidierung.buchungLiegtNachZeitpunkt(any(), any())).thenReturn(true);
+        when(buchungsValidierung.liegtImPraktikumsZeitraum(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerMindestens15Min(any(), any())).thenReturn(true);
+        when(buchungsValidierung.dauerIstVielfachesVon15(any(), any())).thenReturn(true);
+        when(buchungsValidierung.startZeitIstVielfachesVon15(any())).thenReturn(true);
+        when(buchungsValidierung.klausurAmGleichenTag(any(), any())).thenReturn(true);
+        when(buchungsValidierung.ueberschneidungMitKlausur(any(), any(), any())).thenReturn(Set.of(OK_11_12));
+
+        BuchungsService buchungsService = new BuchungsService(studentRepo, klausurRepo, buchungsValidierung);
+        LocalDateTime startUrlaub = LocalDateTime.of(2022, 3, 8, 10, 45);
+        LocalDateTime endeUrlaub = LocalDateTime.of(2022, 3, 8, 11, 45);
+
+        String error = buchungsService.urlaubBuchen(student, startUrlaub, endeUrlaub);
+
+        verify(student, never()).urlaubNehmen(startUrlaub, endeUrlaub);
+        assertThat(error).isEqualTo("");
     }
 }
