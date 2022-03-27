@@ -17,7 +17,7 @@
 
     <h1>Anmeldung zu einer Klausur</h1>
 
-    <div class="error-msg" th:text="${klausuranmeldungserror}"></div>
+    <div class="error-msg text-danger" th:text="${klausuranmeldungserror}"></div>
 
     <div class="formular mt-3">
         <div class="form-text"><p class="alert"><strong>
@@ -27,7 +27,7 @@
 
         <form name="klausur_anmelden" method="post" th:action="@{/klausuranmeldung}">
             <div class="form-floating mb-3">
-                <select class="form-control w-50" name="klausur" id="klausur-select">
+                <select class="form-control w-50" name="klausur" id="klausur-select" required>
                     <option disabled selected value="">Wählen Sie eine Klausur aus</option>
                     <option
                             th:each="k : ${klausuren}"

@@ -23,18 +23,17 @@
 
         <form name="urlaub_anmelden" class="mt-3" method="post" th:action="@{/urlaubsbuchung}">
             <div class="form-floating mb-3">
-                <input type="text" class="form-control w-25" id="datum"
-                       placeholder=" " name="datum" value="">
-                <label for="datum" class="form-label">Datum (dd.mm.yyyy)</label>
+                <input type="text" class="form-control w-25" id="datum" placeholder=" " name="datum" value="" required>
+                <label for="datum" class="form-label">Datum (yyyy-mm-dd)</label>
             </div>
 
             <div class="form-floating mb-3">
-                <input type="text" class="form-control w-25" id="von" placeholder=" " name="von" value="">
+                <input type="text" class="form-control w-25" id="von" placeholder=" " name="von" value="" required>
                 <label for="von">Start (hh:mm)</label>
             </div>
 
             <div class="form-floating mb-3">
-                <input type="text" class="form-control w-25" id="bis" placeholder=" " name="bis" value="">
+                <input type="text" class="form-control w-25" id="bis" placeholder=" " name="bis" value="" required>
                 <label for="bis" class="form-label">Ende (hh:mm)</label>
             </div>
 

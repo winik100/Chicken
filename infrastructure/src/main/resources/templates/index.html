@@ -30,7 +30,7 @@
 
         <tbody>
         <tr th:each="u : ${urlaube}">
-            <td th:text="${u.start().toLocalDate()}">Datum</td>
+            <td th:text="${#temporals.format(u.start().toLocalDate(), 'dd.MM.yyyy')}">Datum</td>
             <td th:text="${u.start().toLocalTime()}">von</td>
             <td th:text="${u.ende().toLocalTime()}">bis</td>
             <td th:text="${u.dauerInMin()}">Zeit (min)</td>
@@ -85,7 +85,7 @@
             <tbody>
             <tr th:each="k : ${klausuren}">
                 <td th:text="${k.getName()}"></td>
-                <td th:text="${k.getStart().toLocalDate()}"></td>
+                <td th:text="${#temporals.format(k.getStart().toLocalDate(), 'dd.MM.yyyy')}"></td>
                 <td><span th:text="${k.getStart().toLocalTime()}"></span>
                     <span> - </span>
                     <span th:text="${k.getEnde().toLocalTime()}"></span></td>
