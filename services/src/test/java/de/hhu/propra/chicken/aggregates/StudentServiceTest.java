@@ -42,16 +42,8 @@ public class StudentServiceTest {
     }
 
     @Test
-    @DisplayName("findeStudent ruft studentMitId aus Repo auf.")
-    void test_3() {
-        service.findeStudent(145654L);
-
-        verify(repo, times(1)).studentMitId(145654L);
-    }
-
-    @Test
     @DisplayName("findeStudentMitHandle ruft studentMitGitHubHandle aus Repo auf.")
-    void test_4() {
+    void test_3() {
         service.findeStudentMitHandle("ibimsgithub");
 
         verify(repo, times(1)).studentMitGitHubHandle("ibimsgithub");

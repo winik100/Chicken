@@ -24,10 +24,6 @@ public class StudentService {
         }
     }
 
-    public Student findeStudent(Long id) {
-        return repo.studentMitId(id);
-    }
-
     public Student findeStudentMitHandle(String gitHubHandle) {
         return repo.studentMitGitHubHandle(gitHubHandle);
     }

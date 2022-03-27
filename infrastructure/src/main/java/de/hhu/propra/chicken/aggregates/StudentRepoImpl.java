@@ -21,17 +21,6 @@ public class StudentRepoImpl implements StudentRepository {
     }
 
     @Override
-    public Student studentMitId(Long id) {
-        Optional<StudentEntity> studentEntity = studentRepo.findById(id);
-        StudentEntity student = studentEntity.orElse(null);
-        if (student == null) {
-            return null;
-        }
-        return new Student(student.id(), student.githubHandle(), student.restUrlaub(),
-                Collections.emptySet(), Collections.emptySet());
-    }
-
-    @Override
     public void save(Student student) {
         StudentEntity studentEntity = new StudentEntity(student.getId(),
                 student.getGithubHandle(),
