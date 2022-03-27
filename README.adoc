@@ -55,7 +55,7 @@ Defaults:
 
 |===
 | *Qualitätsziel* | *Beschreibung*
-| Funktionale Vollständigkeit / Korrektheit | Um keine ungültigen Buchungen zuzulassen (und entsprechend Verwirrung bezüglich Freistellungen zu erzeugen) müssen alle spezifizierten Buchungsregeln abgedeckt und kompatibel sein.
+| Funktionale Vollständigkeit / Korrektheit | Um keine ungültigen Buchungen zuzulassen (und entsprechend Verwirrung bezüglich Freistellungen zu erzeugen), müssen alle spezifizierten Buchungsregeln abgedeckt und kompatibel sein.
 | Testbarkeit | Die Funktionalität des Systems ist sehr stark von der korrekten Umsetzung der Validierungsregeln abhängig.
 | Erweiterbarkeit / Modifizierbarkeit | Es ist leicht, dem System weitere Validierungsregeln hinzuzufügen und in Zukunft Funktionalität für andere Stakeholder als Studenten zu implementieren.
 | Sicherheit | Ausschließlich authentifizierte Studenten können das System nutzen. Rollenbasierte Authorisierung für potenzielle Funktionalität für Tutoren und Admins.
@@ -86,7 +86,7 @@ Defaults:
 |===
 | Team | Entwicklung in einem Team von 5 Modulteilnehmer:innen
 | Zeitplan | In der Zeit vom 07.03.2022 bis 25.03.2022 von Montag bis Freitag jeweils 4 Stunden (9:30 - 13:30)
-| Vorgehensmodell | Mob-Programming, testgetriebene Entwicklung (nicht strikt, aber zeitige Tests), Dokumentation mit arc42 und DokChess als Vorbild
+| Vorgehensmodell | Mob-Programming; testgetriebene Entwicklung (nicht strikt, aber zeitige Tests); Dokumentation mit arc42 und DokChess als Vorbild
 | Entwicklungswerkzeuge | IntelliJ als IDE, Gradle, PlantUML
 | Versionskontrolle | Git bei Github
 |===
@@ -100,8 +100,7 @@ Defaults:
 
 === Fachlicher Kontext
 
-HIER KONTEXTABGRENZUNG
-
+image::diagramme/kontextabgrenzung.png[]
 
 ==== Student (Benutzer)
 Studenten müssen mit Klausuren und Urlauben interagieren (d.h., sie hinzufügen und buchen/stornieren) können.
@@ -116,8 +115,8 @@ Das System nutzt Github, um Nutzer zu authentifizieren und verwendet die daraus 
 
 |===
 | *Qualitätsziel* | *Architekturelle Entscheidungen zur Begünstigung*
-| Funktionale Vollständigkeit / Korrektheit | Umfangreiches Testen der Buchungslogik, Szenariotests
-| Testbarkeit | Kapselung der Validierung für isolierte Tests, Methodendesign mit Blick auf Testbarkeit (z.B. Zeitvalidierung)
+| Funktionale Vollständigkeit / Korrektheit | Umfangreiches Testen der Buchungslogik; Szenariotests
+| Testbarkeit | Kapselung der Validierung für isolierte Tests; Methodendesign mit Blick auf Testbarkeit (z.B. Zeitvalidierung)
 | Erweiterbarkeit / Modifizierbarkeit | Kapselung der Validierung erlaubt Hinzufügen weiterer Validierungsmethoden, ohne nötige Änderungen in der Service-Logik; Design der Buchungsmethoden erlaubt einfaches Hinzufügen weiterer Validierungsschritte
 | Sicherheit | Konfiguration von SSO via Github, einem vertrauenswürdigen Provider
 |===
@@ -140,7 +139,7 @@ Als Web-Anwendung wurde die grafische Benutzerberfläche mittels HTML und Thymel
 
 === Komponentensicht
 
-HIIIIIIIIIER KOMPONENTENSICHT
+image::diagramme/komponentensicht.png[]
 
 |===
 | *Subsystem* | *Kurzbeschreibung*
@@ -153,18 +152,18 @@ HIIIIIIIIIER KOMPONENTENSICHT
 
 === Risiken und technische Schulden
 
-Aus Gründen begrenzter Zeit und Priorisierung von Funktionalität gibt es einige Stellen in der Anwendung, die nicht ausgereift sind. Weiterhin existieren Überbleibsel suboptimaler Modellierungsentscheidungen, für deren Verbesserung keine Gelegenheit war.
+Aufgrund begrenzter Zeit und Priorisierung von Funktionalität gibt es einige Stellen in der Anwendung, die nicht ausgereift sind. Weiterhin existieren Überbleibsel suboptimaler Modellierungsentscheidungen, für deren Verbesserung keine Gelegenheit war.
 
 Darunter fallen:
 
-==== "Nicht-funktionale Fehler"
-Die Anwendung enthält mindestens einen "kosmetischen" Fehler, der allerdings keinen Einfluss auf die Funktionalität nimmt.
-Klausuren in der Vergangenheit können nicht (zumindest von Studenten) storniert werden. Außerdem gibt es in der Anwendung keine derzeit implementierte Möglichkeit, registrierte Klausuren (also solche, die zum Registrierungszeitpunkt valide sind) nachträglich zu entfernen.
+==== Nicht-funktionale Fehler
+Es gibt in der Anwendung keine derzeit implementierte Möglichkeit, registrierte Klausuren (also solche, die zum Registrierungszeitpunkt valide sind) nachträglich zu entfernen.
+Außerdem funktioniert die Persistenz von Studierenden über deren GitHub-Handle, d.h. bei Änderung des GitHub-Handles wird ein neuer Eintrag in der Datenbank angelegt.
 
 ==== Spring-Dependency in Domain
 Um eine sinnvolle Datenbank-Modellierung zu ermöglichen wurde die Entscheidung getroffen, die @Table und @Column Annotationen aus Spring-Data in der Domäne zu benutzen, um die Beziehung zwischen Studierenden und Klausuren korrekt abzubilden.
 Dabei wurde jedoch streng beachtet, keinerlei andere Spring-Abhängigkeit in das Domänenmodell einzuführen.
 
 ==== Accessiblity
-Aufgrund des sehr simplistischen Designs unserer Webseiten haben wir uns entschieden mehr Zeit in vollständige und korrekte Funktionalität zu investieren.
-Dennoch haben wir darauf geachtet, einfache, hilfreiche Accessiblity-Überlegungen (z.B. Kontraste) umzusetzen.
+Aufgrund des sehr simplistischen Designs unserer Webseiten haben wir uns entschieden, mehr Zeit in vollständige und korrekte Funktionalität zu investieren.
+Dennoch haben wir darauf geachtet, einfache hilfreiche Aspekte von Accessibility (z.B. Kontraste) umzusetzen.

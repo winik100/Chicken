@@ -1,4 +1,7 @@
 @startuml
+
+skinparam monochrome true
+
 class Student {
 - String githubHandle
 - UrlaubsZeit restUrlaub
@@ -39,4 +42,5 @@ Klausur <-- LsfId
 Klausur <-- KlausurTyp
 Student <-- UrlaubsEintrag
 Student <-- UrlaubsZeit
+
 @enduml

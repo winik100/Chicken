@@ -1,0 +1,36 @@
+@startuml
+
+skinparam monochrome true
+skinparam node rectangle
+
+package "Chicken" {
+    package "Infrastructure" {
+      [Web]
+      [Repositories]
+    }
+    package "Services" {
+      [Buchungslogik]
+      [Validierung]
+    }
+    package "Domain" {
+      [Student]
+      [Klausur]
+    }
+}
+database Datenbank
+interface Nutzer
+interface AuditLog
+
+Nutzer --> [Web]
+[Web] -r-> [Buchungslogik]
+[Buchungslogik] -u-> [Validierung]
+[Buchungslogik] -r-> AuditLog
+[Buchungslogik] --> [Student]
+[Buchungslogik] --> [Klausur]
+[Buchungslogik] --> [Repositories]
+[Repositories] --> Datenbank
+
+Nutzer -[hidden]r-> [Web]
+[Web] -[hidden]d-> [Repositories]
+
+@enduml

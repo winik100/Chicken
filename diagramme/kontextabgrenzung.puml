@@ -1,0 +1,11 @@
+@startuml
+
+skinparam monochrome true
+
+[Chicken] <<..system..>>
+node GitHub
+
+[Chicken] - [GitHub]
+Student - [Chicken]
+
+@enduml
