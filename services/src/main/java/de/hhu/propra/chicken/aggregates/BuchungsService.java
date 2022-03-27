@@ -22,23 +22,6 @@ public class BuchungsService {
         this.validierung = validierung;
     }
 
-    static LocalDateTime neuesUrlaubsEndeBerechnen(LocalDateTime start, LocalDateTime ende,
-                                                   LocalDateTime freistellungsStart, LocalDateTime freistellungsEnde) {
-        if (start.isBefore(freistellungsStart)
-                && (ende.isAfter(freistellungsStart) && ende.isBefore(freistellungsEnde))) {
-            return freistellungsStart;
-        }
-        return ende;
-    }
-
-    static LocalDateTime neuenUrlaubsStartBerechnen(LocalDateTime start, LocalDateTime ende,
-                                                    LocalDateTime freistellungsStart, LocalDateTime freistellungsEnde) {
-        if (start.isAfter(freistellungsStart) && ende.isAfter(freistellungsEnde)) {
-            return freistellungsEnde;
-        }
-        return start;
-    }
-
     public String klausurBuchen(Klausur klausur, Student student) throws IOException {
         if (!validierung.buchungLiegtNachZeitpunkt(klausur.getStart(), LocalDateTime.now())) {
             log.error(student.getGithubHandle(), "Buchungsversuch von Klausur in der Vergangenheit.",
@@ -142,7 +125,7 @@ public class BuchungsService {
         if (!validierung.hatAusreichendRestUrlaub(student, start, ende)) {
             log.error(student.getGithubHandle(), "Buchungsversuch von Urlaub, dessen Dauer den verbleibenden " +
                     "Resturlaub übersteigt.", LocalDateTime.now());
-            return  "Ihr Resturlaub reicht nicht aus.";
+            return "Ihr Resturlaub reicht nicht aus.";
         }
         student.urlaubNehmen(start, ende);
         studentRepo.save(student);
@@ -152,7 +135,7 @@ public class BuchungsService {
     public String urlaubStornieren(Student student, LocalDateTime start, LocalDateTime ende) throws IOException {
         if (!validierung.buchungLiegtNachZeitpunkt(start, LocalDateTime.now().plusDays(1))) {
             log.error(student.getGithubHandle(), "Verspäteter Stornierungsversuch des Urlaubs am "
-                    + start.toLocalDate() + " von " + start.toLocalTime() + " bis " + ende.toLocalTime() + ".",
+                            + start.toLocalDate() + " von " + start.toLocalTime() + " bis " + ende.toLocalTime() + ".",
                     LocalDateTime.now());
             return "Urlaub kann nur bis zum Vortag storniert werden.";
         }
