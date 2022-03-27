@@ -1,24 +1,68 @@
 .img-thumbnail {
-    max-width:50%;
-    border-width:0;
+    max-width: 50%;
+    border-width: 0;
 }
+
 .btn-primary {
-    color:#000000;
-    background-color: #b7e1ef;
+    color: #000000;
+    background-color: #a6d4e3;
     border-color: #a6d4e3
 }
+
 .btn-primary:hover {
-    color:#000000;
-    background-color: #a6d4e3;
-    border-color:#a6d4e3
+    color: #000000;
+    background-color: #94c8d9;
+    border-color: #94c8d9
 }
+
+.btn-primary.focus, .btn-primary:focus {
+    box-shadow: 0 0 0 .2rem rgb(219, 242, 250)
+}
+
+.btn-primary.disabled, .btn-primary:disabled {
+    color: #000000;
+    background-color: #a6d4e3;
+    border-color: #a6d4e3
+}
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show > .btn-primary.dropdown-toggle {
+    color: #000000;
+    background-color: #89c1d3;
+    border-color: #89c1d3
+}
+
+.btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show > .btn-primary.dropdown-toggle:focus {
+    box-shadow: 0 0 0 .2rem rgb(219, 242, 250)
+}
+
 .btn-secondary {
-    color:#000000;
+    color: #000000;
     background-color: #ffdca4;
+    border-color: #ffdca4
+}
+
+.btn-secondary:hover {
+    color: #000000;
+    background-color: #f8d193;
     border-color: #f8d193
 }
-.btn-secondary:hover {
-    color:#000000;
-    background-color: #f8d193;
-    border-color:#f8d193
+
+.btn-secondary.focus, .btn-secondary:focus {
+    box-shadow: 0 0 0 .2rem rgb(253, 237, 212)
+}
+
+.btn-secondary.disabled, .btn-secondary:disabled {
+    color: #000000;
+    background-color: #ffdca4;
+    border-color: #ffdca4
+}
+
+.btn-secondary:not(:disabled):not(.disabled).active, .btn-secondary:not(:disabled):not(.disabled):active, .show > .btn-secondary.dropdown-toggle {
+    color: #000000;
+    background-color: #f5c881;
+    border-color: #f5c881
+}
+
+.btn-secondary:not(:disabled):not(.disabled).active:focus, .btn-secondary:not(:disabled):not(.disabled):active:focus, .show > .btn-secondary.dropdown-toggle:focus {
+    box-shadow: 0 0 0 .2rem rgba(253, 237, 212)
 }
