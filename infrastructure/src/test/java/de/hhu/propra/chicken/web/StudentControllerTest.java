@@ -26,6 +26,7 @@ import java.util.*;
 
 import static de.hhu.propra.chicken.util.KlausurTemplates.PK_10_11;
 import static de.hhu.propra.chicken.util.KlausurTemplates.PK_12_13;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -77,12 +78,14 @@ public class StudentControllerTest {
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                 new SecurityContextImpl(principal));
 
-        mvc.perform(get("/").session(session))
+        String html = mvc.perform(get("/").session(session))
                 .andExpectAll(status().isOk(),
                         model().attribute("klausuren", Collections.emptySet()),
                         model().attribute("urlaube", Collections.emptySet()),
                         model().attribute("urlaubssumme", 0L),
-                        model().attribute("resturlaub", 240L));
+                        model().attribute("resturlaub", 240L)).andReturn().getResponse().getContentAsString();
+        assertThat(html).contains("0");
+        assertThat(html).contains("240");
     }
 
     @Test
@@ -101,12 +104,15 @@ public class StudentControllerTest {
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                 new SecurityContextImpl(principal));
 
-        mvc.perform(get("/").session(session))
+        String html = mvc.perform(get("/").session(session))
                 .andExpectAll(status().isOk(),
                         model().attribute("klausuren", Set.of(PK_10_11, PK_12_13)),
                         model().attribute("urlaube", Collections.emptySet()),
                         model().attribute("urlaubssumme", 180L),
-                        model().attribute("resturlaub", 60L));
+                        model().attribute("resturlaub", 60L)).andReturn().getResponse().getContentAsString();
+        assertThat(html).contains("180", "60");
+        assertThat(html).contains("PK_10_11", "08.03.2022", "10:00", "11:00");
+        assertThat(html).contains("PK_12_13", "12:00", "13:00");
     }
 
     @Test
@@ -140,9 +146,11 @@ public class StudentControllerTest {
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                 new SecurityContextImpl(principal));
         when(klausurService.alleKlausuren()).thenReturn(Set.of(PK_10_11, PK_12_13));
-        mvc.perform(get("/klausuranmeldung").session(session))
+        String html = mvc.perform(get("/klausuranmeldung").session(session))
                 .andExpectAll(status().isOk(),
-                        model().attribute("klausuren", Set.of(PK_10_11, PK_12_13)));
+                        model().attribute("klausuren", Set.of(PK_10_11, PK_12_13))).andReturn()
+                .getResponse().getContentAsString();
+        assertThat(html).contains("PK_10_11", "PK_12_13");
     }
 
     @Test
@@ -173,7 +181,7 @@ public class StudentControllerTest {
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                 new SecurityContextImpl(principal));
         when(klausurService.klausurHinzufuegen(any())).thenReturn("testerror");
-        mvc.perform(post("/klausurregistrierung").with(csrf())
+        String html = mvc.perform(post("/klausurregistrierung").with(csrf())
                         .param("veranstaltung", "testklausur")
                         .param("lsfid", "111111")
                         .param("vor_ort", "true")
@@ -181,7 +189,9 @@ public class StudentControllerTest {
                         .param("von", "10:30")
                         .param("bis", "11:30").session(session))
                 .andExpectAll(status().isOk(),
-                        model().attribute("klausurregistrierungserror", "testerror"));
+                        model().attribute("klausurregistrierungserror", "testerror"))
+                .andReturn().getResponse().getContentAsString();
+        assertThat(html).contains("testerror");
     }
 
     @Test
@@ -213,12 +223,14 @@ public class StudentControllerTest {
         Student student = mock(Student.class);
         when(studentService.findeStudentMitHandle(any())).thenReturn(student);
         when(buchungsService.urlaubBuchen(any(), any(), any())).thenReturn("testerror");
-        mvc.perform(post("/urlaubsbuchung").with(csrf())
+        String html = mvc.perform(post("/urlaubsbuchung").with(csrf())
                         .param("datum", "2022-03-20")
                         .param("von", "10:30")
                         .param("bis", "11:30").session(session))
                 .andExpectAll(status().isOk(),
-                        model().attribute("urlaubbuchungserror", "testerror"));
+                        model().attribute("urlaubbuchungserror", "testerror"))
+                .andReturn().getResponse().getContentAsString();
+        assertThat(html).contains("testerror");
     }
 
     @Test
@@ -238,7 +250,7 @@ public class StudentControllerTest {
         mvc.perform(post("/klausurstornierung").with(csrf())
                         .param("lsfId", "111111")
                         .session(session))
-                .andExpectAll(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test

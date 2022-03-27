@@ -54,25 +54,6 @@ public class StudentController {
         return "index";
     }
 
-    @PostMapping("/klausurstornierung")
-    public RedirectView klausurstornierung(@AuthenticationPrincipal OAuth2User principal,
-                                           @RequestParam("lsfId") String lsfId,
-                                           RedirectAttributes redirectAttributes) throws IOException {
-        Student student = studentService.findeStudentMitHandle(principal.getAttribute("login"));
-        Klausur klausur = klausurService.findeKlausurMitLsfId(Long.valueOf(lsfId));
-        String error = buchungsService.klausurStornieren(klausur, student);
-        RedirectView redirectView = new RedirectView("/", true);
-        redirectAttributes.addFlashAttribute("klausurstornoerror", error);
-        return redirectView;
-    }
-
-    @GetMapping("/klausuranmeldung")
-    public String klausuranmeldung(Model model) {
-        Set<Klausur> klausuren = klausurService.alleKlausuren();
-        model.addAttribute("klausuren", klausuren);
-        return "klausuranmeldung";
-    }
-
     @GetMapping("/klausurregistrierung")
     public String klausurregistrierung() {
         return "klausurregistrierung";
@@ -102,6 +83,13 @@ public class StudentController {
         return "klausurregistrierung";
     }
 
+    @GetMapping("/klausuranmeldung")
+    public String klausuranmeldung(Model model) {
+        Set<Klausur> klausuren = klausurService.alleKlausuren();
+        model.addAttribute("klausuren", klausuren);
+        return "klausuranmeldung";
+    }
+
     @PostMapping("/klausuranmeldung")
     public String klausurAnmeldungDurchfuehren(Model model,
                                                @RequestParam("klausur")String lsfId,
@@ -116,6 +104,18 @@ public class StudentController {
         Set<Klausur> klausuren = klausurService.alleKlausuren();
         model.addAttribute("klausuren", klausuren);
         return "klausuranmeldung";
+    }
+
+    @PostMapping("/klausurstornierung")
+    public RedirectView klausurstornierung(@AuthenticationPrincipal OAuth2User principal,
+                                           @RequestParam("lsfId") String lsfId,
+                                           RedirectAttributes redirectAttributes) throws IOException {
+        Student student = studentService.findeStudentMitHandle(principal.getAttribute("login"));
+        Klausur klausur = klausurService.findeKlausurMitLsfId(Long.valueOf(lsfId));
+        String error = buchungsService.klausurStornieren(klausur, student);
+        RedirectView redirectView = new RedirectView("/", true);
+        redirectAttributes.addFlashAttribute("klausurstornoerror", error);
+        return redirectView;
     }
 
     @GetMapping("/urlaubsbuchung")
