@@ -1,8 +1,10 @@
-=== Autoren: charzim, wummlamm, danielrieger, winik100
-== Chicken-Anwendung
+:toc:
+= Chicken-Anwendung
 
 Die Chicken-Anwendung ist ein System zur Verwaltung von Klausur- und Urlaubsbuchungen der Studierenden des Programmierpraktikums
 im Bachelor-Modul _Software-Entwicklung im Team_ an der Heinrich-Heine-Universität Düsseldorf.
+
+_Autor:innen: charzim, wummlamm, danielrieger, winik100_
 
 === Konfiguration und Start der Anwendung
 Die Chicken-Anwendung erfordert, dass ``docker`` sowie ``docker-compose`` installiert sind.
@@ -32,6 +34,7 @@ Zudem können die Praktikumszeiten angepasst werden. In der gleichen Datei finde
 [NOTE]
 ====
 Formatierung: 'yyyy-mm-dd', 'hh:mm'
+
 Defaults:
 
 * Praktikumszeitraum: 07.03.2022 bis 01.04.2022
@@ -158,7 +161,16 @@ Darunter fallen:
 
 ==== Nicht-funktionale Fehler
 Es gibt in der Anwendung keine derzeit implementierte Möglichkeit, registrierte Klausuren (also solche, die zum Registrierungszeitpunkt valide sind) nachträglich zu entfernen.
-Außerdem funktioniert die Persistenz von Studierenden über deren GitHub-Handle, d.h. bei Änderung des GitHub-Handles wird ein neuer Eintrag in der Datenbank angelegt.
+
+==== Konsistenz der Nutzerdaten
+Unsere Datenmodellierung ist nur konsistent unter der Annahme, dass Github Userhandles unveränderlich sind.
+Da dies in der Realität nicht der Fall ist wäre etwa die Nutzung der User-ID sinnvoller.
+Uns erschien eine  Ummodellierung der Datenbankanbindung an diesem Punkt jedoch nicht mehr angemessen angesichts des begrenzten Nutzungskontexts des Praktikums,
+währenddessen eine Änderung des Handles eher unwahrscheinlich und mit organistorischen Bedenken (etwa Anwesenheitsprüfung) verbunden wäre.
+
+==== Kein Ende-zu-Ende Test
+Wir stießen zum Entwicklungsende auf Probleme, den in unseren Controllermethoden injizierten AuthenticationPrincipal zu mocken, der vom externen Github System abhängt.
+Entsprechend müssen wir uns zu sehr auf das extensive manuelle Testen während der Entwicklung verlassen.
 
 ==== Spring-Dependency in Domain
 Um eine sinnvolle Datenbank-Modellierung zu ermöglichen wurde die Entscheidung getroffen, die @Table und @Column Annotationen aus Spring-Data in der Domäne zu benutzen, um die Beziehung zwischen Studierenden und Klausuren korrekt abzubilden.
